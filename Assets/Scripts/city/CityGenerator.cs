@@ -94,9 +94,9 @@ public class CityGenerator : MonoBehaviour
                 building.LocalPosition = Vector3.zero;
                 float d = Random.Range(0.7f, 0.8f);
                 building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
+                building.Init();
 
                 block.building = building;
-
             }
         }
 
