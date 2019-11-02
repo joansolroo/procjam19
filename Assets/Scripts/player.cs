@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
+    public static player main;
+
     public Transform model;
 
     private CharacterController controller;
@@ -16,6 +18,11 @@ public class player : MonoBehaviour
     private float currentHeight;
 
     public LayerMask floorMask;
+    
+    void Awake()
+    {
+        main = this;
+    }
     // Start is called before the first frame update
     void Start()
     {

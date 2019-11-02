@@ -251,7 +251,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 37444790}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07994bfe8b0e4adb97d706de5dea48d5, type: 3}
   m_Name: 
@@ -1311,7 +1311,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &279689276
 Transform:
   m_ObjectHideFlags: 0
@@ -6687,6 +6687,11 @@ PrefabInstance:
       propertyPath: hasWindow
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
+        type: 3}
+      propertyPath: windowMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
     - target: {fileID: 1312013454266200244, guid: baf7df2bffb10f04e837a608cc9b3e49,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7179,12 +7184,12 @@ PrefabInstance:
     - target: {fileID: 6616598120780132930, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
       propertyPath: targetHeight
-      value: 10
+      value: 74.9
       objectReference: {fileID: 0}
     - target: {fileID: 6616598120780132930, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
       propertyPath: speed
-      value: 30
+      value: 54.39
       objectReference: {fileID: 0}
     - target: {fileID: 6616598121470187656, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
@@ -7194,7 +7199,7 @@ PrefabInstance:
     - target: {fileID: 6616598119987098975, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
       propertyPath: far clip plane
-      value: 100
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d4664de08188d2468c1bb0e95d16fda, type: 3}
