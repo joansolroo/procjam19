@@ -6,6 +6,6 @@ public class City : TerrainElement
 {
     public List<Region> regions;
     public Block[,] blocks;
-
+    public List<Street> streets;
     
 }
