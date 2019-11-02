@@ -34,7 +34,7 @@ public class CarAI : Particle
         if ((this.transform.position - checkpoint).sqrMagnitude < 0.1f)
         {
             ++currentCheckpoint;
-            if (currentCheckpoint > checkpoints.Length)
+            if (currentCheckpoint >= checkpoints.Length)
             {
                 if (loop)
                 {
