@@ -12,6 +12,8 @@ public class Building : TerrainElement
     public Texture[] textureList;
     public Vector3[] textureWindowSizeList;
 
+    public List<List<Vector3>> paths = new List<List<Vector3>>();
+
     public void Resize(Vector3 newsize)
     {
         this.transform.localScale = Vector3.one;
@@ -154,6 +156,25 @@ public class Building : TerrainElement
         mesh.normals = normals.ToArray();
         mesh.uv = textures.ToArray();
         mesh.triangles = faces.ToArray();
+
+        List<Vector3> footPath = new List<Vector3>();
+        float d = 0;
+        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x - size.x / 2, d, transform.localPosition.z - size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x - size.x / 2, d, transform.localPosition.z + size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x + size.x / 2, d, transform.localPosition.z + size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x + size.x / 2, d, transform.localPosition.z - size.z / 2)));
+        paths.Add(footPath);
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        foreach (List<Vector3> path in paths)
+        {
+            for (int i = 0; i < path.Count; i++)
+            {
+                Gizmos.DrawLine(path[i], path[(i + 1)% path.Count]);
+            }
+        }
     }
 
     private bool IsEmptySpace(List<GameObject> blocs, Vector3 p)
@@ -193,19 +214,6 @@ public class Building : TerrainElement
         faces.Add(verticies.Count - 1);
         faces.Add(verticies.Count - 3);
 
-
-
-        /*GameObject w = Instantiate(windowTemplate);
-        w.transform.parent = transform;
-        w.SetActive(true);
-        w.transform.localScale = s;
-        w.transform.localPosition = p;
-        w.transform.localEulerAngles = r;*/
-        /*Material m = w.GetComponent<MeshRenderer>().material;
-        if (light)
-            m.SetColor("_EmissionColor", windowColorGradient.Evaluate(Random.Range(0f, 1f)));
-        else
-            m.SetColor("_EmissionColor", m.color * Mathf.LinearToGammaSpace(0));*/
-
     }
+
 }

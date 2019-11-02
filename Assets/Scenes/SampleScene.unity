@@ -5357,15 +5357,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6003936302b50439796f823a0fb73b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 0}
-  speed: 20
-  rotationSpeed: 6
-  floorTest: {fileID: 0}
-  gravity: 1
+  car: {fileID: 0}
   targetHeight: 80
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 256
+  dy: 0
+  speed: 20
+  steer: 0
 --- !u!1 &1798450033
 GameObject:
   m_ObjectHideFlags: 0
@@ -7200,6 +7196,26 @@ PrefabInstance:
         type: 3}
       propertyPath: far clip plane
       value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501467056991282564, guid: 2d4664de08188d2468c1bb0e95d16fda,
+        type: 3}
+      propertyPath: maxSpeedHorizontal
+      value: 44.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501467056991282564, guid: 2d4664de08188d2468c1bb0e95d16fda,
+        type: 3}
+      propertyPath: maxSpeedVertical
+      value: 26.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501467056991282564, guid: 2d4664de08188d2468c1bb0e95d16fda,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 8.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4501467056991282564, guid: 2d4664de08188d2468c1bb0e95d16fda,
+        type: 3}
+      propertyPath: rotationSmooth
+      value: 102.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d4664de08188d2468c1bb0e95d16fda, type: 3}
