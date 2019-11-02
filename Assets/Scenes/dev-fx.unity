@@ -6728,7 +6728,12 @@ PrefabInstance:
         type: 3}
       propertyPath: renderer
       value: 
-      objectReference: {fileID: 9083474676232955698}
+      objectReference: {fileID: 0}
+    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
+        type: 3}
+      propertyPath: windowMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
     - target: {fileID: 1312013454266200244, guid: baf7df2bffb10f04e837a608cc9b3e49,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7492,12 +7497,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &9083474676232955698 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9083474676232955698, guid: baf7df2bffb10f04e837a608cc9b3e49,
-    type: 3}
-  m_PrefabInstance: {fileID: 3739566834169344952}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9162667752968410410
 Transform:
   m_ObjectHideFlags: 0
