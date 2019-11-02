@@ -35,8 +35,9 @@ public class player : MonoBehaviour
             currentHeight = hit.distance;
         }
 
-        float dy = targetHeight - currentHeight;
+        float dy = 0.1f*(targetHeight - currentHeight);
         if (Mathf.Abs(dy) > 1) dy = Mathf.Sign(dy);
+
         Vector3 verticalDirection = new Vector3(0, dy, 0) * gravity;
         Vector3 horizontalDirection = transform.forward * Input.GetAxis("Vertical");
         Vector3 direction = verticalDirection + horizontalDirection;
