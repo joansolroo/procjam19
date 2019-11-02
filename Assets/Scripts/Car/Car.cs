@@ -83,7 +83,7 @@ public class Car : MonoBehaviour
     {
         // visuals
         Vector3 targetDirection;
-        if(direction.sqrMagnitude < 0.1f)
+        if(direction.sqrMagnitude < 0.01f)
         {
             targetDirection = this.transform.forward;
         }
