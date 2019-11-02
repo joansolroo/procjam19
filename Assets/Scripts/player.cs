@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
+    public static player main;
     public Car car;
 
     public float targetHeight;
-
+    
+    void Awake()
+    {
+        main = this;
+    }
+    
     public float dy;
     public float speed;
     public float steer;

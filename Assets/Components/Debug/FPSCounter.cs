@@ -9,7 +9,8 @@ public class FPSCounter : MonoBehaviour
 
     void Update()
     {
-        deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+        deltaTime = Time.deltaTime;
+        //deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         if(Input.GetKeyDown(KeyCode.P))
         {
             visible = !visible;
