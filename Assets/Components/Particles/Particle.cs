@@ -2,51 +2,66 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Equipment
+public abstract class Particle : GameElement
 {
-    public abstract class Particle : GameElement
+    [Header("Particle properties")]
+    [SerializeField] public ParticlePool pool;
+    [SerializeField] public float lifeTime;
+    [SerializeField] protected float time;
+    bool destroyed = false;
+    #region Events
+    public delegate void ParticleEvent();
+    public ParticleEvent OnCreate;
+    public ParticleEvent OnTick;
+    public ParticleEvent OnDestroy;
+    #endregion
+
+    public float NormalizedTime
     {
-        [Header("Particle properties")]
-        [SerializeField] public ParticlePool pool;
-        [SerializeField] public float lifeTime;
-        [SerializeField] protected float time;
+        get {
+            if (lifeTime > 0)
+                return (time / lifeTime);
+            else
+                return 1; }
+    }
 
-        #region Events
-        public delegate void ParticleEvent();
-        public ParticleEvent OnCreate;
-        public ParticleEvent OnTick;
-        public ParticleEvent OnDestroy;
-        #endregion
+    public bool Destroyed { get => destroyed; }
 
-        public float NormalizedTime
-        {
-            get { return (time / lifeTime); }
-        }
-
-        public void ResetParticle()
-        {
-            DoCreate();
-            this.time = lifeTime;
-            OnCreate?.Invoke();
-        }
-        protected void Update()
+    private void Start()
+    {
+        ResetParticle();
+    }
+    public void ResetParticle()
+    {
+        destroyed = false;
+        DoCreate();
+        this.time = lifeTime;
+        OnCreate?.Invoke();
+    }
+    protected void Update()
+    {
+        if(lifeTime > 0)
         {
             time -= Time.deltaTime;
             if (time <= 0)
             {
-                DoDestroy();
-                OnDestroy?.Invoke();
-                pool.Release(this);
-            }
-            else
-            {
-                DoTick();
-                OnTick?.Invoke();
+                Destroy();
             }
         }
-
-        protected abstract void DoCreate();
-        protected abstract void DoTick();
-        protected abstract void DoDestroy();
+        if(!destroyed)
+        {
+            DoTick();
+            OnTick?.Invoke();
+        }
     }
+    public void Destroy()
+    {
+        destroyed = true;
+        DoDestroy();
+        OnDestroy?.Invoke();
+        pool.Release(this);
+    }
+    protected abstract void DoCreate();
+    protected abstract void DoTick();
+    protected abstract void DoDestroy();
 }

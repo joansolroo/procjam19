@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Equipment;
-
 public class MeshParticle : Particle
 {
     [Header("Particle Attributes")]

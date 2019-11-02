@@ -4,52 +4,28 @@ using UnityEngine;
 
 public class player : MonoBehaviour
 {
-    public Transform model;
+    public Car car;
 
-    private CharacterController controller;
-    public float speed = 10;
-    public float rotationSpeed = 6;
-
-    public Transform floorTest;
-    public float gravity = 1f;
     public float targetHeight;
-    private float currentHeight;
 
-    public LayerMask floorMask;
-    // Start is called before the first frame update
-    void Start()
+    public float dy;
+    public float speed;
+    public float steer;
+    private void Update()
     {
-        controller = GetComponent<CharacterController>();
-    }
-
-    Vector3 currentDirection;
-    // Update is called once per frame
-    void Update()
-    {
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(floorTest.position, floorTest.TransformDirection(Vector3.down), out hit, Mathf.Infinity, floorMask))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            Debug.DrawRay(floorTest.position, floorTest.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            Debug.Log("Did Hit");
-            currentHeight = hit.distance;
+            targetHeight += Time.deltaTime * 10;
         }
-
-        float dy = 0.1f*(targetHeight - currentHeight);
-        if (Mathf.Abs(dy) > 1) dy = Mathf.Sign(dy);
-
-        Vector3 verticalDirection = new Vector3(0, dy, 0) * gravity;
-        Vector3 horizontalDirection = transform.forward * Input.GetAxis("Vertical");
-        Vector3 direction = verticalDirection + horizontalDirection;
-        controller.Move(speed  * direction * Time.deltaTime);
-        this.transform.Rotate(Vector3.up, rotationSpeed * Input.GetAxis("Horizontal"));
-
-        if (horizontalDirection.sqrMagnitude == 0)
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            direction= verticalDirection+this.transform.forward;
+            targetHeight -= Time.deltaTime * 10;
         }
+        if (targetHeight < 0) targetHeight = 0;
+        dy = (targetHeight - car.CurrentHeight);
+        speed = Input.GetAxis("Vertical");
+        steer = Input.GetAxis("Horizontal");
 
-        currentDirection = Vector3.MoveTowards(currentDirection, direction, Time.deltaTime*5);
-        model.LookAt(model.position + currentDirection);
+        car.Move(speed, steer, dy);
     }
 }

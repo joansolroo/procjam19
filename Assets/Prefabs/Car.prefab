@@ -762,6 +762,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6616598120780132929}
   - component: {fileID: 6616598120780132933}
+  - component: {fileID: 4501467056991282564}
   - component: {fileID: 6616598120780132930}
   m_Layer: 0
   m_Name: Car
@@ -805,6 +806,28 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4501467056991282564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6616598120780132932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8054062fc4a15d4ba191c2eb18bec73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 6616598120780132933}
+  model: {fileID: 6616598120178711193}
+  speed: 10
+  rotationSpeed: 6
+  floorTest: {fileID: 6616598121470187656}
+  gravity: 1
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 256
+  direction: {x: 0, y: 0, z: 0}
 --- !u!114 &6616598120780132930
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -817,15 +840,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6003936302b50439796f823a0fb73b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 6616598120178711193}
-  speed: 20
-  rotationSpeed: 6
-  floorTest: {fileID: 6616598121470187656}
-  gravity: 1
+  car: {fileID: 4501467056991282564}
   targetHeight: 2
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 256
 --- !u!1 &6616598121091266890
 GameObject:
   m_ObjectHideFlags: 0

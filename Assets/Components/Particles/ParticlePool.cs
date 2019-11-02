@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using Equipment;
 
 public class ParticlePool : GameElement
 {
     public static Dictionary<string, ParticlePool> pools = new Dictionary<string, ParticlePool>();
-    public Particle prefab;
+    public Particle[] prefabs;
     public int maxInstance = 5;
 
     private List<Particle> pool = new List<Particle>();
@@ -31,7 +30,7 @@ public class ParticlePool : GameElement
     {
         if(pool.Count < maxInstance)
         {
-            Particle particle = Instantiate(prefab);
+            Particle particle = Instantiate(prefabs[Random.Range(0,prefabs.Length)]);
             particle.pool = this;
             pool.Add(particle);
             lastInstanceIndex = pool.Count - 1;
@@ -46,6 +45,10 @@ public class ParticlePool : GameElement
             lastInstanceIndex = (lastInstanceIndex + 1) % maxInstance;
             return go;
         }
+    }
+    public T Take<T>()
+    {
+        return Take().GetComponent<T>();
     }
     public void Release(Particle p)
     {

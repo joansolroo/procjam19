@@ -11,7 +11,7 @@ public class WeatherManager : MonoBehaviour
     [SerializeField] bool useFog;
     [SerializeField] Color fogColor;
     [SerializeField] [Range(0,0.1f)]float fogDensity;
-
+    [SerializeField] Renderer floorFog;
     [Header("Rain")]
     [SerializeField] float rainAmount;
     [SerializeField] RainCameraController rainOnCamera;
@@ -34,7 +34,7 @@ public class WeatherManager : MonoBehaviour
         fogDensity = Mathf.Max(0.05f, (50 - mainCamera.transform.position.y) / 50f)*0.05f;
         RenderSettings.fogDensity = fogDensity;
         mainCamera.backgroundColor = fogColor;
-
+        floorFog.material.SetColor("_TintColor", fogColor);
         //this is not the best to get the angle
         Vector3 camPosition = mainCamera.transform.position;
         Vector3 cameraVelocity = cameraPrevPosition - camPosition;
