@@ -11,10 +11,11 @@ public class Clock : MonoBehaviour
     [SerializeField] int beats = 4;
     #endregion
 
+    public float time = 0;
     #region Status
     [Header("Status")]
-    [SerializeField] int globalBeat = -1;
-    [SerializeField] int beat = -1;
+    [SerializeField] public int globalBeat = -1;
+    [SerializeField] public int beat = -1;
     #endregion
 
     #region Events
@@ -30,10 +31,17 @@ public class Clock : MonoBehaviour
         StartCoroutine(DoTicking());
     }
 
+    float totalTime;
+    float expectedTime;
+    float error;
+
     IEnumerator DoTicking()
     {
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(beatDuration);
-        
+        WaitForSecondsRealtime wait;
+        globalBeat = 0;
+        beat = 0;
+        float currentTime = Time.time;
+        float startTime = currentTime;
         while (true)
         {
             OnTick?.Invoke();
@@ -45,13 +53,12 @@ public class Clock : MonoBehaviour
             {
                 OnMinorTick?.Invoke();
             }
-
-            if (wait.waitTime != beatDuration)
-            {
-                wait = new WaitForSecondsRealtime(beatDuration);
-            }
+            totalTime = Time.time - startTime;
+            expectedTime = beatDuration * globalBeat;
+            error = expectedTime- totalTime;
+            float waitTime = beatDuration+error;
+            wait = new WaitForSecondsRealtime(waitTime);
             yield return wait;
-
             ++globalBeat;
             beat = globalBeat % beats;
         }
