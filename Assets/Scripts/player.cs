@@ -16,17 +16,23 @@ public class player : MonoBehaviour
     
     public float dy;
     public float speed;
+    public float verticalSpeed;
     public float steer;
     private void Update()
     {
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            targetHeight += Time.deltaTime * 10;
+            targetHeight += Time.deltaTime * verticalSpeed;
         }
-        if (Input.GetKey(KeyCode.LeftControl))
+        else if (Input.GetKey(KeyCode.LeftControl))
         {
-            targetHeight -= Time.deltaTime * 10;
+            targetHeight -= Time.deltaTime * verticalSpeed;
         }
+        else
+        {
+            targetHeight = car.CurrentHeight;
+        }
+
         if (targetHeight < 0) targetHeight = 0;
         dy = (targetHeight - car.CurrentHeight);
         speed = Input.GetAxis("Vertical");

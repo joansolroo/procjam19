@@ -167,7 +167,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 8260527735689630649, guid: d25098422d49de943942e6140bdd8816, type: 3}
-  maxInstance: 50
+  maxInstance: 500
   lastInstanceIndex: 0
 --- !u!1 &7681804409359763294
 GameObject:
@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: {x: 20, y: 0, z: 20}
-  richness: 0.1
+  richness: 0.6
   color: {r: 0, g: 1, b: 0.35566998, a: 1}
 --- !u!1 &7681804411035351932
 GameObject:
@@ -491,6 +491,9 @@ MonoBehaviour:
   - {fileID: 7681804411163886501}
   - {fileID: 7681804410123108312}
   streets: []
+  blockVisibilityRadius: 900
+  blockVisibilityOffset: 46
+  personVisibilityRadius: 100
 --- !u!114 &7681804411061927425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -551,5 +554,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: {x: 20, y: 0, z: 20}
-  richness: 1
+  richness: 0.5
   color: {r: 0.8215008, g: 0, b: 1, a: 1}

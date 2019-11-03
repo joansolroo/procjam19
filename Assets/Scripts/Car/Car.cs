@@ -13,6 +13,7 @@ public class Car : MonoBehaviour
     public float maxSpeedVertical = 10;
     public float rotationSpeed = 6;
     public float rotationSmooth = 5;
+    public float aimingSmooth = 0.1f;
     public Transform floorTest;
     public float gravity = 1f;
 
@@ -22,14 +23,16 @@ public class Car : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        lastNonZeroHorizontalDirection = Vector3.forward;
     }
+
     [SerializeField] Vector3 direction;
     Vector3 verticalDirection;
     Vector3 horizontalDirection;
+    Vector3 lastNonZeroHorizontalDirection;
     Vector3 currentDirection;
     
     private float currentHeight;
-
     public float CurrentHeight { get => currentHeight; set => currentHeight = value; }
 
     private void FixedUpdate()
@@ -49,11 +52,14 @@ public class Car : MonoBehaviour
         targetHeight = Mathf.Max(targetHeight, 0);
         float dy = targetHeight - currentHeight;
 
-        if (Mathf.Abs(dy) > 1) dy = Mathf.Sign(dy);
+        if (Mathf.Abs(dy) > 1)
+            dy = Mathf.Sign(dy);
         
         verticalDirection = new Vector3(0, dy, 0);
         horizontalDirection = transform.forward;
-
+        if ((horizontalDirection * speed).sqrMagnitude > 0.01f)
+            lastNonZeroHorizontalDirection = (horizontalDirection * speed).normalized;
+        
         direction = verticalDirection * gravity * maxSpeedVertical + horizontalDirection* speed * maxSpeedHorizontal;
         controller.Move(direction * Time.deltaTime);
         if (steer != 0)
@@ -74,28 +80,18 @@ public class Car : MonoBehaviour
         verticalDirection = new Vector3(0,direction.y,0)*maxSpeedVertical;
         horizontalDirection = direction*maxSpeedHorizontal;
         horizontalDirection.y = 0;
-        
+        if (horizontalDirection.sqrMagnitude > 0.01f)
+            lastNonZeroHorizontalDirection = horizontalDirection.normalized;
+
         controller.Move((horizontalDirection+verticalDirection) * Time.deltaTime);
         Debug.DrawLine(this.transform.position, targetPosition);
     }
 
     private void LateUpdate()
     {
-        // visuals
-        Vector3 targetDirection;
-        /*if(direction.sqrMagnitude < 0.01f)
-        {
-            targetDirection = this.transform.forward;
-        }
-        else */if (horizontalDirection.sqrMagnitude == 0)
-        {
-            targetDirection = verticalDirection + this.transform.forward;
-        }else
-        {
-            targetDirection = this.direction;
-        }
-
-        currentDirection = Vector3.MoveTowards(currentDirection, targetDirection, Time.deltaTime * rotationSmooth);
+        // visual aiming update
+        Vector3 targetDirection = lastNonZeroHorizontalDirection + verticalDirection;
+        currentDirection = (1 - aimingSmooth) * currentDirection + aimingSmooth * targetDirection;
         model.LookAt(model.position + currentDirection);
     }
 

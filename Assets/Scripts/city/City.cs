@@ -8,46 +8,56 @@ public class City : TerrainElement
     public Block[,] blocks;
     public List<Street> streets;
 
-    public float blockVisibilityRadius = 1000;
+    public float blockVisibilityRadius = 10;
+    public float blockVisibilityOffset = 30;
     public float personVisibilityRadius = 100;
 
     void Update()
     {
-        foreach (Block b in blocks)
-        {
-            // visibility streaming sphere test
-            bool invisible = (player.main.transform.position - b.transform.position).sqrMagnitude > blockVisibilityRadius * blockVisibilityRadius || Camera.main.transform.InverseTransformPoint(this.transform.position).z < -20;
-            if (invisible && b.visible)
+        for (int i = 0; i < blocks.GetLength(0); i++)
+            for (int j = 0; j < blocks.GetLength(1); j++)
             {
-                b.transform.gameObject.SetActive(false);
-                foreach (GameObject p in b.building.persons)
-                    p.SetActive(false);
-                b.building.persons.Clear();
-                b.visible = false;
-            }
-            else if(!invisible && !b.visible)
-            {
-                b.transform.gameObject.SetActive(true);
-                b.visible = true;
-            }
+                Block b = blocks[i, j];
 
-            // person instancing streaming sphere
-            if(!invisible)
-            {
-                bool person = (player.main.transform.position - b.transform.position).sqrMagnitude < personVisibilityRadius * personVisibilityRadius;
-                if(person && !b.hasPersons)
+                // visibility streaming sphere test
+                Vector3 p = Camera.main.transform.InverseTransformPoint(b.transform.position);
+                bool visible = p.z > -blockVisibilityOffset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;// || Camera.main.transform.InverseTransformPoint(this.transform.position).z < -20;
+                
+                if (!visible && b.visible)
                 {
-                    b.building.GeneratePersons(20);
-                    b.hasPersons = true;
-                }
-                else if (!person && b.hasPersons)
-                {
-                    foreach (GameObject p in b.building.persons)
-                        p.SetActive(false);
-                    b.building.persons.Clear();
+                    b.transform.gameObject.SetActive(false);
+                    if (b.building != null)
+                    {
+                        foreach (GameObject pepole in b.building.persons)
+                            pepole.SetActive(false);
+                        b.building.persons.Clear();
+                    }
+                    b.visible = false;
                     b.hasPersons = false;
                 }
+                else if (visible && !b.visible)
+                {
+                    b.transform.gameObject.SetActive(true);
+                    b.visible = true;
+                }
+
+                // person instancing streaming sphere
+                if(visible && b.building)
+                {
+                    bool person = p.sqrMagnitude < personVisibilityRadius * personVisibilityRadius;
+                    if(person && !b.hasPersons)
+                    {
+                        b.building.GeneratePersons(20);
+                        b.hasPersons = true;
+                    }
+                    else if (!person && b.hasPersons)
+                    {
+                        foreach (GameObject pepole in b.building.persons)
+                            pepole.SetActive(false);
+                        b.building.persons.Clear();
+                        b.hasPersons = false;
+                    }
+                }
             }
-        }
     }
 }
