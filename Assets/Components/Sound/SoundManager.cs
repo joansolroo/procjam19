@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] AudioMixer mixer;
     [SerializeField] AudioListener listener;
 
-    [SerializeField] Song song;
+    //[SerializeField] Song song;
     [SerializeField] AudioSource[] channels;
 
     [SerializeField] AudioClip clip;
@@ -26,9 +26,22 @@ public class SoundManager : MonoBehaviour
     }*/
     public void Minor()
     {
-        if ( metronome.globalBeat ==0 || metronome.beat % 16 == 0)
+        if (metronome.globalBeat == 0 || metronome.beat % 16 == 0)
         {
-            channels[0].PlayOneShot(clip);
+            foreach (AudioSource source in channels)
+            {
+                if(Random.value > 0.5f)
+                {
+                    source.Play();
+                }
+            }    
+        }
+        foreach (AudioSource source in channels)
+        {
+            if (Random.value < 0.1f)
+            {
+                source.volume = Mathf.Clamp01(source.volume+=Random.Range(-0.2f,0.2f));
+            }
         }
     }
 

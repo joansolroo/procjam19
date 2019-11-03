@@ -16,7 +16,7 @@ GameObject:
   m_Layer: 0
   m_Name: Metronome
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: 1f8f83d2463e04a48b0f8e1fe17aa07e, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -46,8 +46,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f6848b4883a77a438b3aa5c483f44f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BPM: 120
-  beats: 4
+  BPM: 96
+  beats: 16
+  time: 0
   globalBeat: -1
   beat: -1
 --- !u!114 &2683525173558335167
@@ -57,7 +58,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820534917301586103}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c77a797d3c772ef4d9329322ce55b30a, type: 3}
   m_Name: 
@@ -74,7 +75,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 820534917301586103}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c77a797d3c772ef4d9329322ce55b30a, type: 3}
   m_Name: 
