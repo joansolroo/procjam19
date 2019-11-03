@@ -25,7 +25,7 @@ public class Building : TerrainElement
     }
 
     bool visible = true;
-    void Update()
+    void Update2()
     {
         
         if (Vector3.Distance(player.main.transform.position, this.transform.position) > 1000
@@ -94,6 +94,7 @@ public class Building : TerrainElement
             Vector3 s2 = new Vector3(sidesize, sidesize, sidesize);
             roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
             roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
+            roofgo.name = "roof";
 
             blocs.Add(go);
         }
@@ -184,6 +185,7 @@ public class Building : TerrainElement
 
         //  assign windows value to mesh
         GameObject windows = new GameObject();
+        windows.name = "windows";
         windows.transform.parent = transform;
         windows.transform.localPosition = Vector3.zero;
         windows.transform.localScale = Vector3.one;
@@ -195,7 +197,8 @@ public class Building : TerrainElement
         mesh.vertices = verticies.ToArray();
         mesh.normals = normals.ToArray();
         mesh.uv = textures.ToArray();
-        //mesh.triangles = faces.ToArray();
+
+        // split all windows in multiple group for different lightning
         mesh.subMeshCount = windowMaterials.Length;
         List<int>[] submeshes = new List<int>[windowMaterials.Length];
         for (int i = 0; i < submeshes.Length; i++)
@@ -255,7 +258,6 @@ public class Building : TerrainElement
             }
         }
     }
-
     private bool IsEmptySpace(List<GameObject> blocs, Vector3 p)
     {
         foreach (GameObject g2 in blocs)

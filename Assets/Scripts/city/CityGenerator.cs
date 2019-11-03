@@ -120,25 +120,25 @@ public class CityGenerator : MonoBehaviour
                     Vector3 c = nexus + new Vector3(i, 0, 0) + city.size / 2;
                     if (city.ValidCell(c))
                     {
-                        city.blocks[(int)c.x, (int)c.z].gameObject.SetActive(false);
+                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
                     }
 
                     c = nexus - new Vector3(i, 0, 0) + city.size / 2;
                     if (city.ValidCell(c))
                     {
-                        city.blocks[(int)c.x, (int)c.z].gameObject.SetActive(false);
+                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
                     }
 
                     c = nexus + new Vector3(0, 0, i) + city.size / 2;
                     if (city.ValidCell(c))
                     {
-                        city.blocks[(int)c.x, (int)c.z].gameObject.SetActive(false);
+                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
                     }
 
                     c = nexus - new Vector3(0, 0, i) + city.size / 2;
                     if (city.ValidCell(c))
                     {
-                        city.blocks[(int)c.x, (int)c.z].gameObject.SetActive(false);
+                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
                     }
                 }
             }
