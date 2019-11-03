@@ -145,7 +145,7 @@ public class CityGenerator : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmos2()
     {
         Gizmos.DrawWireCube(city.transform.position, city.size);
         /*if (city.regions != null)

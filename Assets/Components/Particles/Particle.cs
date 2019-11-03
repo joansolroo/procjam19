@@ -5,10 +5,12 @@ using UnityEngine;
 public abstract class Particle : GameElement
 {
     [Header("Particle properties")]
-    [SerializeField] public ParticlePool pool;
-    [SerializeField] public float lifeTime;
-    [SerializeField] protected float time;
+    public ParticlePool pool;
+    public bool useLifetime = true;
+    public float lifeTime;
+    protected float time;
     bool destroyed = false;
+
     #region Events
     public delegate void ParticleEvent();
     public ParticleEvent OnCreate;
@@ -25,7 +27,10 @@ public abstract class Particle : GameElement
                 return 1; }
     }
 
-    public bool Destroyed { get => destroyed; }
+    public bool Destroyed
+    {
+        get => destroyed;
+    }
 
     private void Start()
     {
@@ -40,7 +45,7 @@ public abstract class Particle : GameElement
     }
     protected void Update()
     {
-        if(lifeTime > 0)
+        if(useLifetime && lifeTime > 0)
         {
             time -= Time.deltaTime;
             if (time <= 0)
