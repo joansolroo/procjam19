@@ -69,7 +69,6 @@ public class Car : MonoBehaviour
     }
     public void MoveTowards(Vector3 targetPosition)
     {
-       
         direction = targetPosition - this.transform.position;
         float msqr = direction.sqrMagnitude;
         if(msqr>1)
@@ -90,6 +89,7 @@ public class Car : MonoBehaviour
     private void LateUpdate()
     {
         // visual aiming update
+        verticalDirection.y = Mathf.Clamp(verticalDirection.y, -0.5f, 0.5f);
         Vector3 targetDirection = lastNonZeroHorizontalDirection + verticalDirection;
         currentDirection = (1 - aimingSmooth) * currentDirection + aimingSmooth * targetDirection;
         model.LookAt(model.position + currentDirection);

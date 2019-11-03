@@ -11,12 +11,14 @@ public class WeatherManager : MonoBehaviour
     [SerializeField] bool useFog;
     [SerializeField] Color fogColor;
     [SerializeField] [Range(0,0.1f)]float fogDensity;
-    [SerializeField] Renderer floorFog;
+    [SerializeField] Renderer[] floorFog;
     [Header("Rain")]
     [SerializeField] float rainAmount;
     [SerializeField] RainCameraController rainOnCamera;
     [SerializeField] DigitalRuby.RainMaker.RainScript rain;
     [SerializeField] bool rainExposed = true;
+
+    public float ffa = 0.1f;
 
     Vector3 cameraPrevPosition;
     // Start is called before the first frame update
@@ -31,10 +33,22 @@ public class WeatherManager : MonoBehaviour
     {
         RenderSettings.fog = useFog;
         RenderSettings.fogColor = fogColor;
-        fogDensity = Mathf.Max(0.05f, (50 - mainCamera.transform.position.y) / 50f)*0.05f;
+        fogDensity = Mathf.Min(0.05f, Mathf.Pow(mainCamera.transform.position.y, -1.3f));
         RenderSettings.fogDensity = fogDensity;
         mainCamera.backgroundColor = fogColor;
-        floorFog.material.SetColor("_TintColor", fogColor);
+        
+        Color ff = fogColor;
+        ffa = Mathf.Max(0.05f, 0.01f * Mathf.Pow(mainCamera.transform.position.y, 0.6f));
+        ff.a = ffa;
+        foreach (Renderer fog in floorFog)
+            fog.material.SetColor("_TintColor", ff);
+
+        
+        for (int i = 0; i < floorFog.Length; i++)
+        {
+            floorFog[i].transform.position = new Vector3(0, Mathf.Pow(mainCamera.transform.position.y * (0.5f*i+0.1f), 0.6f), 0);
+        }
+
         //this is not the best to get the angle
         Vector3 camPosition = mainCamera.transform.position;
         Vector3 cameraVelocity = cameraPrevPosition - camPosition;
