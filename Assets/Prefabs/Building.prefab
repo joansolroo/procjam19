@@ -48,6 +48,9 @@ MonoBehaviour:
     type: 3}
   windowTemplate: {fileID: 7315090748754782694, guid: 081c9be5514eb984f93953d65f0f9ca5,
     type: 3}
+  roofTemplate: {fileID: 6836988052636193617, guid: d3701103a402c234aa9ef5311c2ae8e1,
+    type: 3}
+  personParticleManager: PersonParticleManager
   windowColorGradient:
     serializedVersion: 2
     key0: {r: 0.39587042, g: 0.59701777, b: 0.6037736, a: 1}
@@ -77,9 +80,25 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 4
     m_NumAlphaKeys: 2
+  textureIndex: 0
+  windowMaterials:
+  - {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
+  - {fileID: 2100000, guid: 1df3cc2ae86455343b87542ed239d9e7, type: 2}
+  - {fileID: 2100000, guid: 3b9bfdc1ee1fd3e45aa9d99e3ed5c552, type: 2}
+  - {fileID: 2100000, guid: f1b58d6452ee598418f6e568847329f5, type: 2}
+  - {fileID: 2100000, guid: b7c2daba41ebf8a478f2e3d4f28f95e7, type: 2}
   textureList:
   - {fileID: 2800000, guid: 45d86a19c8655e54aa3289204f0bd6fe, type: 3}
   - {fileID: 2800000, guid: fd1f6707f8708f04b96f072b7a33b28e, type: 3}
+  - {fileID: 2800000, guid: bc28146a0843cb34fa71c6b25c9d726e, type: 3}
+  - {fileID: 2800000, guid: c37e4ef2884248c478dd138c89e82e6d, type: 3}
+  - {fileID: 2800000, guid: 5ef9c4ce5f6622346afc4a27c02496c1, type: 3}
+  - {fileID: 2800000, guid: 1ceeef5d042bf3b459968bae0fd9251d, type: 3}
   textureWindowSizeList:
   - {x: 0.045, y: 0.045, z: 0.045}
   - {x: 0.031, y: 0.045, z: 0.045}
+  - {x: 0.031, y: 0.0235, z: 0.045}
+  - {x: 0.02, y: 0.045, z: 0.045}
+  - {x: 0.0505, y: 0.028, z: 0.045}
+  - {x: 0.024, y: 0.044, z: 0.045}
+  persons: []

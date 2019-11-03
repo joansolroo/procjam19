@@ -6,13 +6,17 @@ public class Building : TerrainElement
 {
     public GameObject blocTemplate;
     public GameObject windowTemplate;
+    public GameObject roofTemplate;
+    public string personParticleManager = "PersonParticleManager";
     public Gradient windowColorGradient;
+    public int textureIndex;
 
-    public Material windowMaterial;
+    public Material[] windowMaterials;
     public Texture[] textureList;
     public Vector3[] textureWindowSizeList;
 
     public List<List<Vector3>> paths = new List<List<Vector3>>();
+    public List<GameObject> persons = new List<GameObject>();
 
     public void Resize(Vector3 newsize)
     {
@@ -59,11 +63,12 @@ public class Building : TerrainElement
 
     public void Init(int b = 3)
     {
+        // magic numbers
         float roundy = 10f;
-        //float f = 0.5f / roundy - 0.005f;
         float epsilon = 0.0001f;
-        int textureIndex = Random.Range(0, textureList.Length);
+        textureIndex = Random.Range(0, textureList.Length);
 
+        // place blocs and adjust textures
         List<GameObject> blocs = new List<GameObject>();
         for (int i = 0; i < b; i++)
         {
@@ -83,6 +88,13 @@ public class Building : TerrainElement
             go.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textureList[textureIndex]);
             go.GetComponent<MeshRenderer>().material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
 
+            GameObject roofgo = Instantiate(roofTemplate);
+            roofgo.transform.parent = transform;
+            roofgo.SetActive(true);
+            Vector3 s2 = new Vector3(sidesize, sidesize, sidesize);
+            roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
+            roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
+
             blocs.Add(go);
         }
 
@@ -101,7 +113,14 @@ public class Building : TerrainElement
 
                     if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
                     {
-                        PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
+                        if(textureIndex != 5)
+                            PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
+                        else
+                        {
+                            Vector3 left = Vector3.Cross(new Vector3(0, 0, 1), Vector3.up).normalized * (textureWindowSizeList[textureIndex].x / 2 + 0.0005f);
+                            PlaceWindow(verticies, normals, textures, faces, p + left, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
+                            PlaceWindow(verticies, normals, textures, faces, p - left, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
+                        }
                     }
                 }
 
@@ -113,7 +132,14 @@ public class Building : TerrainElement
 
                     if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
                     {
-                        PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
+                        if (textureIndex != 5)
+                            PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
+                        else
+                        {
+                            Vector3 left = Vector3.Cross(new Vector3(0, 0, -1), Vector3.up).normalized * (textureWindowSizeList[textureIndex].x / 2 + 0.0005f);
+                            PlaceWindow(verticies, normals, textures, faces, p + left, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
+                            PlaceWindow(verticies, normals, textures, faces, p - left, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
+                        }
                     }
                 }
 
@@ -125,7 +151,14 @@ public class Building : TerrainElement
 
                     if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
                     {
-                        PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(1, 0, 0));
+                        if (textureIndex != 5)
+                            PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(1, 0, 0));
+                        else
+                        {
+                            Vector3 left = Vector3.Cross(new Vector3(1, 0, 0), Vector3.up).normalized * (textureWindowSizeList[textureIndex].x / 2 + 0.0005f);
+                            PlaceWindow(verticies, normals, textures, faces, p + left, textureWindowSizeList[textureIndex], new Vector3(1, 0, 0));
+                            PlaceWindow(verticies, normals, textures, faces, p - left, textureWindowSizeList[textureIndex], new Vector3(1, 0, 0));
+                        }
                     }
                 }
 
@@ -137,7 +170,14 @@ public class Building : TerrainElement
 
                     if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
                     {
-                        PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(-1, 0, 0));
+                        if (textureIndex != 5)
+                            PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(-1, 0, 0));
+                        else
+                        {
+                            Vector3 left = Vector3.Cross(new Vector3(-1, 0, 0), Vector3.up).normalized * (textureWindowSizeList[textureIndex].x / 2 + 0.0005f);
+                            PlaceWindow(verticies, normals, textures, faces, p + left, textureWindowSizeList[textureIndex], new Vector3(-1, 0, 0));
+                            PlaceWindow(verticies, normals, textures, faces, p - left, textureWindowSizeList[textureIndex], new Vector3(-1, 0, 0));
+                        }
                     }
                 }
         }
@@ -148,15 +188,32 @@ public class Building : TerrainElement
         windows.transform.localPosition = Vector3.zero;
         windows.transform.localScale = Vector3.one;
         MeshRenderer renderer = windows.AddComponent<MeshRenderer>();
-        renderer.material = windowMaterial;
+        renderer.materials = windowMaterials;
         MeshFilter mf = windows.AddComponent<MeshFilter>();
         mf.mesh = new Mesh();
         Mesh mesh = mf.mesh;
         mesh.vertices = verticies.ToArray();
         mesh.normals = normals.ToArray();
         mesh.uv = textures.ToArray();
-        mesh.triangles = faces.ToArray();
+        //mesh.triangles = faces.ToArray();
+        mesh.subMeshCount = windowMaterials.Length;
+        List<int>[] submeshes = new List<int>[windowMaterials.Length];
+        for (int i = 0; i < submeshes.Length; i++)
+            submeshes[i] = new List<int>();
+        for(int i=0; i<faces.Count; i+=6)
+        {
+            int subIndex = Random.Range(0, submeshes.Length);
+            submeshes[subIndex].Add(faces[i]);
+            submeshes[subIndex].Add(faces[i+1]);
+            submeshes[subIndex].Add(faces[i+2]);
+            submeshes[subIndex].Add(faces[i+3]);
+            submeshes[subIndex].Add(faces[i+4]);
+            submeshes[subIndex].Add(faces[i+5]);
+        }
+        for (int i = 0; i < submeshes.Length; i++)
+            mesh.SetTriangles(submeshes[i], i);
 
+        // generate person path
         List<Vector3> footPath = new List<Vector3>();
         float d = 0;
         footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x - size.x / 2, d, transform.localPosition.z - size.z / 2)));
@@ -165,7 +222,29 @@ public class Building : TerrainElement
         footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x + size.x / 2, d, transform.localPosition.z - size.z / 2)));
         paths.Add(footPath);
     }
-    private void OnDrawGizmos()
+    public void GeneratePersons(int personCount = 10)
+    {
+        // get particle pool
+        ParticlePool personPool = ParticlePool.pools[personParticleManager];
+        if (personPool == null)
+        {
+            Debug.LogError("ParticlePool of name : " + personParticleManager + ", not found");
+            return;
+        }
+
+        // ask for new guys and generate them
+        for (int i=0; i< personCount; i++)
+        {
+            GameObject go = personPool.Take();
+            Person person = go.GetComponent<Person>();
+            person.path = new List<Vector3>(paths[0]);
+            person.ResetPerson(Random.Range(0.0019f, 0.0021f));
+            go.SetActive(true);
+            persons.Add(go);
+        }
+    }
+
+    private void OnDrawGizmos2()
     {
         Gizmos.color = Color.green;
         foreach (List<Vector3> path in paths)
@@ -195,10 +274,10 @@ public class Building : TerrainElement
     private void PlaceWindow(List<Vector3> verticies, List<Vector3> normals, List<Vector2> textures, List<int> faces, Vector3 p, Vector3 s, Vector3 n)
     {
         Vector3 left = Vector3.Cross(n, Vector3.up).normalized;
-        verticies.Add(p - 0.5f * s.x * left - 0.5f * s.x * Vector3.up);
-        verticies.Add(p + 0.5f * s.x * left - 0.5f * s.x * Vector3.up);
-        verticies.Add(p - 0.5f * s.x * left + 0.5f * s.x * Vector3.up);
-        verticies.Add(p + 0.5f * s.x * left + 0.5f * s.x * Vector3.up);
+        verticies.Add(p - 0.5f * s.x * left - 0.5f * s.y * Vector3.up);
+        verticies.Add(p + 0.5f * s.x * left - 0.5f * s.y * Vector3.up);
+        verticies.Add(p - 0.5f * s.x * left + 0.5f * s.y * Vector3.up);
+        verticies.Add(p + 0.5f * s.x * left + 0.5f * s.y * Vector3.up);
         normals.Add(n);
         normals.Add(n);
         normals.Add(n);
@@ -213,7 +292,6 @@ public class Building : TerrainElement
         faces.Add(verticies.Count - 2);
         faces.Add(verticies.Count - 1);
         faces.Add(verticies.Count - 3);
-
     }
-
+    
 }
