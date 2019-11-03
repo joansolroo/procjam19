@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName ="SoundClip", menuName ="2D/soundclip", order = 2)]
+[CreateAssetMenu(fileName ="SoundClip", menuName ="Audio/soundclip", order = 2)]
 public class SoundClip : ScriptableObject
 {
     [SerializeField] public AudioClip clip;
