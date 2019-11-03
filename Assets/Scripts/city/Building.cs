@@ -8,12 +8,12 @@ public class Building : TerrainElement
     public GameObject windowTemplate;
     public GameObject roofTemplate;
     public string personParticleManager = "PersonParticleManager";
-    public Gradient windowColorGradient;
     public int textureIndex;
 
     public Material[] windowMaterials;
     public Texture[] textureList;
     public Vector3[] textureWindowSizeList;
+    public GameObject[] roofEquipementTemplate;
 
     public List<List<Vector3>> paths = new List<List<Vector3>>();
     public List<GameObject> persons = new List<GameObject>();
@@ -22,43 +22,6 @@ public class Building : TerrainElement
     {
         this.transform.localScale = Vector3.one;
         size = newsize;
-    }
-
-    bool visible = true;
-    void Update2()
-    {
-        
-        if (Vector3.Distance(player.main.transform.position, this.transform.position) > 1000
-            || Camera.main.transform.InverseTransformPoint(this.transform.position).z <0)
-        {
-            if (visible)
-            {
-                visible = false;
-                OnBecameInvisible();
-            }
-        }else
-        {
-            if (!visible)
-            {
-                visible = true;
-                OnBecameVisible();
-            }
-        }
-    }
-    void OnBecameInvisible()
-    {
-        for (int c = 0; c < transform.childCount; ++c)
-        {
-            transform.GetChild(c).gameObject.SetActive(false);
-        }
-    }
-
-    void OnBecameVisible()
-    {
-        for (int c = 0; c < transform.childCount; ++c)
-        {
-            transform.GetChild(c).gameObject.SetActive(true);
-        }
     }
 
     public void Init(int b = 3)
@@ -72,6 +35,7 @@ public class Building : TerrainElement
         List<GameObject> blocs = new List<GameObject>();
         for (int i = 0; i < b; i++)
         {
+            //  place blocs
             GameObject go = Instantiate(blocTemplate);
             go.transform.parent = transform;
             go.SetActive(true);
@@ -87,7 +51,9 @@ public class Building : TerrainElement
 
             go.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textureList[textureIndex]);
             go.GetComponent<MeshRenderer>().material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
+            blocs.Add(go);
 
+            //  place roof
             GameObject roofgo = Instantiate(roofTemplate);
             roofgo.transform.parent = transform;
             roofgo.SetActive(true);
@@ -95,8 +61,6 @@ public class Building : TerrainElement
             roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
             roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
             roofgo.name = "roof";
-
-            blocs.Add(go);
         }
 
         //  generate windows attributes
@@ -215,6 +179,17 @@ public class Building : TerrainElement
         }
         for (int i = 0; i < submeshes.Length; i++)
             mesh.SetTriangles(submeshes[i], i);
+
+        // place randoom roof equipement
+        if(Random.Range(0f,1f) > 0.2f)
+        {
+            int equipementIndex = Random.Range(0, roofEquipementTemplate.Length);
+            GameObject equipement = Instantiate(roofEquipementTemplate[equipementIndex]);
+            equipement.transform.parent = transform;
+            equipement.name = "roofEquipement";
+            equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y/2, 0);
+            equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
+        }
 
         // generate person path
         List<Vector3> footPath = new List<Vector3>();

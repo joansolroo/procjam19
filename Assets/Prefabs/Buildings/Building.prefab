@@ -51,35 +51,6 @@ MonoBehaviour:
   roofTemplate: {fileID: 6836988052636193617, guid: d3701103a402c234aa9ef5311c2ae8e1,
     type: 3}
   personParticleManager: PersonParticleManager
-  windowColorGradient:
-    serializedVersion: 2
-    key0: {r: 0.39587042, g: 0.59701777, b: 0.6037736, a: 1}
-    key1: {r: 0.9122499, g: 0.9339623, b: 0.73571557, a: 1}
-    key2: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}
-    key3: {r: 0.75, g: 0.76285356, b: 1, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 0
-    ctime1: 22937
-    ctime2: 46067
-    ctime3: 65535
-    ctime4: 0
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 4
-    m_NumAlphaKeys: 2
   textureIndex: 0
   windowMaterials:
   - {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
@@ -101,4 +72,8 @@ MonoBehaviour:
   - {x: 0.02, y: 0.045, z: 0.045}
   - {x: 0.0505, y: 0.028, z: 0.045}
   - {x: 0.024, y: 0.044, z: 0.045}
+  roofEquipementTemplate:
+  - {fileID: 6394038765148768213, guid: cf859d45a831884469fc15cb5272c143, type: 3}
+  - {fileID: 634401544232353195, guid: b27fa02cebbd14845a71a9dfca49f4de, type: 3}
+  - {fileID: 8665937614215196597, guid: d7891f5e526c66e43a202f92311c1575, type: 3}
   persons: []
