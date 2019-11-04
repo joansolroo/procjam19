@@ -10,8 +10,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 051af12b755e92e4abe275fb9d6f6c18, type: 3}
-  m_Name: song channel
+  m_Name: channel 1.2
   m_EditorClassIdentifier: 
-  clips: []
+  name: name
+  number: 4
+  clips:
+  - {fileID: 8300000, guid: c6d6ad3e26527724fbfb6c6b2001fbce, type: 3}
+  - {fileID: 8300000, guid: ae76079677139e74aae9275ddb19fa09, type: 3}
   bpm: 96
   mixerChannel: New Group
+  transitions:
+    nodeCount: 2
+    entry: 0
+    exit: 0
+    nodeData:
+    - {fileID: 0}
+    - {fileID: 0}
+    transitions:
+    - probabilities:
+      - 0.5
+      - 0.5
+    - probabilities:
+      - 2
+      - 0.5

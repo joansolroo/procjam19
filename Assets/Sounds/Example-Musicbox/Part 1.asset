@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd0a7ebd8392b03438f24b0b6d7738d2, type: 3}
-  m_Name: Song
+  m_Script: {fileID: 11500000, guid: caabbbf0b71d408428b94da0c43f02b1, type: 3}
+  m_Name: Part 1
   m_EditorClassIdentifier: 
   channels:
-  - {fileID: 11400000, guid: e0b1a2a50bc298e4b995483be5732fd8, type: 2}
-  - {fileID: 11400000, guid: bd1e472a74431764481b614dd203d87e, type: 2}
+  - {fileID: 11400000, guid: 98dee2ecab2ba374fbf86c549414b417, type: 2}
+  - {fileID: 11400000, guid: bb6b3a599273c9141845241e49c33b9b, type: 2}

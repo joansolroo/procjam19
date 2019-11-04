@@ -5,7 +5,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "song channel", menuName = "Audio/Song Channel", order = 2)]
 public class SongChannel : ScriptableObject
 {
-    [SerializeField] AudioClip[] clips;
+    public string name = "name";
+    public int number = 4;
+    [SerializeField] public AudioClip[] clips;
     [SerializeField] float bpm = 96;
     [SerializeField] string mixerChannel = "New Group";
+
+    public Graph transitions;
+
+    void OnValidate()
+    {
+        if (transitions == null)
+            transitions = new Graph(clips.Length);
+        transitions.nodeCount = clips.Length;
+        if (transitions.nodeData.Length != clips.Length)
+        {
+            transitions.nodeData = new SoundClip[clips.Length];
+        }
+        //clips.CopyTo(transitions.nodeData, 0);
+    }
 }
