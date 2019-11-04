@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: channel 2.2
   m_EditorClassIdentifier: 
   name: name
-  number: 4
   clips:
   - {fileID: 8300000, guid: 217631082fabfcf42a256d6f7d43c19c, type: 3}
   - {fileID: 8300000, guid: 224b66b65852ff3439536b3c79136ac4, type: 3}

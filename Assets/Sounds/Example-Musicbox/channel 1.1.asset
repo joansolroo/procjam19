@@ -13,23 +13,66 @@ MonoBehaviour:
   m_Name: channel 1.1
   m_EditorClassIdentifier: 
   name: name
-  number: 4
   clips:
   - {fileID: 8300000, guid: cbda47e5de4cdb744813e86a04ffa1eb, type: 3}
   - {fileID: 8300000, guid: e6db1539abcf0504b85d808b328f3ae9, type: 3}
+  - {fileID: 8300000, guid: 6ff4b84c15bc90345bf99a170e88627f, type: 3}
+  - {fileID: 8300000, guid: 217631082fabfcf42a256d6f7d43c19c, type: 3}
+  - {fileID: 8300000, guid: 8d31fd014f4d7fa4d8470224aaf235e1, type: 3}
+  - {fileID: 8300000, guid: 6ff4b84c15bc90345bf99a170e88627f, type: 3}
   bpm: 96
   mixerChannel: New Group
   transitions:
-    nodeCount: 2
+    nodeCount: 6
     entry: 0
     exit: 0
     nodeData:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     transitions:
     - probabilities:
       - 0.5
       - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
+      - 0.5
     - probabilities:
       - 0.5
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+    - probabilities:
+      - 0.5
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+    - probabilities:
+      - 0.5
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+    - probabilities:
+      - 0.5
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
+    - probabilities:
+      - 0.5
+      - 0.75
+      - 0.75
+      - 0.75
+      - 0.75
       - 0.75

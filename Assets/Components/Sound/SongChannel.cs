@@ -6,7 +6,6 @@ using UnityEngine;
 public class SongChannel : ScriptableObject
 {
     public string name = "name";
-    public int number = 4;
     [SerializeField] public AudioClip[] clips;
     [SerializeField] float bpm = 96;
     [SerializeField] string mixerChannel = "New Group";

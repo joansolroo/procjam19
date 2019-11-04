@@ -20,8 +20,8 @@ MonoBehaviour:
     entry: 0
     exit: 0
     nodeData:
-    - {fileID: 0}
-    - {fileID: 0}
+    - {fileID: 11400000, guid: 28fb5b90c0f5a814a9626c77db4e16d8, type: 2}
+    - {fileID: 11400000, guid: f222104ac7101034d804164b4c7b6b84, type: 2}
     transitions:
     - probabilities:
       - 0.5
