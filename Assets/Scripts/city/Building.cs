@@ -7,8 +7,10 @@ public class Building : TerrainElement
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
+    public GameObject groundTemplate;
     public string personParticleManager = "PersonParticleManager";
     public int textureIndex;
+    public bool sharedBuilding = false;
 
     public Material[] windowMaterials;
     public Texture[] textureList;
@@ -40,7 +42,7 @@ public class Building : TerrainElement
             go.transform.parent = transform;
             go.SetActive(true);
 
-            float sidesize = Random.Range(0.6f, 0.9f) * size.x;
+            float sidesize = (sharedBuilding ? Random.Range(0.4f, 0.6f) : Random.Range(0.6f, 0.9f))* size.x;
             Vector3 s = new Vector3(sidesize, (i == 0 ? 1 : Random.Range(0.5f, 0.9f)) * size.y, sidesize);
             go.transform.localScale = new Vector3((int)(s.x * roundy) / roundy, (int)(s.y * roundy + 1) / roundy, (int)(s.z * roundy) / roundy);
 
@@ -76,7 +78,7 @@ public class Building : TerrainElement
                 {
                     Vector3 p = new Vector3(go.transform.localPosition.x - go.transform.localScale.x / 2 + k + 0.25f / roundy, l, go.transform.localPosition.z + go.transform.localScale.z / 2 + epsilon);
 
-                    if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
+                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p - new Vector3(0, 0, 2 * epsilon)) && Random.Range(0f, 1f) > 0.8f)
                     {
                         if(textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
@@ -95,7 +97,7 @@ public class Building : TerrainElement
                 {
                     Vector3 p = new Vector3(go.transform.localPosition.x - go.transform.localScale.x / 2 + k + 0.25f / roundy, l, go.transform.localPosition.z - go.transform.localScale.z / 2 - epsilon);
 
-                    if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
+                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p + new Vector3(0,0, 2* epsilon)) && Random.Range(0f, 1f) > 0.8f)
                     {
                         if (textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
@@ -114,7 +116,7 @@ public class Building : TerrainElement
                 {
                     Vector3 p = new Vector3(go.transform.localPosition.x + go.transform.localScale.x / 2 + epsilon, l, go.transform.localPosition.z - go.transform.localScale.z / 2 + k + 0.25f / roundy);
 
-                    if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
+                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p - new Vector3(2 * epsilon, 0, 0)) && Random.Range(0f, 1f) > 0.8f)
                     {
                         if (textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(1, 0, 0));
@@ -133,7 +135,7 @@ public class Building : TerrainElement
                 {
                     Vector3 p = new Vector3(go.transform.localPosition.x - go.transform.localScale.x / 2 - epsilon, l, go.transform.localPosition.z - go.transform.localScale.z / 2 + k + 0.25f / roundy);
 
-                    if (IsEmptySpace(blocs, p) && Random.Range(0f, 1f) > 0.8f)
+                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p + new Vector3(2 * epsilon, 0, 0)) && Random.Range(0f, 1f) > 0.8f)
                     {
                         if (textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(-1, 0, 0));
@@ -194,10 +196,10 @@ public class Building : TerrainElement
         // generate person path
         List<Vector3> footPath = new List<Vector3>();
         float d = 0;
-        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x - size.x / 2, d, transform.localPosition.z - size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x - size.x / 2, d, transform.localPosition.z + size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x + size.x / 2, d, transform.localPosition.z + size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(transform.localPosition.x + size.x / 2, d, transform.localPosition.z - size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3( - size.x / 2, d, - size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3( - size.x / 2, d, size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3( size.x / 2, d, size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3( size.x / 2, d, - size.z / 2)));
         paths.Add(footPath);
     }
     public void GeneratePersons(int personCount = 10)
@@ -222,7 +224,7 @@ public class Building : TerrainElement
         }
     }
 
-    private void OnDrawGizmos2()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
         foreach (List<Vector3> path in paths)
