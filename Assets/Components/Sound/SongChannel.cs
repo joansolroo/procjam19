@@ -5,10 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "song channel", menuName = "Audio/Song Channel", order = 2)]
 public class SongChannel : ScriptableObject
 {
-    public string name = "name";
     [SerializeField] public AudioClip[] clips;
-    [SerializeField] float bpm = 96;
-    [SerializeField] string mixerChannel = "New Group";
+    [SerializeField] public int duration = 1;
 
     public Graph transitions;
 

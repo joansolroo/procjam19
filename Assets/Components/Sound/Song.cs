@@ -6,7 +6,6 @@ using UnityEngine;
 public class Song : ScriptableObject
 {
     public SongPart[] parts;
-
     public Graph transitions;
 
     void OnValidate()

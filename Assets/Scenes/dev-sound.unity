@@ -215,6 +215,7 @@ GameObject:
   - component: {fileID: 383683935}
   - component: {fileID: 383683937}
   - component: {fileID: 383683938}
+  - component: {fileID: 383683939}
   m_Layer: 0
   m_Name: Markov box
   m_TagString: Untagged
@@ -250,6 +251,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: c6d6ad3e26527724fbfb6c6b2001fbce, type: 3}
   - {fileID: 8300000, guid: 9d37daee241c1ff4ba0c0351c1517d88, type: 3}
   - {fileID: 8300000, guid: ae76079677139e74aae9275ddb19fa09, type: 3}
+  partBeat: 0
+  channelBeat: 
 --- !u!4 &383683936
 Transform:
   m_ObjectHideFlags: 0
@@ -277,7 +280,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
   m_Volume: 1
-  m_Pitch: 1
+  m_Pitch: 0.8
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -384,6 +387,29 @@ AudioReverbZone:
   m_Density: 60
   m_LFReference: 250
   m_RoomLF: 0
+--- !u!164 &383683939
+AudioReverbFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383683934}
+  m_Enabled: 1
+  m_DryLevel: 0
+  m_Room: -1000
+  m_RoomHF: -698
+  m_DecayTime: 7.24
+  m_DecayHFRatio: 0.33
+  m_ReflectionsLevel: -1166
+  m_ReverbLevel: 16
+  m_ReverbDelay: 0.03
+  m_Diffusion: 100
+  m_Density: 100
+  m_HFReference: 5000
+  m_RoomLF: 0
+  m_LFReference: 250
+  m_ReflectionsDelay: 0
+  m_ReverbPreset: 10
 --- !u!1 &404991759
 GameObject:
   m_ObjectHideFlags: 0
