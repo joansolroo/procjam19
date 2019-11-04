@@ -16,6 +16,8 @@ public class Building : TerrainElement
     public Texture[] textureList;
     public Vector3[] textureWindowSizeList;
     public GameObject[] roofEquipementTemplate;
+    public GameObject[] megaStructureNameTemplate;
+    public GameObject[] megaStructureEquipementTemplate;
 
     public List<List<Vector3>> paths = new List<List<Vector3>>();
     public List<GameObject> persons = new List<GameObject>();
@@ -183,7 +185,32 @@ public class Building : TerrainElement
             mesh.SetTriangles(submeshes[i], i);
 
         // place randoom roof equipement
-        if(Random.Range(0f,1f) > 0.2f)
+        if (sharedBuilding && Random.Range(0f, 1f) > 0.5f)
+        {
+            int nameIndex = Random.Range(0, megaStructureNameTemplate.Length);
+            Vector2[] pos = { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1) };
+            int[] ori = { 0, -90, 180, 90 };
+            for (int i=0; i<4; i++)
+            {
+                GameObject name = Instantiate(megaStructureNameTemplate[nameIndex]);
+                name.transform.parent = transform;
+                name.name = "LightningName " + i.ToString();
+                name.transform.localPosition = blocs[0].transform.localPosition + new Vector3(pos[i].x * blocs[0].transform.localScale.x / 2, blocs[0].transform.localScale.y / 2, pos[i].y * blocs[0].transform.localScale.z / 2);
+                name.transform.localScale = 0.15f * Vector3.one;
+                name.transform.localEulerAngles = new Vector3(0, ori[i], 0);
+            }
+
+            if (nameIndex < megaStructureEquipementTemplate.Length)
+            {
+                GameObject equipement = Instantiate(megaStructureEquipementTemplate[nameIndex]);
+                equipement.transform.parent = transform;
+                equipement.name = "roofEquipement";
+                equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y / 2, 0);
+                equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
+                equipement.transform.localScale = Vector3.one;
+            }
+        }
+        else if(Random.Range(0f,1f) > 0.2f)
         {
             int equipementIndex = Random.Range(0, roofEquipementTemplate.Length);
             GameObject equipement = Instantiate(roofEquipementTemplate[equipementIndex]);
@@ -191,7 +218,9 @@ public class Building : TerrainElement
             equipement.name = "roofEquipement";
             equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y/2, 0);
             equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
+            equipement.transform.localScale = Vector3.one;
         }
+
 
         // generate person path
         List<Vector3> footPath = new List<Vector3>();

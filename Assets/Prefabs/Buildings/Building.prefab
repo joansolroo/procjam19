@@ -54,6 +54,7 @@ MonoBehaviour:
     type: 3}
   personParticleManager: PersonParticleManager
   textureIndex: 0
+  sharedBuilding: 0
   windowMaterials:
   - {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
   - {fileID: 2100000, guid: 1df3cc2ae86455343b87542ed239d9e7, type: 2}
@@ -78,4 +79,12 @@ MonoBehaviour:
   - {fileID: 6394038765148768213, guid: cf859d45a831884469fc15cb5272c143, type: 3}
   - {fileID: 634401544232353195, guid: b27fa02cebbd14845a71a9dfca49f4de, type: 3}
   - {fileID: 8665937614215196597, guid: d7891f5e526c66e43a202f92311c1575, type: 3}
+  megaStructureNameTemplate:
+  - {fileID: 5899426859894770336, guid: 3641d1d1d400cb94583c51e4636425e9, type: 3}
+  - {fileID: 6267065372406776633, guid: 363aed60d9ad1d8448ef74d41f23c629, type: 3}
+  - {fileID: 5126049154982183277, guid: 101711defb6cc084686ba98e59573790, type: 3}
+  megaStructureEquipementTemplate:
+  - {fileID: 6394038765148768213, guid: cf859d45a831884469fc15cb5272c143, type: 3}
+  - {fileID: 634401544232353195, guid: b27fa02cebbd14845a71a9dfca49f4de, type: 3}
+  - {fileID: 965190768829911144, guid: f07ba7ab793f46342867c167b32779bc, type: 3}
   persons: []
