@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 051af12b755e92e4abe275fb9d6f6c18, type: 3}
-  m_Name: channel 2.2
+  m_Name: channel 0.1
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 217631082fabfcf42a256d6f7d43c19c, type: 3}
-  - {fileID: 8300000, guid: 224b66b65852ff3439536b3c79136ac4, type: 3}
-  duration: 2
+  - {fileID: 0}
+  - {fileID: 8300000, guid: 237746be2ff18bc43981c0fd54a508bd, type: 3}
+  duration: 4
   transitions:
     nodeCount: 2
     entry: 0
@@ -25,8 +25,8 @@ MonoBehaviour:
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0.2
-      - 0.5
+      - 0
+      - 1
     - probabilities:
-      - 0.2
-      - 0.3
+      - 0
+      - 1

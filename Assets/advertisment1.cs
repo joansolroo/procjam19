@@ -10,7 +10,7 @@ public class advertisment1 : MonoBehaviour
     public Gradient neonColor;
 
     public string[] textList;
-
+    public float alpha = 0.1f;
     public void SetText(string text)
     {
         frontText.text = text;
@@ -20,7 +20,7 @@ public class advertisment1 : MonoBehaviour
     {
         frontText.fontMaterial.SetColor(ShaderUtilities.ID_FaceColor, c);
         backText.fontMaterial.SetColor(ShaderUtilities.ID_GlowColor, c);
-        c.a = 0.1f;
+        c.a = alpha;
         frontText.fontMaterial.SetColor(ShaderUtilities.ID_GlowColor, c);
         backText.fontMaterial.SetColor(ShaderUtilities.ID_FaceColor, c);
     }

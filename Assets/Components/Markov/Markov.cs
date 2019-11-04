@@ -62,11 +62,11 @@ public class Markov : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        metronome.OnMayorTick += TickMayor;
         metronome.OnTick += Tick;
         navigationPart = new MarkovNavigation(song.transitions);
        
-        ResetChannelNavigation();
+        ResetPartProgress();
+
         /*
         // debug mode
         // Creates a crappy song to test transitions
@@ -88,35 +88,72 @@ public class Markov : MonoBehaviour
         */
     }
     MarkovNavigation navigationPart;
+    public int partBeat;
     MarkovNavigation[] navigationChannel;
-    void ResetChannelNavigation()
+    public int[] channelBeat;
+    SongPart currentPart;
+    void ResetPartProgress()
     {
-        navigationChannel = new MarkovNavigation[song.parts[navigationPart.current].channels.Length];
-        for (int c = 0; c < song.parts[navigationPart.current].channels.Length; ++c)
-        {
-            navigationChannel[c] = new MarkovNavigation(song.parts[navigationPart.current].channels[c].transitions);
-        }
-    }
-    void TickMayor()
-    {
-        int current = navigationPart.current;
-        int next = navigationPart.Navigate();
-        Debug.Log("PART Transition:" + current + "->" + next);
+        partBeat = 0;
+        currentPart = song.parts[navigationPart.current];
 
-        if (current != next)
+        navigationChannel = new MarkovNavigation[currentPart.channels.Length];
+        channelBeat = new int[currentPart.channels.Length];
+        for (int c = 0; c < currentPart.channels.Length; ++c)
         {
-            ResetChannelNavigation();
+            navigationChannel[c] = new MarkovNavigation(currentPart.channels[c].transitions);
+            channelBeat[c] = 0;
         }
     }
+
+    bool first = true;
     void Tick()
     {
-        SongPart part = song.parts[navigationPart.current];
-        for (int c = 0; c < part.channels.Length; ++c)
+        bool resetted = false;
+        if(first)
+        {
+            resetted = true;
+            first = false;
+        }
+        if(partBeat >= currentPart.duration)
         {
             int current = navigationPart.current;
-            int next = navigationChannel[c].Navigate();
-            Debug.Log("> CHANNEL:"+c+", Transition:" + current + "->" + next);           
-            source.PlayOneShot(part.channels[c].clips[next]);
+            int next = navigationPart.Navigate();
+            Debug.Log("PART Transition:" + current + "->" + next);
+
+            if (current != next)
+            {
+                ResetPartProgress();
+                resetted = true;
+            }
+            partBeat = 0;
+        }
+        ++partBeat;
+        
+        for (int c = 0; c < currentPart.channels.Length; ++c)
+        {
+            SongChannel channel = currentPart.channels[c];
+            int current = navigationChannel[c].current;
+            if (resetted)
+            {
+                if (channel.clips[current] != null)
+                {
+                    source.PlayOneShot(channel.clips[current]);
+                }
+                Debug.Log("> CHANNEL:" + c + ", enter:" + current);
+            }
+            if(channelBeat[c]>= channel.duration)
+            {
+                int next = navigationChannel[c].Navigate();
+                Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
+                if (channel.clips[next] != null)
+                {
+                    source.PlayOneShot(channel.clips[next]);
+                }
+
+                channelBeat[c] = 0;
+            }
+            ++channelBeat[c];
         }
     }
 }
