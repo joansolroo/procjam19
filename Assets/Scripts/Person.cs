@@ -10,6 +10,7 @@ public class Person : Particle
     private CharacterController controller;
     private Vector3 smoothDirection;
     public float smoothAimming = 0.1f;
+    public float positionDispertion = 0.2f;
 
     public void Start()
     {
@@ -23,7 +24,7 @@ public class Person : Particle
             path.Reverse();
         pathIndex = Random.Range(0f, path.Count);
         transform.position = Vector3.Lerp(path[(int)pathIndex], path[(int)(pathIndex+1) % path.Count], pathIndex - (int)pathIndex);
-        transform.position += new Vector3(Random.Range(-0.1f, 0.1f), 0, Random.Range(-0.1f, 0.1f));
+        transform.position += new Vector3(Random.Range(-positionDispertion, positionDispertion), 0, Random.Range(-positionDispertion, positionDispertion));
         smoothDirection = (path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex]).normalized;
     }
 

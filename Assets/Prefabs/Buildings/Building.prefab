@@ -50,6 +50,8 @@ MonoBehaviour:
     type: 3}
   roofTemplate: {fileID: 6836988052636193617, guid: d3701103a402c234aa9ef5311c2ae8e1,
     type: 3}
+  groundTemplate: {fileID: 7684029060594953985, guid: c13b63084d7e446459dd07875e262e1b,
+    type: 3}
   personParticleManager: PersonParticleManager
   textureIndex: 0
   windowMaterials:

@@ -964,7 +964,7 @@ PrefabInstance:
     - target: {fileID: 6616598120780132929, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6616598120780132929, guid: 2d4664de08188d2468c1bb0e95d16fda,
         type: 3}
@@ -1158,12 +1158,22 @@ PrefabInstance:
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.x
-      value: 10
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.z
-      value: 10
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: seed
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: enableBlockMerge
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}

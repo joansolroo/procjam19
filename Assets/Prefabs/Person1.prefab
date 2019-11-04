@@ -322,6 +322,7 @@ MonoBehaviour:
   path: []
   pathIndex: 0
   smoothAimming: 0.2
+  positionDispertion: 0.05
 --- !u!143 &8846358825637144682
 CharacterController:
   m_ObjectHideFlags: 0

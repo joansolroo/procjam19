@@ -5,12 +5,20 @@ using UnityEngine;
 public class City : TerrainElement
 {
     public List<Region> regions;
+    public GameObject floor;
     public Block[,] blocks;
     public List<Street> streets;
 
     public float blockVisibilityRadius = 10;
     public float blockVisibilityOffset = 30;
+    public int pedestrianDensity = 30;
     public float personVisibilityRadius = 100;
+
+    void Start()
+    {
+        //floor.transform.localScale = new Vector3((size.x + 2) / 10, 1, (size.z + 2) / 10);
+        //floor.transform.localPosition = new Vector3(-size.x / 2 - 0.5f, 0, -size.z / 2 - 0.5f);
+    }
 
     void Update()
     {
@@ -21,8 +29,9 @@ public class City : TerrainElement
 
                 // visibility streaming sphere test
                 Vector3 p = Camera.main.transform.InverseTransformPoint(b.transform.position);
-                bool visible = p.z > -blockVisibilityOffset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;// || Camera.main.transform.InverseTransformPoint(this.transform.position).z < -20;
-                
+                float offset = (b.building != null && b.building.sharedBuilding ? 2 * blockVisibilityOffset : blockVisibilityOffset);
+                bool visible = p.z > -offset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;
+
                 if (!visible && b.visible)
                 {
                     b.transform.gameObject.SetActive(false);
@@ -44,10 +53,11 @@ public class City : TerrainElement
                 // person instancing streaming sphere
                 if(visible && b.building)
                 {
-                    bool person = p.sqrMagnitude < personVisibilityRadius * personVisibilityRadius;
+                    float radius = (b.building.sharedBuilding ? 1.5f * personVisibilityRadius : personVisibilityRadius);
+                    bool person = p.sqrMagnitude < radius * radius;
                     if(person && !b.hasPersons)
                     {
-                        b.building.GeneratePersons(20);
+                        b.building.GeneratePersons((b.building.sharedBuilding ? 2* pedestrianDensity : pedestrianDensity));
                         b.hasPersons = true;
                     }
                     else if (!person && b.hasPersons)

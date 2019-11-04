@@ -7,7 +7,7 @@ public class CityGenerator : MonoBehaviour
     public City city;
 
     public Building buildingTemplate;
-
+    public bool enableBlockMerge = false;
 
     public int seed = -1;
 
@@ -42,6 +42,7 @@ public class CityGenerator : MonoBehaviour
                 block.transform.localScale = Vector3.one;
                 block.LocalPosition = new Vector3(x, 0, z) - city.size / 2;
                 block.region = city.regions[0];
+                block.building = null;
             }
         }
 
@@ -89,14 +90,32 @@ public class CityGenerator : MonoBehaviour
                 block.richness /= radius * radius;
 
                 // BUILDING FACTORY
-                Building building = Instantiate<Building>(buildingTemplate);
-                building.transform.parent = block.transform;
-                building.LocalPosition = Vector3.zero;
-                float d = Random.Range(0.7f, 0.8f);
-                building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
-                building.Init();
+                if (enableBlockMerge && Random.Range(0f, 1f) > 0.95f && AvailableForMergeBlock(x, z))
+                {
+                    Building building = Instantiate<Building>(buildingTemplate);
+                    building.transform.parent = block.transform;
+                    building.LocalPosition = new Vector3(0.5f, 0, 0.5f);
+                    float d = Random.Range(1.7f, 1.8f);
+                    building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness * 1.1f, d));
+                    building.sharedBuilding = true;
+                    building.Init(5);
 
-                block.building = building;
+                    block.building = building;
+                    city.blocks[x + 1, z].building = building;
+                    city.blocks[x, z + 1].building = building;
+                    city.blocks[x + 1, z + 1].building = building;
+                }
+                else if(block.building == null)
+                {
+                    Building building = Instantiate<Building>(buildingTemplate);
+                    building.transform.parent = block.transform;
+                    building.LocalPosition = Vector3.zero;
+                    float d = Random.Range(0.7f, 0.8f);
+                    building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
+                    building.Init();
+
+                    block.building = building;
+                }
             }
         }
 
@@ -184,5 +203,11 @@ public class CityGenerator : MonoBehaviour
             }
         }
     
+    }
+    private bool AvailableForMergeBlock(int x, int y)
+    {
+        if (x == 0 || y == 0 || x == city.size.x - 1 || y == city.size.z - 1) return false;
+        else if (city.blocks[x, y].building != null || city.blocks[x + 1, y].building != null || city.blocks[x, y + 1].building != null || city.blocks[x + 1, y + 1].building != null) return false;
+        else return true;
     }
 }
