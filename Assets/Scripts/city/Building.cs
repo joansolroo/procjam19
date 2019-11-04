@@ -216,7 +216,7 @@ public class Building : TerrainElement
             GameObject go = personPool.Take();
             Person person = go.GetComponent<Person>();
             person.path = new List<Vector3>(paths[0]);
-            person.ResetPerson(Random.Range(0.0019f, 0.0021f));
+            person.ResetPerson(Random.Range(0.0017f, 0.0023f));
             go.SetActive(true);
             persons.Add(go);
         }

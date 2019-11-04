@@ -33,12 +33,13 @@ public class WeatherManager : MonoBehaviour
     {
         RenderSettings.fog = useFog;
         RenderSettings.fogColor = fogColor;
-        fogDensity = Mathf.Min(0.05f, Mathf.Pow(mainCamera.transform.position.y, -1.3f));
+        float h = Mathf.Max(mainCamera.transform.position.y, 0.1f);
+        fogDensity = Mathf.Min(0.05f, Mathf.Pow(h, -1.3f));
         RenderSettings.fogDensity = fogDensity;
         mainCamera.backgroundColor = fogColor;
         
         Color ff = fogColor;
-        ffa = Mathf.Max(0.05f, 0.01f * Mathf.Pow(mainCamera.transform.position.y, 0.6f));
+        ffa = Mathf.Max(0.05f, 0.02f * Mathf.Pow(h, 0.6f));
         ff.a = ffa;
         foreach (Renderer fog in floorFog)
             fog.material.SetColor("_TintColor", ff);
@@ -46,7 +47,7 @@ public class WeatherManager : MonoBehaviour
         
         for (int i = 0; i < floorFog.Length; i++)
         {
-            floorFog[i].transform.position = new Vector3(0, Mathf.Pow(mainCamera.transform.position.y * (0.5f*i+0.1f), 0.6f), 0);
+            floorFog[i].transform.position = new Vector3(0, Mathf.Pow(h * (0.5f*i+0.1f), 0.6f), 0);
         }
 
         //this is not the best to get the angle
