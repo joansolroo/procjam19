@@ -4,23 +4,29 @@ using UnityEngine;
 
 public class Building : TerrainElement
 {
+    // attributes
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
     public GameObject groundTemplate;
     public string personParticleManager = "PersonParticleManager";
-    public int textureIndex;
+    private int textureIndex;
     public bool sharedBuilding = false;
 
     public Material[] windowMaterials;
     public Texture[] textureList;
     public Vector3[] textureWindowSizeList;
     public GameObject[] roofEquipementTemplate;
+    public GameObject[] lateralEquipementTemplate;
     public GameObject[] megaStructureNameTemplate;
     public GameObject[] megaStructureEquipementTemplate;
 
     public List<List<Vector3>> paths = new List<List<Vector3>>();
     public List<GameObject> persons = new List<GameObject>();
+
+    private static float roundy = 10f;
+    private static float epsilon = 0.0001f;
+    private List<GameObject> blocs = new List<GameObject>();
 
     public void Resize(Vector3 newsize)
     {
@@ -28,45 +34,73 @@ public class Building : TerrainElement
         size = newsize;
     }
 
+    // generation functions
     public void Init(int b = 3)
     {
-        // magic numbers
-        float roundy = 10f;
-        float epsilon = 0.0001f;
         textureIndex = Random.Range(0, textureList.Length);
-
-        // place blocs and adjust textures
-        List<GameObject> blocs = new List<GameObject>();
+        
+        // process
         for (int i = 0; i < b; i++)
+            PlaceBlocs(i);
+        GenerateWindows();
+        PlaceRoofEquipement();
+        PlaceLateralEquipement();
+        GeneratePaths();
+    }
+    public void GeneratePersons(int personCount = 10)
+    {
+        // get particle pool
+        ParticlePool personPool = ParticlePool.pools[personParticleManager];
+        if (personPool == null)
         {
-            //  place blocs
-            GameObject go = Instantiate(blocTemplate);
-            go.transform.parent = transform;
-            go.SetActive(true);
-
-            float sidesize = (sharedBuilding ? Random.Range(0.4f, 0.6f) : Random.Range(0.6f, 0.9f))* size.x;
-            Vector3 s = new Vector3(sidesize, (i == 0 ? 1 : Random.Range(0.5f, 0.9f)) * size.y, sidesize);
-            go.transform.localScale = new Vector3((int)(s.x * roundy) / roundy, (int)(s.y * roundy + 1) / roundy, (int)(s.z * roundy) / roundy);
-
-            Vector3 maxDisplacement = size - go.transform.localScale;
-            Vector3 p = new Vector3(Random.Range(-maxDisplacement.x / 2, maxDisplacement.x / 2), go.transform.localScale.y / 2, Random.Range(-maxDisplacement.z / 2, maxDisplacement.z / 2));
-            go.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, p.y, (int)(p.z * roundy) / roundy);
-            go.name = this.transform.position.ToString() + "." + i;
-
-            go.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textureList[textureIndex]);
-            go.GetComponent<MeshRenderer>().material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
-            blocs.Add(go);
-
-            //  place roof
-            GameObject roofgo = Instantiate(roofTemplate);
-            roofgo.transform.parent = transform;
-            roofgo.SetActive(true);
-            Vector3 s2 = new Vector3(sidesize, sidesize, sidesize);
-            roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
-            roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
-            roofgo.name = "roof";
+            Debug.LogError("ParticlePool of name : " + personParticleManager + ", not found");
+            return;
         }
 
+        // ask for new guys and generate them
+        for (int i=0; i< personCount; i++)
+        {
+            GameObject go = personPool.Take();
+            Person person = go.GetComponent<Person>();
+            person.path = new List<Vector3>(paths[0]);
+            person.ResetPerson(Random.Range(0.0017f, 0.0023f));
+            go.SetActive(true);
+            persons.Add(go);
+        }
+    }
+
+    // Random generation process
+    private void PlaceBlocs(int i)
+    {
+        //  place blocs
+        GameObject go = Instantiate(blocTemplate);
+        go.transform.parent = transform;
+        go.SetActive(true);
+
+        float sidesize = (sharedBuilding ? Random.Range(0.4f, 0.6f) : Random.Range(0.6f, 0.9f)) * size.x;
+        Vector3 s = new Vector3(sidesize, (i == 0 ? 1 : Random.Range(0.5f, 0.9f)) * size.y, sidesize);
+        go.transform.localScale = new Vector3((int)(s.x * roundy) / roundy, (int)(s.y * roundy + 1) / roundy, (int)(s.z * roundy) / roundy);
+
+        Vector3 maxDisplacement = size - go.transform.localScale;
+        Vector3 p = new Vector3(Random.Range(-maxDisplacement.x / 2, maxDisplacement.x / 2), go.transform.localScale.y / 2, Random.Range(-maxDisplacement.z / 2, maxDisplacement.z / 2));
+        go.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, p.y, (int)(p.z * roundy) / roundy);
+        go.name = this.transform.position.ToString() + "." + i;
+
+        go.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textureList[textureIndex]);
+        go.GetComponent<MeshRenderer>().material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
+        blocs.Add(go);
+
+        //  place roof
+        GameObject roofgo = Instantiate(roofTemplate);
+        roofgo.transform.parent = transform;
+        roofgo.SetActive(true);
+        Vector3 s2 = new Vector3(sidesize, sidesize, sidesize);
+        roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
+        roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
+        roofgo.name = "roof";
+    }
+    private void GenerateWindows()
+    {
         //  generate windows attributes
         List<Vector3> verticies = new List<Vector3>();
         List<Vector2> textures = new List<Vector2>();
@@ -82,7 +116,7 @@ public class Building : TerrainElement
 
                     if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p - new Vector3(0, 0, 2 * epsilon)) && Random.Range(0f, 1f) > 0.8f)
                     {
-                        if(textureIndex != 5)
+                        if (textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, 1));
                         else
                         {
@@ -99,7 +133,7 @@ public class Building : TerrainElement
                 {
                     Vector3 p = new Vector3(go.transform.localPosition.x - go.transform.localScale.x / 2 + k + 0.25f / roundy, l, go.transform.localPosition.z - go.transform.localScale.z / 2 - epsilon);
 
-                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p + new Vector3(0,0, 2* epsilon)) && Random.Range(0f, 1f) > 0.8f)
+                    if (IsEmptySpace(blocs, p) && !IsEmptySpace(blocs, p + new Vector3(0, 0, 2 * epsilon)) && Random.Range(0f, 1f) > 0.8f)
                     {
                         if (textureIndex != 5)
                             PlaceWindow(verticies, normals, textures, faces, p, textureWindowSizeList[textureIndex], new Vector3(0, 0, -1));
@@ -171,26 +205,28 @@ public class Building : TerrainElement
         List<int>[] submeshes = new List<int>[windowMaterials.Length];
         for (int i = 0; i < submeshes.Length; i++)
             submeshes[i] = new List<int>();
-        for(int i=0; i<faces.Count; i+=6)
+        for (int i = 0; i < faces.Count; i += 6)
         {
             int subIndex = Random.Range(0, submeshes.Length);
             submeshes[subIndex].Add(faces[i]);
-            submeshes[subIndex].Add(faces[i+1]);
-            submeshes[subIndex].Add(faces[i+2]);
-            submeshes[subIndex].Add(faces[i+3]);
-            submeshes[subIndex].Add(faces[i+4]);
-            submeshes[subIndex].Add(faces[i+5]);
+            submeshes[subIndex].Add(faces[i + 1]);
+            submeshes[subIndex].Add(faces[i + 2]);
+            submeshes[subIndex].Add(faces[i + 3]);
+            submeshes[subIndex].Add(faces[i + 4]);
+            submeshes[subIndex].Add(faces[i + 5]);
         }
         for (int i = 0; i < submeshes.Length; i++)
             mesh.SetTriangles(submeshes[i], i);
-
+    }
+    private void PlaceRoofEquipement()
+    {
         // place randoom roof equipement
         if (sharedBuilding && Random.Range(0f, 1f) > 0.5f)
         {
             int nameIndex = Random.Range(0, megaStructureNameTemplate.Length);
             Vector2[] pos = { new Vector2(1, 0), new Vector2(0, 1), new Vector2(-1, 0), new Vector2(0, -1) };
             int[] ori = { 0, -90, 180, 90 };
-            for (int i=0; i<4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 GameObject name = Instantiate(megaStructureNameTemplate[nameIndex]);
                 name.transform.parent = transform;
@@ -210,49 +246,84 @@ public class Building : TerrainElement
                 equipement.transform.localScale = Vector3.one;
             }
         }
-        else if(Random.Range(0f,1f) > 0.2f)
+        else if (Random.Range(0f, 1f) > 0.2f)
         {
             int equipementIndex = Random.Range(0, roofEquipementTemplate.Length);
             GameObject equipement = Instantiate(roofEquipementTemplate[equipementIndex]);
             equipement.transform.parent = transform;
             equipement.name = "roofEquipement";
-            equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y/2, 0);
+            equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y / 2, 0);
             equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
             equipement.transform.localScale = Vector3.one;
         }
+    }
+    private void PlaceLateralEquipement()
+    {
+        float e = epsilon;
+        float dp = 0.02f;
+        float offset = 0.15f;
 
+        List<Vector3> availablePositions = new List<Vector3>();
+        List<Vector3> ori = new List<Vector3>();
+        for (int i = 0; i < blocs.Count; i++) 
+        {
+            GameObject b = blocs[i];
+            Vector3 p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2 + e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2 + e);
+            if (IsEmptySpace(blocs, p))
+            {
+                bool r = Random.Range(0, 2) == 1;
+                availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, dp)));
+                ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
+            }
 
-        // generate person path
+            p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2 + e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2 - e);
+            if (IsEmptySpace(blocs, p))
+            {
+                bool r = Random.Range(0, 2) == 1;
+                availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, -dp)));
+                ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
+            }
+
+            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2 - e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2 + e);
+            if (IsEmptySpace(blocs, p))
+            {
+                bool r = Random.Range(0, 2) == 1;
+                availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, dp)));
+                ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
+            }
+
+            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2 - e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2 - e);
+            if (IsEmptySpace(blocs, p))
+            {
+                bool r = Random.Range(0, 2) == 1;
+                availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, -dp)));
+                ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
+            }
+        }
+        for (int i = 0; i < availablePositions.Count; i++)
+        {
+            Vector3 p = availablePositions[i];
+            int equipementIndex = Random.Range(0, lateralEquipementTemplate.Length);
+            GameObject equipement = Instantiate(lateralEquipementTemplate[equipementIndex]);
+            equipement.transform.parent = transform;
+            equipement.name = "lateralEquipement";
+            equipement.transform.localPosition = p;
+            equipement.transform.localEulerAngles = ori[i];
+            equipement.transform.localScale = Vector3.one;
+        }
+    }
+    private void GeneratePaths()
+    {
         List<Vector3> footPath = new List<Vector3>();
         float d = 0;
-        footPath.Add(transform.TransformPoint(new Vector3( - size.x / 2, d, - size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3( - size.x / 2, d, size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3( size.x / 2, d, size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3( size.x / 2, d, - size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(-size.x / 2, d, -size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(-size.x / 2, d, size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(size.x / 2, d, size.z / 2)));
+        footPath.Add(transform.TransformPoint(new Vector3(size.x / 2, d, -size.z / 2)));
         paths.Add(footPath);
     }
-    public void GeneratePersons(int personCount = 10)
-    {
-        // get particle pool
-        ParticlePool personPool = ParticlePool.pools[personParticleManager];
-        if (personPool == null)
-        {
-            Debug.LogError("ParticlePool of name : " + personParticleManager + ", not found");
-            return;
-        }
 
-        // ask for new guys and generate them
-        for (int i=0; i< personCount; i++)
-        {
-            GameObject go = personPool.Take();
-            Person person = go.GetComponent<Person>();
-            person.path = new List<Vector3>(paths[0]);
-            person.ResetPerson(Random.Range(0.0017f, 0.0023f));
-            go.SetActive(true);
-            persons.Add(go);
-        }
-    }
-
+    // helpers
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
