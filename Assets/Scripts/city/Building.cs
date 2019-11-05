@@ -259,7 +259,6 @@ public class Building : TerrainElement
     }
     private void PlaceLateralEquipement()
     {
-        float e = epsilon;
         float dp = 0.02f;
         float offset = 0.15f;
 
@@ -268,32 +267,32 @@ public class Building : TerrainElement
         for (int i = 0; i < blocs.Count; i++) 
         {
             GameObject b = blocs[i];
-            Vector3 p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2 + e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2 + e);
-            if (IsEmptySpace(blocs, p))
+            Vector3 p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2);
+            if (IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, dp)));
                 ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
             }
 
-            p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2 + e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2 - e);
-            if (IsEmptySpace(blocs, p))
+            p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2);
+            if (IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, -dp)));
                 ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
             }
 
-            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2 - e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2 + e);
-            if (IsEmptySpace(blocs, p))
+            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2);
+            if (IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, dp)));
                 ori.Add((r ? new Vector3(0, 0, 0) : new Vector3(0, 90, 0)));
             }
 
-            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2 - e, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2 - e);
-            if (IsEmptySpace(blocs, p))
+            p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2);
+            if (IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon))) 
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, -dp)));
