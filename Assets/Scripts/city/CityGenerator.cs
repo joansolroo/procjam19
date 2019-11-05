@@ -5,7 +5,7 @@ using UnityEngine;
 public class CityGenerator : MonoBehaviour
 {
     public City city;
-
+    public AutoMergeChildMeshes streetTexture;
     public Building buildingTemplate;
     public bool enableBlockMerge = false;
 
@@ -26,9 +26,10 @@ public class CityGenerator : MonoBehaviour
 
         Transform blockContainer = new GameObject().transform;
         blockContainer.parent = city.transform;
+        blockContainer.localPosition = Vector3.zero;
         blockContainer.localScale = Vector3.one;
         blockContainer.name = "blocks";
-
+        
         // create the basic tiles: blocks
         for (int x = 0; x < city.size.x; ++x)
         {
@@ -43,11 +44,19 @@ public class CityGenerator : MonoBehaviour
                 block.LocalPosition = new Vector3(x, 0, z) - city.size / 2;
                 block.region = city.regions[0];
                 block.building = null;
+
+                GameObject s = Instantiate(city.streetTexture);
+                s.transform.parent = streetTexture.transform;
+                s.transform.localPosition = new Vector3(x, 0.001f, z) - city.size/2;
+                s.transform.localScale = Vector3.one;
+                s.name = "streetPatch";
             }
         }
+        streetTexture.Merge();
+
 
         // divide in regions
-        foreach (Region region in city.regions)
+        foreach (Region region in city.regions) 
         {
             // SPACE SORTING: REGION
             region.transform.parent = city.transform;
@@ -66,8 +75,7 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
-
-
+        
         for (int x = 0; x < city.size.x; ++x)
         {
             for (int z = 0; z < city.size.x; ++z)

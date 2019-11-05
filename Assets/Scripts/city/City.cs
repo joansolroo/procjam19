@@ -6,6 +6,7 @@ public class City : TerrainElement
 {
     public List<Region> regions;
     public GameObject floor;
+    public GameObject streetTexture;
     public Block[,] blocks;
     public List<Street> streets;
 

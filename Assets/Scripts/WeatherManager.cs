@@ -47,7 +47,7 @@ public class WeatherManager : MonoBehaviour
         
         for (int i = 0; i < floorFog.Length; i++)
         {
-            floorFog[i].transform.position = new Vector3(0, Mathf.Pow(h * (0.5f*i+0.1f), 0.6f), 0);
+            floorFog[i].transform.position = new Vector3(0, Mathf.Pow(h * (0.5f*i+0.1f), 0.6f)-0.1f, 0);
         }
 
         //this is not the best to get the angle
