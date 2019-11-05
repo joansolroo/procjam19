@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: main
   m_EditorClassIdentifier: 
   channels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  duration: 4
+  - {fileID: 11400000, guid: fdbd3209caa4ebc4293559d826f73e27, type: 2}
+  - {fileID: 11400000, guid: bad54d4ffe5eced45b2445debd5bcb22, type: 2}
+  - {fileID: 11400000, guid: b24cb0c1cb91b8c4e8fd2472eaefc0d2, type: 2}
+  - {fileID: 11400000, guid: dc56a316269466248a17d774fdd685f6, type: 2}
+  duration: 128
