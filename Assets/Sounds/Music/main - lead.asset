@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 051af12b755e92e4abe275fb9d6f6c18, type: 3}
-  m_Name: intro - bass
+  m_Name: main - lead
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 0}
-  - {fileID: 8300000, guid: 3118e892197df0141ae89610c3d4ce49, type: 3}
+  - {fileID: 8300000, guid: ab5d16d2b9aa9534f898546ea680a1ea, type: 3}
+  - {fileID: 8300000, guid: 172bb1716b0483946be8a0f32b66c35e, type: 3}
   duration: 16
   transitions:
     nodeCount: 2
-    entry: 1
+    entry: 0
     exit: 0
     nodeData:
     - {fileID: 0}
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0.1
-      - 0.1
+      - 0.5
+      - 0.5
     - probabilities:
-      - 0.9
-      - 0.9
+      - 0.5
+      - 0.5
