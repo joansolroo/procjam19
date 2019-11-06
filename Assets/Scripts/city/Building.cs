@@ -5,6 +5,7 @@ using UnityEngine;
 public class Building : TerrainElement
 {
     // attributes
+    public bool generateOnstart = false;
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
@@ -26,6 +27,16 @@ public class Building : TerrainElement
     private static float roundy = 10f;
     private static float epsilon = 0.0001f;
     private List<GameObject> blocs = new List<GameObject>();
+
+    void Start()
+    {
+        if(generateOnstart)
+        {
+            Resize(new Vector3(transform.localScale.x, 1, transform.localScale.z));
+            Init();
+            GeneratePersons();
+        }
+    }
 
     public void Resize(Vector3 newsize)
     {
