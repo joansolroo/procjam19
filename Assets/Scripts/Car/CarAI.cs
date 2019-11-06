@@ -10,6 +10,8 @@ public class CarAI : Particle
     [SerializeField] Vector3[] checkpoints;
     [SerializeField] bool loop = true;
     public int currentCheckpoint = 0;
+    public City city;
+
     public GameObject GetGameObject()
     {
         return gameObject;
@@ -17,11 +19,18 @@ public class CarAI : Particle
 
     Vector3 initPosition;
     Vector3 checkpoint;
+    bool randomWalk = true;
+    GraphSparse<Vector3>.Node current;
+    GraphSparse<Vector3>.Node next;
     protected override void DoCreate()
     {
-        currentCheckpoint = 0;
+        /*currentCheckpoint = 0;
         initPosition = this.transform.position;
-        checkpoint = checkpoints[currentCheckpoint] + initPosition;
+        checkpoint = checkpoints[currentCheckpoint] + initPosition;*/
+        current = city.carRoads.nodes[Random.Range(0, city.carRoads.nodes.Count)];
+        next = city.carRoads.nodes[current.links[Random.Range(0,current.links.Count)].to];
+        this.transform.position = current.data;
+        checkpoint = next.data;
     }
 
     protected override void DoDestroy()
@@ -33,22 +42,38 @@ public class CarAI : Particle
     {
         if ((this.transform.position - checkpoint).sqrMagnitude < 0.1f)
         {
-            ++currentCheckpoint;
-            if (currentCheckpoint >= checkpoints.Length)
-            {
-                if (loop)
+            if (randomWalk) {
+                int previousId = current.id;
+                current = next;
+                int nextId = previousId;
+                do
                 {
-                    currentCheckpoint = 0;
-                    checkpoint = checkpoints[currentCheckpoint] + initPosition;
-                }
-                else
-                {
-                    Destroy();
-                }
+                    nextId = Random.Range(0, current.links.Count);
+                } while (current.links.Count > 1 && nextId == previousId);
+
+                Debug.Log("From:" + current.id + ", goto:" + nextId + "/" + current.links.Count);
+                next =city.carRoads.nodes[current.links[nextId].to];
+                checkpoint = next.data;
             }
             else
             {
-                checkpoint = checkpoints[currentCheckpoint] + initPosition;
+                ++currentCheckpoint;
+                if (currentCheckpoint >= checkpoints.Length)
+                {
+                    if (loop)
+                    {
+                        currentCheckpoint = 0;
+                        checkpoint = checkpoints[currentCheckpoint] + initPosition;
+                    }
+                    else
+                    {
+                        Destroy();
+                    }
+                }
+                else
+                {
+                    checkpoint = checkpoints[currentCheckpoint] + initPosition;
+                }
             }
         }
         if (!Destroyed)

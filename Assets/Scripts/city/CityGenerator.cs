@@ -15,7 +15,7 @@ public class CityGenerator : MonoBehaviour
     void Start()
     {
         if (seed < 0)
-            seed = Random.Range(0,4000000);
+            seed = Random.Range(0, 4000000);
         Random.InitState(seed);
         Generate();
     }
@@ -29,11 +29,11 @@ public class CityGenerator : MonoBehaviour
         blockContainer.localPosition = Vector3.zero;
         blockContainer.localScale = Vector3.one;
         blockContainer.name = "blocks";
-        
+
         // create the basic tiles: blocks
         for (int x = 0; x < city.size.x; ++x)
         {
-            for (int z = 0; z < city.size.x; ++z)
+            for (int z = 0; z < city.size.z; ++z)
             {
                 // SPACE SORTING: BLOCK
                 GameObject b = new GameObject();
@@ -47,7 +47,7 @@ public class CityGenerator : MonoBehaviour
 
                 GameObject s = Instantiate(city.streetTexture);
                 s.transform.parent = streetTexture.transform;
-                s.transform.localPosition = new Vector3(x, 0.001f, z) - city.size/2;
+                s.transform.localPosition = new Vector3(x, 0.001f, z) - city.size / 2;
                 s.transform.localScale = Vector3.one;
                 s.name = "streetPatch";
             }
@@ -56,7 +56,7 @@ public class CityGenerator : MonoBehaviour
 
 
         // divide in regions
-        foreach (Region region in city.regions) 
+        foreach (Region region in city.regions)
         {
             // SPACE SORTING: REGION
             region.transform.parent = city.transform;
@@ -96,7 +96,7 @@ public class CityGenerator : MonoBehaviour
         // block stuff
         for (int x = 0; x < city.size.x; ++x)
         {
-            for (int z = 0; z < city.size.x; ++z)
+            for (int z = 0; z < city.size.z; ++z)
             {
                 // smooth the information
                 Block block = city.blocks[x, z];
@@ -131,17 +131,78 @@ public class CityGenerator : MonoBehaviour
                     city.blocks[x, z + 1].building = building;
                     city.blocks[x + 1, z + 1].building = building;
                 }
-                else if(block.building == null && !block.isAvenue)
+                else if (block.building == null && !block.isAvenue)
                 {
                     SimpleBuildingGenerate(block);
                 }
             }
         }
 
-       /* Transform streetContainer = new GameObject().transform;
-        streetContainer.name = "Streets";
-        streetContainer.parent = city.transform;
-        streetContainer.localScale = Vector3.one;*/
+
+
+        // ROADS
+        city.carRoads = new GraphSparse<Vector3>();
+        city.carRoads.nodes = new List<GraphSparse<Vector3>.Node>();
+        int height = 5;
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x <= city.size.x; ++x)
+            {
+                for (int z = 0; z <= city.size.z; ++z)
+                {
+                    // create nodes, in a grid
+                    int id = (int)(x * (city.size.z + 1) + z + y * (city.size.x + 1) * (city.size.z + 1));
+                    GraphSparse<Vector3>.Node node = new GraphSparse<Vector3>.Node();
+                    node.id = id;
+                    Vector3Int cell = new Vector3Int(x, 0, z);
+                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * 50 / 2, -50 / 2);
+                    node.links = new List<GraphSparse<Vector3>.Link>();
+
+                    city.carRoads.nodes.Add(node);
+
+                    // Create links, predictively (assuming regular grid)
+                    // TODO optimize: very bad loop
+                    for (int dy = -1; dy <= 1; ++dy)
+                    {
+                        int y2 = y + dy;
+                        if (y2 >= 0 && y2 < height)
+                        {
+                            for (int dx = -1; dx <= 1; ++dx)
+                            {
+                                int x2 = x + dx;
+                                if (x2 >= 0 && x2 <= city.size.x)
+                                {
+                                    for (int dz = -1; dz <= 1; ++dz)
+                                    {
+                                        // TODO optimize: this test can be improved by simply not doing a loop
+                                        if ((dx != 0 || dz != 0 || dy!=0) && (Mathf.Abs(dy) +Mathf.Abs(dx) + Mathf.Abs(dz) < 2))
+                                        {
+
+                                            int z2 = z + dz;
+                                            //Vector3Int cell2 = new Vector3Int(x2, 0, z2);
+                                            int id2 = (int)(x2 * (city.size.z + 1) + z2 + y2 * (city.size.x + 1) * (city.size.z + 1));
+                                            if (z2 >= 0 && z2 <= city.size.z)
+                                            {
+                                                GraphSparse<Vector3>.Link link = new GraphSparse<Vector3>.Link();
+                                                link.from = node.id;
+                                                link.to = id2;
+                                                link.probability = 1;
+                                                node.links.Add(link);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /* Transform streetContainer = new GameObject().transform;
+         streetContainer.name = "Streets";
+         streetContainer.parent = city.transform;
+         streetContainer.localScale = Vector3.one;*/
 
         // ADD streets
         /*foreach (Region region in city.regions)
@@ -187,19 +248,20 @@ public class CityGenerator : MonoBehaviour
 
             }
         }
-        foreach (Street street in city.streets) {
+        foreach (Street street in city.streets)
+        {
             Gizmos.color = Color.black;
             if (street.checkpoints != null)
             {
                 int prev = 0;
                 for (int current = 1; current < street.checkpoints.Count; ++current)
                 {
-                    Gizmos.DrawLine(city.transform.TransformPoint(street.checkpoints[prev])+Vector3.up *50, city.transform.TransformPoint(street.checkpoints[current]));
+                    Gizmos.DrawLine(city.transform.TransformPoint(street.checkpoints[prev]) + Vector3.up * 50, city.transform.TransformPoint(street.checkpoints[current]));
                     prev = current;
                 }
             }
         }
-    
+
     }
     private bool AvailableForMergeBlock(int x, int y)
     {
@@ -215,7 +277,7 @@ public class CityGenerator : MonoBehaviour
         building.LocalPosition = Vector3.zero;
         float d = Random.Range(0.7f, 0.8f);
         building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
-        building.Init((int)(2*block.richness)+1);
+        building.Init((int)(2 * block.richness) + 1);
 
         block.building = building;
     }

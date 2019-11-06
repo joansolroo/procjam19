@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 using UnityEditor;
 
 
-[CustomPropertyDrawer(typeof(Graph))]
+[CustomPropertyDrawer(typeof(GraphDense))]
 public class CustomGraphDrawer : PropertyDrawer
 {
     public override VisualElement CreatePropertyGUI(SerializedProperty property)

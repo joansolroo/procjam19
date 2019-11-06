@@ -7,13 +7,13 @@ public class Markov : MonoBehaviour
     public class MarkovNavigation
     {
         public int current;
-        public Graph graph;
+        public GraphDense graph;
 
-        public MarkovNavigation(Graph graph)
+        public MarkovNavigation(GraphDense graph)
         {
             ChangeGraph(graph);
         }
-        public void ChangeGraph(Graph graph)
+        public void ChangeGraph(GraphDense graph)
         {
             this.graph = graph;
             this.current = graph.entry;

@@ -3,12 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public class Graph
+public abstract class Graph
 {
-    public int nodeCount = 5;
+   //// public abstract bool HasNode(int node);
+   //// public abstract bool HasLink(int from, int to);
+   //// public abstract float GetLink(int from, int to);
+}
+[System.Serializable]
+public class GraphSparse<T> : Graph
+{
+    [System.Serializable]
+    public class Node
+    {
+        public int id;
+        public List<Link> links;
+        public T data;
+    }
+    [System.Serializable]
+    public class Link
+    {
+        public int from;
+        public int to;
+        public float probability;
+    }
+
+    public List<Node> nodes;
+}
+
+[System.Serializable]
+public class GraphDense : Graph
+{
     public int entry = 0;
     public int exit = -1;
+    public int nodeCount = 5;
 
     public ScriptableObject[] nodeData;
 
@@ -20,7 +47,7 @@ public class Graph
 
     public Links[] transitions;
 
-    public Graph(int size)
+    public GraphDense(int size)
     {
         nodeCount = size;
         transitions = new Links[size];
