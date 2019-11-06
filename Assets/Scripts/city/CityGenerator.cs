@@ -155,7 +155,7 @@ public class CityGenerator : MonoBehaviour
                     GraphSparse<Vector3>.Node node = new GraphSparse<Vector3>.Node();
                     node.id = id;
                     Vector3Int cell = new Vector3Int(x, 0, z);
-                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * 50 / 2, -50 / 2);
+                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * 50 / 2+5, -50 / 2);
                     node.links = new List<GraphSparse<Vector3>.Link>();
 
                     city.carRoads.nodes.Add(node);

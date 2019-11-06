@@ -27,7 +27,7 @@ public class LifeManager : MonoBehaviour
                 activeCars.Add(car);
                 car.gameObject.SetActive(true);
             }
-            created = false;
+            created = true;
         }
     }
 }

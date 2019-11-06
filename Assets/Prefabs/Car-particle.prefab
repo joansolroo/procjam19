@@ -238,7 +238,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4939083338136496331}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.32, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -279,14 +279,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 4939083338136496330}
   model: {fileID: 4939083339281997846}
-  maxSpeed: 10
-  rotationSpeed: 6
-  rotationSmooth: 2
-  floorTest: {fileID: 4939083337446687239}
+  cameraParent: {fileID: 0}
+  forwardSpeed: 6
+  maxSpeedHorizontal: 10
+  maxSpeedVertical: 10
+  verticalSpeed: 10
+  rotationSpeed: 10
   gravity: 1
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 256
+  hleanLimit: 10
+  vleanLimit: 30
+  inertia: 0.1
   direction: {x: 0, y: 0, z: 0}
 --- !u!114 &4939083338136496332
 MonoBehaviour:
@@ -301,18 +303,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pool: {fileID: 0}
+  useLifetime: 1
   lifeTime: 0
-  time: 0
   car: {fileID: 4939083338136496333}
+  city: {fileID: 0}
+  checkpointMinDistance: 1
+  fancySteer: 0
+  randomWalk: 0
   checkpoints:
   - {x: 0, y: 0, z: 0}
-  - {x: 5, y: 2, z: 0}
-  - {x: 5, y: 2, z: 5}
-  - {x: 0, y: 0, z: 5}
+  - {x: 10, y: 20, z: 0}
+  - {x: 10, y: 20, z: 50}
+  - {x: 0, y: 0, z: 50}
   loop: 1
   currentCheckpoint: 0
-  initPosition: {x: 0, y: 0, z: 0}
-  checkpoint: {x: 0, y: 0, z: 0}
+  gas: 0
+  steer: 0
+  steerUnclamped: 0
+  vertical: 0
+  forwardPlane: {x: 0, y: 0, z: 0}
+  targetPlane: {x: 0, y: 0, z: 0}
 --- !u!1 &4939083338344932293
 GameObject:
   m_ObjectHideFlags: 0
