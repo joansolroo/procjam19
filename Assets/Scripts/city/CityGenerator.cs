@@ -75,7 +75,25 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
-        
+
+        // create avenue
+        foreach (Region region in city.regions)
+        {
+            if (region.richness > 0.5f)
+            {
+                Vector3 nexus = new Vector3((int)region.LocalPosition.x, (int)region.LocalPosition.y, (int)region.LocalPosition.z);
+                for (int i = 0; i < city.size.x; i++)
+                {
+
+                    MarkAsAvenue(nexus + new Vector3(i, 0, 0) + city.size / 2);
+                    MarkAsAvenue(nexus - new Vector3(i, 0, 0) + city.size / 2);
+                    MarkAsAvenue(nexus + new Vector3(0, 0, i) + city.size / 2);
+                    MarkAsAvenue(nexus - new Vector3(0, 0, i) + city.size / 2);
+                }
+            }
+        }
+
+        // block stuff
         for (int x = 0; x < city.size.x; ++x)
         {
             for (int z = 0; z < city.size.x; ++z)
@@ -113,65 +131,36 @@ public class CityGenerator : MonoBehaviour
                     city.blocks[x, z + 1].building = building;
                     city.blocks[x + 1, z + 1].building = building;
                 }
-                else if(block.building == null)
+                else if(block.building == null && !block.isAvenue)
                 {
-                    Building building = Instantiate<Building>(buildingTemplate);
-                    building.transform.parent = block.transform;
-                    building.LocalPosition = Vector3.zero;
-                    float d = Random.Range(0.7f, 0.8f);
-                    building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
-                    building.Init();
-
-                    block.building = building;
+                    SimpleBuildingGenerate(block);
                 }
             }
         }
 
-        Transform streetContainer = new GameObject().transform;
+       /* Transform streetContainer = new GameObject().transform;
         streetContainer.name = "Streets";
         streetContainer.parent = city.transform;
-        streetContainer.localScale = Vector3.one;
+        streetContainer.localScale = Vector3.one;*/
 
         // ADD streets
-        foreach (Region region in city.regions)
+        /*foreach (Region region in city.regions)
         {
             if(region.richness>0.5f)
             {
-                Street street = new GameObject().AddComponent<Street>();
-                street.transform.parent = streetContainer;
-                street.checkpoints = new List<Vector3>();
-
                 Vector3 nexus = new Vector3((int)region.LocalPosition.x, (int)region.LocalPosition.y, (int)region.LocalPosition.z);
                 for (int i = 0; i < city.size.x; i++)
                 {
-                    Vector3 c = nexus + new Vector3(i, 0, 0) + city.size / 2;
-                    if (city.ValidCell(c))
-                    {
-                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
-                    }
-
-                    c = nexus - new Vector3(i, 0, 0) + city.size / 2;
-                    if (city.ValidCell(c))
-                    {
-                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
-                    }
-
-                    c = nexus + new Vector3(0, 0, i) + city.size / 2;
-                    if (city.ValidCell(c))
-                    {
-                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
-                    }
-
-                    c = nexus - new Vector3(0, 0, i) + city.size / 2;
-                    if (city.ValidCell(c))
-                    {
-                        Destroy(city.blocks[(int)c.x, (int)c.z].building.transform.gameObject);
-                    }
+                    TryDestroyCell(nexus + new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus + new Vector3(0, 0, i) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(0, 0, i) + city.size / 2);
                 }
             }
-        }
+        }*/
     }
 
+    // helpers
     private void OnDrawGizmos2()
     {
         Gizmos.DrawWireCube(city.transform.position, city.size);
@@ -216,6 +205,32 @@ public class CityGenerator : MonoBehaviour
     {
         if (x == 0 || y == 0 || x == city.size.x - 1 || y == city.size.z - 1) return false;
         else if (city.blocks[x, y].building != null || city.blocks[x + 1, y].building != null || city.blocks[x, y + 1].building != null || city.blocks[x + 1, y + 1].building != null) return false;
+        else if (city.blocks[x, y].isAvenue || city.blocks[x + 1, y].isAvenue || city.blocks[x, y + 1].isAvenue || city.blocks[x + 1, y + 1].isAvenue) return false;
         else return true;
+    }
+    private void SimpleBuildingGenerate(Block block)
+    {
+        Building building = Instantiate<Building>(buildingTemplate);
+        building.transform.parent = block.transform;
+        building.LocalPosition = Vector3.zero;
+        float d = Random.Range(0.7f, 0.8f);
+        building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
+        building.Init((int)(2*block.richness)+1);
+
+        block.building = building;
+    }
+    private void TryDestroyCell(Vector3 c)
+    {
+        if (city.ValidCell(c))
+        {
+            Block block = city.blocks[(int)c.x, (int)c.z];
+            Destroy(block.building.transform.gameObject);
+            block.isAvenue = true;
+        }
+    }
+    private void MarkAsAvenue(Vector3 c)
+    {
+        if (city.ValidCell(c))
+            city.blocks[(int)c.x, (int)c.z].isAvenue = true;
     }
 }

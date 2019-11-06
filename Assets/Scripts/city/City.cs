@@ -14,13 +14,7 @@ public class City : TerrainElement
     public float blockVisibilityOffset = 30;
     public int pedestrianDensity = 30;
     public float personVisibilityRadius = 100;
-
-    void Start()
-    {
-        //floor.transform.localScale = new Vector3((size.x + 2) / 10, 1, (size.z + 2) / 10);
-        //floor.transform.localPosition = new Vector3(-size.x / 2 - 0.5f, 0, -size.z / 2 - 0.5f);
-    }
-
+    
     void Update()
     {
         for (int i = 0; i < blocks.GetLength(0); i++)

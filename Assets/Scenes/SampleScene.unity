@@ -665,5 +665,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: size.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: size.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: enableBlockMerge
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804410766880588, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: richness
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}

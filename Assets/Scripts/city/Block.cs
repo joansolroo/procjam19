@@ -9,4 +9,5 @@ public class Block : TerrainElement
     public bool visible = true;
     public bool hasPersons = false;
     public float richness;
+    public bool isAvenue = false;
 }

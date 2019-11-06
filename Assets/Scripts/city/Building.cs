@@ -8,7 +8,6 @@ public class Building : TerrainElement
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
-    public GameObject groundTemplate;
     public string personParticleManager = "PersonParticleManager";
     private int textureIndex;
     public bool sharedBuilding = false;
@@ -261,6 +260,9 @@ public class Building : TerrainElement
     {
         float dp = 0.02f;
         float offset = 0.15f;
+
+        if (sharedBuilding && size.y < 5 * offset)
+            return;
 
         List<Vector3> availablePositions = new List<Vector3>();
         List<Vector3> ori = new List<Vector3>();
