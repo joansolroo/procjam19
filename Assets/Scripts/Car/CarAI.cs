@@ -7,6 +7,7 @@ public class CarAI : Particle
     [Header("links")]
     [SerializeField] Car car;
     public City city;
+    public TrafficController traffic;
 
     [Header("AI")]
     [SerializeField] float checkpointMinDistance = 1f;
@@ -22,8 +23,8 @@ public class CarAI : Particle
     Vector3 checkpoint;
 
     [Header("Status")]
-    [SerializeField]  float gas = 0;
-    [SerializeField]  float steer = 0;
+    [SerializeField] float gas = 0;
+    [SerializeField] float steer = 0;
     [SerializeField] float steerUnclamped = 0;
     [SerializeField] float vertical = 0;
     public Vector3 forwardPlane;
@@ -34,20 +35,22 @@ public class CarAI : Particle
         return gameObject;
     }
 
+    bool targetisCurrentRoad = true;
     protected override void DoCreate()
     {
         if (randomWalk)
         {
-            current = city.carRoads.nodes[Random.Range(0, city.carRoads.nodes.Count)];
-            next = city.carRoads.nodes[current.links[Random.Range(0, current.links.Count)].to];
-            this.transform.position = current.data;
-            checkpoint = next.data;
+            current = traffic.GetRandomNode();
+            next = traffic.GetRandomWalk(current);
+            checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
+            this.transform.position = checkpoint;
+            targetisCurrentRoad = true;
         }
         else
         {
             currentCheckpoint = 0;
             initPosition = this.transform.position;
-            checkpoint = checkpoints[currentCheckpoint] + initPosition; 
+            checkpoint = checkpoints[currentCheckpoint] + initPosition;
         }
         this.transform.LookAt(checkpoint);
     }
@@ -57,23 +60,26 @@ public class CarAI : Particle
 
     }
 
-    
+
     protected override void DoTick()
     {
-        if ((this.transform.position - checkpoint).sqrMagnitude < checkpointMinDistance* checkpointMinDistance)
+        if ((this.transform.position - checkpoint).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
         {
-            if (randomWalk) {
-                int previousId = current.id;
-                current = next;
-                int nextId = previousId;
-                do
+            if (randomWalk)
+            {
+                if (targetisCurrentRoad)
                 {
-                    nextId = Random.Range(0, current.links.Count);
-                } while (current.links.Count > 1 && nextId == previousId);
-
-               // Debug.Log("From:" + current.id + ", goto:" + nextId + "/" + current.links.Count);
-                next =city.carRoads.nodes[current.links[nextId].to];
-                checkpoint = next.data;
+                    checkpoint = traffic.GetRoadPoint(next, next.data - current.data);
+                    targetisCurrentRoad = false;
+                }
+                else
+                {
+                    var newNext = traffic.GetRandomWalk(current, next);
+                    current = next;
+                    next = newNext;
+                    checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
+                    targetisCurrentRoad = true;
+                }
             }
             else
             {
@@ -113,23 +119,24 @@ public class CarAI : Particle
                 this.transform.LookAt(checkpoint);
                 steer = 0;
             }
-            vertical = Mathf.Clamp(checkpoint.y - this.transform.position.y, -1,1);
-            
+            vertical = Mathf.Clamp(checkpoint.y - this.transform.position.y, -1, 1);
+
             car.Move(gas, steer, vertical);
         }
     }
 
     private void OnDrawGizmos()
     {
-        
+
         int prev = 0;
-        Vector3 position = Application.isPlaying? initPosition: this.transform.position;
+        Vector3 position = Application.isPlaying ? initPosition : this.transform.position;
         if (randomWalk)
         {
             Gizmos.color = Color.gray;
             Gizmos.DrawLine(this.transform.position, checkpoint);
         }
-        else {
+        else
+        {
             Gizmos.color = Color.gray;
             Gizmos.DrawLine(this.transform.position, position + checkpoints[currentCheckpoint]);
             Gizmos.color = Color.black;
