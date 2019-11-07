@@ -57,15 +57,12 @@ public class Markov : MonoBehaviour
     [SerializeField] Clock metronome;
     [SerializeField] Song song;
     [SerializeField] AudioSource source;
-    [SerializeField] AudioClip[] clip;
 
     // Start is called before the first frame update
     void Start()
     {
         metronome.OnTick += Tick;
         navigationPart = new MarkovNavigation(song.transitions);
-       
-        ResetPartProgress();
 
         /*
         // debug mode
@@ -114,8 +111,9 @@ public class Markov : MonoBehaviour
         {
             resetted = true;
             first = false;
+            ResetPartProgress();
         }
-        if(partBeat >= currentPart.duration)
+        else if(partBeat >= currentPart.duration)
         {
             int current = navigationPart.current;
             int next = navigationPart.Navigate();
@@ -142,7 +140,9 @@ public class Markov : MonoBehaviour
                 }
                 Debug.Log("> CHANNEL:" + c + ", enter:" + current);
             }
-            if(channelBeat[c]>= channel.duration)
+            // TODO: improve. This double if is because the first time a part loops it has a missing beat
+            if((channelBeat[c] == partBeat-1 && channelBeat[c]>= channel.duration-1)
+             || (channelBeat[c] < partBeat-1 && channelBeat[c] >= channel.duration))
             {
                 int next = navigationChannel[c].Navigate();
                 Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);

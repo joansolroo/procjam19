@@ -72,14 +72,58 @@ public class City : TerrainElement
     {
         if (carRoads != null)
         {
-            Gizmos.color = Color.gray;
+            
             GraphSparse<Vector3> roads = carRoads;
-            foreach (GraphSparse<Vector3>.Node node in roads.nodes)
+            foreach (GraphSparse<Vector3>.Node node1 in roads.nodes)
             {
-                Gizmos.DrawSphere(node.data, 1);
-                foreach (GraphSparse<Vector3>.Link link in node.links)
+                int size = 3;
+                Gizmos.color = Color.white;
+                Gizmos.DrawCube(node1.data, Vector3.one*3*2);
+                foreach (GraphSparse<Vector3>.Link link in node1.links)
                 {
-                    Gizmos.DrawLine(node.data, roads.nodes[link.to].data);
+                    GraphSparse<Vector3>.Node node2 = roads.nodes[link.to];
+                    Gizmos.color = Color.gray;
+                    Gizmos.DrawLine(node1.data, node2.data);
+
+                    Vector3 direction = node2.data - node1.data;
+                    Vector3 offset = Vector3.zero;
+                    Color color = Color.black;
+                    if (direction.x > 0)
+                    {
+                        offset = new Vector3(0,1,1);
+                        color = Color.green;
+                    }
+                    else if (direction.x < 0)
+                    {
+                        offset = new Vector3(0, 1, -1);
+                        color = Color.green;
+                    }
+                    else if (direction.z > 0)
+                    {
+                        offset = new Vector3(1, -1, 0);
+                        color = Color.red;
+                    }
+                    else if (direction.z < 0)
+                    {
+                        offset = new Vector3(-1, -1, 0);
+                        color = Color.red;
+                    }
+                    else if (direction.y > 0)
+                    {
+                        offset = new Vector3(1,0,1)*2;
+                        color = Color.blue;
+                    }
+                    else if (direction.y < 0)
+                    {
+                        offset = new Vector3(-1, 0, -1)*2;
+                        color = Color.blue;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("bad link:"+node1.data+",d: "+direction);
+                    }
+                    Gizmos.color = color;
+                    Gizmos.DrawLine(node1.data+offset* size, node2.data+offset* size);
                 }
             }
         }
