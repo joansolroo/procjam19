@@ -539,21 +539,21 @@ AudioReverbZone:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401217009}
-  m_Enabled: 0
+  m_Enabled: 1
   m_MinDistance: 10
   m_MaxDistance: 15
-  m_ReverbPreset: 22
-  m_Room: -1000
-  m_RoomHF: -1000
-  m_DecayTime: 2.81
-  m_DecayHFRatio: 0.14
-  m_Reflections: 429
-  m_ReflectionsDelay: 0.014
-  m_Reverb: 1023
-  m_ReverbDelay: 0.021
+  m_ReverbPreset: 27
+  m_Room: -10000
+  m_RoomHF: -10000
+  m_DecayTime: 1
+  m_DecayHFRatio: 1
+  m_Reflections: -2602
+  m_ReflectionsDelay: 0.007
+  m_Reverb: 200
+  m_ReverbDelay: 0.011
   m_HFReference: 5000
-  m_Diffusion: 80
-  m_Density: 60
+  m_Diffusion: 0
+  m_Density: 0
   m_LFReference: 250
   m_RoomLF: 0
 --- !u!82 &1401217012
@@ -568,7 +568,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.843
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -668,11 +668,11 @@ MonoBehaviour:
   song: {fileID: 11400000, guid: 44d9e793b5c5540409048e22db8aecd5, type: 2}
   source: {fileID: 1401217012}
   clip:
-  - {fileID: 8300000, guid: 895906440300faf40aa4414a80a3a2af, type: 3}
-  - {fileID: 8300000, guid: b145e456f19fda34f90c9c6bb2a6ba1d, type: 3}
-  - {fileID: 8300000, guid: 172bb1716b0483946be8a0f32b66c35e, type: 3}
-  - {fileID: 8300000, guid: ab5d16d2b9aa9534f898546ea680a1ea, type: 3}
-  - {fileID: 8300000, guid: 55dfbda00bcb5a74885098dd9aaf9733, type: 3}
+  - {fileID: 8300000, guid: 8bd297f466fecd84bb780167498a16bb, type: 3}
+  - {fileID: 8300000, guid: 3f76cd1e47040ec40b2ec3eccad218e0, type: 3}
+  - {fileID: 8300000, guid: 2d6c54c43afea714aadb445b032dbce1, type: 3}
+  - {fileID: 8300000, guid: 79a3e9c7a7841524b8310fbc0700e565, type: 3}
+  - {fileID: 8300000, guid: 5bdb5333d5989804189d49735fce4e5c, type: 3}
   partBeat: 0
   channelBeat: 
 --- !u!4 &1401217014
@@ -825,7 +825,7 @@ AudioChorusFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1451057711}
-  m_Enabled: 1
+  m_Enabled: 0
   m_DryMix: 0.5
   m_WetMix1: 0.5
   m_WetMix2: 0.5
