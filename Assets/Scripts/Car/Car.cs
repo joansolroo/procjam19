@@ -4,95 +4,66 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
+    [Header("Links")]
     [SerializeField] CharacterController controller;
+    [SerializeField] Transform model;
+    [SerializeField] Transform cameraParent;
 
-    public Transform model;
-
-    [Header("Car attributes")]
+    [Header("Parameters")]
+    public float forwardSpeed = 6;
     public float maxSpeedHorizontal = 10;
     public float maxSpeedVertical = 10;
+    public float verticalSpeed = 10;
     public float rotationSpeed = 6;
-    public float rotationSmooth = 5;
-    public float aimingSmooth = 0.1f;
-    public Transform floorTest;
     public float gravity = 1f;
+    public float hleanLimit = 10;
+    public float vleanLimit = 10;
+    public float inertia = 0.1f;
 
-    public LayerMask floorMask;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        controller = GetComponent<CharacterController>();
-        lastNonZeroHorizontalDirection = Vector3.forward;
-    }
-
+    [Header("Status")]
     [SerializeField] Vector3 direction;
     Vector3 verticalDirection;
     Vector3 horizontalDirection;
     Vector3 lastNonZeroHorizontalDirection;
     Vector3 currentDirection;
-    
-    private float currentHeight;
-    public float CurrentHeight { get => currentHeight; set => currentHeight = value; }
-
-    private void FixedUpdate()
+    float previousGas;
+    void Start()
     {
-        RaycastHit hit;
-        // Does the ray intersect any objects excluding the player layer
-        if (Physics.Raycast(floorTest.position, floorTest.TransformDirection(Vector3.down), out hit, Mathf.Infinity, floorMask))
-        {
-            Debug.DrawRay(floorTest.position, floorTest.TransformDirection(Vector3.down) * hit.distance, Color.yellow);
-            CurrentHeight = hit.distance;
-        }
+        if(!controller) controller = GetComponent<CharacterController>();
     }
-    public void Move(float speed, float steer, float deltaHeight)
-    {
-        //ensure that the target height is positive
-        float targetHeight = currentHeight + deltaHeight;
-        targetHeight = Mathf.Max(targetHeight, 0);
-        float dy = targetHeight - currentHeight;
 
-        if (Mathf.Abs(dy) > 1)
-            dy = Mathf.Sign(dy);
-        
-        verticalDirection = new Vector3(0, dy, 0);
+    public void Move(float gas, float steer, float vert)
+    {
+        float currentGas = Mathf.Lerp(gas, previousGas, inertia);
+        previousGas = currentGas;
+
         horizontalDirection = transform.forward;
-        if ((horizontalDirection * speed).sqrMagnitude > 0.01f)
-            lastNonZeroHorizontalDirection = (horizontalDirection * speed).normalized;
-        
-        direction = verticalDirection * gravity * maxSpeedVertical + horizontalDirection* speed * maxSpeedHorizontal;
+        if ((horizontalDirection * currentGas).sqrMagnitude > 0.01f)
+            lastNonZeroHorizontalDirection = (horizontalDirection * currentGas).normalized;
+
+        direction = verticalDirection * gravity * maxSpeedVertical + horizontalDirection * currentGas * maxSpeedHorizontal;
         controller.Move(direction * Time.deltaTime);
         if (steer != 0)
         {
             this.transform.Rotate(Vector3.up, rotationSpeed * steer);
         }
+        transform.localPosition += new Vector3(0, vert, 0) * verticalSpeed * Time.deltaTime;
+     
+
+        HorizontalLean(model, steer, hleanLimit, .1f);
+        VerticalLean(model, vert, vleanLimit, .1f);
     }
-    public void MoveTowards(Vector3 targetPosition)
+    
+    void HorizontalLean(Transform target, float axis, float leanLimit, float lerpTime)
     {
-        direction = targetPosition - this.transform.position;
-        float msqr = direction.sqrMagnitude;
-        if(msqr>1)
-        {
-            direction /= msqr;
-        }
-
-        verticalDirection = new Vector3(0,direction.y,0)*maxSpeedVertical;
-        horizontalDirection = direction*maxSpeedHorizontal;
-        horizontalDirection.y = 0;
-        if (horizontalDirection.sqrMagnitude > 0.01f)
-            lastNonZeroHorizontalDirection = horizontalDirection.normalized;
-
-        controller.Move((horizontalDirection+verticalDirection) * Time.deltaTime);
-        Debug.DrawLine(this.transform.position, targetPosition);
+        Vector3 targetEulerAngels = target.localEulerAngles;
+        target.localEulerAngles = new Vector3(targetEulerAngels.x, targetEulerAngels.y, Mathf.LerpAngle(targetEulerAngels.z, -axis * leanLimit, lerpTime));
     }
 
-    private void LateUpdate()
+    void VerticalLean(Transform target, float axis, float leanLimit, float lerpTime)
     {
-        // visual aiming update
-        verticalDirection.y = Mathf.Clamp(verticalDirection.y, -0.5f, 0.5f);
-        Vector3 targetDirection = lastNonZeroHorizontalDirection + verticalDirection;
-        currentDirection = (1 - aimingSmooth) * currentDirection + aimingSmooth * targetDirection;
-        model.LookAt(model.position + currentDirection);
+        Vector3 targetEulerAngels = target.localEulerAngles;
+        target.localEulerAngles = new Vector3(Mathf.LerpAngle(targetEulerAngels.x, -axis * leanLimit, lerpTime), targetEulerAngels.y, targetEulerAngels.z);
     }
 
     private void OnDrawGizmos()

@@ -14,7 +14,9 @@ public class City : TerrainElement
     public float blockVisibilityOffset = 30;
     public int pedestrianDensity = 30;
     public float personVisibilityRadius = 100;
-    
+
+    public GraphSparse<Vector3> carRoads;
+
     void Update()
     {
         for (int i = 0; i < blocks.GetLength(0); i++)
@@ -64,5 +66,22 @@ public class City : TerrainElement
                     }
                 }
             }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (carRoads != null)
+        {
+            Gizmos.color = Color.gray;
+            GraphSparse<Vector3> roads = carRoads;
+            foreach (GraphSparse<Vector3>.Node node in roads.nodes)
+            {
+                Gizmos.DrawSphere(node.data, 1);
+                foreach (GraphSparse<Vector3>.Link link in node.links)
+                {
+                    Gizmos.DrawLine(node.data, roads.nodes[link.to].data);
+                }
+            }
+        }
     }
 }

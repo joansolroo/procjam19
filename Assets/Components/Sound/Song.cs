@@ -6,12 +6,12 @@ using UnityEngine;
 public class Song : ScriptableObject
 {
     public SongPart[] parts;
-    public Graph transitions;
+    public GraphDense transitions;
 
     void OnValidate()
     {
         if (transitions == null)
-            transitions = new Graph(parts.Length);
+            transitions = new GraphDense(parts.Length);
         transitions.nodeCount = parts.Length;
         if (transitions.nodeData.Length != parts.Length)
         {

@@ -8,12 +8,12 @@ public class SongChannel : ScriptableObject
     [SerializeField] public AudioClip[] clips;
     [SerializeField] public int duration = 1;
 
-    public Graph transitions;
+    public GraphDense transitions;
 
     void OnValidate()
     {
         if (transitions == null)
-            transitions = new Graph(clips.Length);
+            transitions = new GraphDense(clips.Length);
         transitions.nodeCount = clips.Length;
         if (transitions.nodeData.Length != clips.Length)
         {
