@@ -223,6 +223,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef7345df53a545e479649ec1cd337602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &625918799 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2602814486438859110, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2602814485980975657}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e50a0fda276f3ed4f83fc7af1dbc7a72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,6 +531,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LifeManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 8434237860367993958, guid: f898df1b20a65ea4db8b5a0b5a68f0a9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8434237860367993952, guid: f898df1b20a65ea4db8b5a0b5a68f0a9,
         type: 3}
@@ -956,6 +973,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: BuildingFactory
       objectReference: {fileID: 0}
+    - target: {fileID: 2602814486438859110, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c,
+        type: 3}
+      propertyPath: buildingTemplate
+      value: 
+      objectReference: {fileID: 501204082}
+    - target: {fileID: 2602814486438859110, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c,
+        type: 3}
+      propertyPath: itemsPerStep
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2602814486438859129, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1011,11 +1038,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2602814486438859110, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c,
-        type: 3}
-      propertyPath: buildingTemplate
-      value: 
-      objectReference: {fileID: 501204082}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
 --- !u!1001 &7681804410042987308
@@ -1033,12 +1055,22 @@ PrefabInstance:
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.x
-      value: 3
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.z
-      value: 3
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: pedestrianDensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927427, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
@@ -1100,10 +1132,25 @@ PrefabInstance:
       propertyPath: enableBlockMerge
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: factory
+      value: 
+      objectReference: {fileID: 625918799}
     - target: {fileID: 7681804410766880588, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: richness
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423129481299674623, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7423129481299674623, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: maxInstance
+      value: 500
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}

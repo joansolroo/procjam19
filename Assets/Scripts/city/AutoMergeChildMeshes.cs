@@ -17,15 +17,10 @@ public class AutoMergeChildMeshes : MonoBehaviour
             combine[i].mesh = meshFilters[i].sharedMesh;
             combine[i].transform = Matrix4x4.TRS(meshFilters[i].transform.localPosition, meshFilters[i].transform.localRotation, meshFilters[i].transform.localScale);
             meshFilters[i].gameObject.SetActive(false);
-
-            //meshFilters[i].gameObject.GetComponent<MeshRenderer>().materials;
-
             i++;
         }
         transform.GetComponent<MeshFilter>().mesh = new Mesh();
         transform.GetComponent<MeshFilter>().mesh.CombineMeshes(combine);
         transform.gameObject.SetActive(true);
-
-        Debug.Log("fusion :" + transform.GetComponent<MeshFilter>().mesh.subMeshCount);
     }
 }

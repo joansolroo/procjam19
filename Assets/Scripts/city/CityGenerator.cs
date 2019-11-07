@@ -6,7 +6,7 @@ public class CityGenerator : MonoBehaviour
 {
     public City city;
     public AutoMergeChildMeshes streetTexture;
-    public Building buildingTemplate;
+    public BuildingFactory factory;
     public bool enableBlockMerge = false;
 
     public int seed = -1;
@@ -118,13 +118,11 @@ public class CityGenerator : MonoBehaviour
                 // BUILDING FACTORY
                 if (enableBlockMerge && Random.Range(0f, 1f) > 0.95f && AvailableForMergeBlock(x, z))
                 {
-                    Building building = Instantiate<Building>(buildingTemplate);
+                    Building building = factory.GetMegaBuilding(Random.Range(0.9f, 1.5f) * block.richness * 1.1f);
                     building.transform.parent = block.transform;
                     building.LocalPosition = new Vector3(0.5f, 0, 0.5f);
-                    float d = Random.Range(1.7f, 1.8f);
-                    building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness * 1.1f, d));
-                    building.sharedBuilding = true;
-                    building.Init(5);
+                    building.transform.localScale = Vector3.one;
+                    building.gameObject.SetActive(true);
 
                     block.building = building;
                     city.blocks[x + 1, z].building = building;
@@ -274,13 +272,11 @@ public class CityGenerator : MonoBehaviour
     }
     private void SimpleBuildingGenerate(Block block)
     {
-        Building building = Instantiate<Building>(buildingTemplate);
+        Building building = factory.GetBuilding(Random.Range(0.9f, 1.5f) * block.richness);
         building.transform.parent = block.transform;
         building.LocalPosition = Vector3.zero;
-        float d = Random.Range(0.7f, 0.8f);
-        building.Resize(new Vector3(d, Random.Range(0.9f, 1.5f) * block.richness, d));
-        building.Init((int)(2 * block.richness) + 1);
-
+        building.transform.localScale = Vector3.one;
+        building.gameObject.SetActive(true);
         block.building = building;
     }
     private void TryDestroyCell(Vector3 c)
