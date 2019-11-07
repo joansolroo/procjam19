@@ -140,6 +140,7 @@ public class Markov : MonoBehaviour
                 }
                 Debug.Log("> CHANNEL:" + c + ", enter:" + current);
             }
+            // TODO: improve. This double if is because the first time a part loops it has a missing beat
             if((channelBeat[c] == partBeat-1 && channelBeat[c]>= channel.duration-1)
              || (channelBeat[c] < partBeat-1 && channelBeat[c] >= channel.duration))
             {
