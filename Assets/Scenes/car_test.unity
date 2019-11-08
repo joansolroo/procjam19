@@ -535,6 +535,5 @@ PrefabInstance:
       propertyPath: rain
       value: 
       objectReference: {fileID: 2077085106842942834}
-    m_RemovedComponents:
-    - {fileID: 2276339592840107990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
