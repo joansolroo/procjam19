@@ -485,7 +485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee7ec3da57ccadc45a5c09080d95f08a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frontText: {fileID: 0}
+  frontText: {fileID: 3340593219991969586}
   backText: {fileID: 8665937614763784535}
   neonColor:
     serializedVersion: 2
