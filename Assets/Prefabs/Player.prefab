@@ -247,7 +247,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 3
-  size: 50
+  size: 20
   speedSize: 10
 --- !u!1 &5574944230512574434
 GameObject:
@@ -738,8 +738,9 @@ MonoBehaviour:
   car: {fileID: 5574944231106949092}
   invertVertical: 0
   camera: {fileID: 5574944231018130641}
-  pursuitScale: {x: 0.5, y: 0.4}
-  cameraDistance: {x: 2, y: 5}
+  cameraOffset: {x: 0, y: 0.4, z: -2}
+  pursuitScale: {x: 0.8, y: 0.4}
+  cameraDistance: {x: 0, y: 5}
 --- !u!143 &5574944231106949093
 CharacterController:
   m_ObjectHideFlags: 0

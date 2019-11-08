@@ -187,20 +187,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5574944231106949094, guid: 1b8f6287780296041aa7f8675e98ada9,
-        type: 3}
-      propertyPath: cameraDistance.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5574944231106949094, guid: 1b8f6287780296041aa7f8675e98ada9,
-        type: 3}
-      propertyPath: pursuitScale.x
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 935101480, guid: 1b8f6287780296041aa7f8675e98ada9, type: 3}
-      propertyPath: size
-      value: 20
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b8f6287780296041aa7f8675e98ada9, type: 3}
 --- !u!23 &364458743 stripped
