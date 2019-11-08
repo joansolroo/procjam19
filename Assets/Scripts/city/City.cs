@@ -54,15 +54,15 @@ public class City : TerrainElement
                     bool person = p.sqrMagnitude < radius * radius;
                     if(person && !b.hasPersons)
                     {
-                        b.building.GeneratePersons((b.building.sharedBuilding ? 2* pedestrianDensity : pedestrianDensity));
                         b.hasPersons = true;
+                        b.building.GeneratePersons((b.building.sharedBuilding ? 2* pedestrianDensity : pedestrianDensity));
                     }
                     else if (!person && b.hasPersons)
                     {
+                        b.hasPersons = false;
                         foreach (GameObject pepole in b.building.persons)
                             pepole.SetActive(false);
                         b.building.persons.Clear();
-                        b.hasPersons = false;
                     }
                 }
             }

@@ -1,0 +1,5 @@
+none       	17ms
+windows    	18ms
+roof       	33ms
+lateral	   	120ms
+pepole-lateral	50ms      p density 30, 100cars

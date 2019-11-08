@@ -5,7 +5,14 @@ using UnityEngine;
 public class Building : TerrainElement
 {
     // attributes
+    [Header("Pipeline configuration")]
     public bool generateOnstart = false;
+    public bool generateWindows = true;
+    public bool generateRoof = true;
+    public bool generateLateral = true;
+    public bool generateLights = true;
+
+    [Header("Generation attributes")]
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
@@ -52,10 +59,9 @@ public class Building : TerrainElement
         // process
         for (int i = 0; i < b; i++)
             PlaceBlocs(i);
-        GenerateWindows();
-        PlaceRoofEquipement();
-        PlaceLateralEquipement();
-        GeneratePaths();
+        if (generateWindows) GenerateWindows();
+        if (generateRoof) PlaceRoofEquipement();
+        if (generateLateral) PlaceLateralEquipement();
     }
     public void GeneratePersons(int personCount = 10)
     {
@@ -324,7 +330,7 @@ public class Building : TerrainElement
             equipement.transform.localScale = Vector3.one;
         }
     }
-    private void GeneratePaths()
+    public void GeneratePaths()
     {
         List<Vector3> footPath = new List<Vector3>();
         float d = 0;

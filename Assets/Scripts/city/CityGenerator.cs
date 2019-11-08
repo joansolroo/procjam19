@@ -124,6 +124,7 @@ public class CityGenerator : MonoBehaviour
                     building.LocalPosition = new Vector3(0.5f, 0, 0.5f);
                     building.transform.localScale = Vector3.one;
                     building.gameObject.SetActive(true);
+                    building.GeneratePaths();
 
                     block.building = building;
                     city.blocks[x + 1, z].building = building;
@@ -278,6 +279,7 @@ public class CityGenerator : MonoBehaviour
         building.LocalPosition = Vector3.zero;
         building.transform.localScale = Vector3.one;
         building.gameObject.SetActive(true);
+        building.GeneratePaths();
         block.building = building;
     }
     private void TryDestroyCell(Vector3 c)
