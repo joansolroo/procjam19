@@ -138,30 +138,56 @@ public class CityGenerator : MonoBehaviour
             }
         }
 
+        GenerateRoads();
 
-        
+        /* Transform streetContainer = new GameObject().transform;
+         streetContainer.name = "Streets";
+         streetContainer.parent = city.transform;
+         streetContainer.localScale = Vector3.one;*/
+
+        // ADD streets
+        /*foreach (Region region in city.regions)
+        {
+            if(region.richness>0.5f)
+            {
+                Vector3 nexus = new Vector3((int)region.LocalPosition.x, (int)region.LocalPosition.y, (int)region.LocalPosition.z);
+                for (int i = 0; i < city.size.x; i++)
+                {
+                    TryDestroyCell(nexus + new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus + new Vector3(0, 0, i) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(0, 0, i) + city.size / 2);
+                }
+            }
+        }*/
+    }
+
+    void GenerateRoads()
+    {
         // ROADS
+        int height = 5;
         city.carRoads = new GraphSparse<Vector3>();
         city.carRoads.nodes = new List<GraphSparse<Vector3>.Node>();
-        int height = 5;
+        city.carNodes = new GraphSparse<Vector3>.Node[(int)city.size.x + 1, height, (int)city.size.z + 1];
+
         for (int y = 0; y < height; ++y)
         {
             for (int x = 0; x <= city.size.x; ++x)
             {
                 for (int z = 0; z <= city.size.z; ++z)
                 {
-                    Block block = city.blocks[(int)Mathf.Clamp(x,0,city.size.x-1), (int)Mathf.Clamp(z, 0, city.size.z-1)];
+                    Block block = city.blocks[(int)Mathf.Clamp(x, 0, city.size.x - 1), (int)Mathf.Clamp(z, 0, city.size.z - 1)];
 
                     // create nodes, in a grid
                     int id = (int)(x * (city.size.z + 1) + z + y * (city.size.x + 1) * (city.size.z + 1));
                     GraphSparse<Vector3>.Node node = new GraphSparse<Vector3>.Node();
                     node.id = id;
                     Vector3Int cell = new Vector3Int(x, 0, z);
-                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * (50 / 2)*(block.richness+0.5f)/2 + 5, -50 / 2);
+                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * (50 / 2) * (block.richness + 0.5f) / 2 + 5, -50 / 2);
                     node.links = new List<GraphSparse<Vector3>.Link>();
 
                     city.carRoads.nodes.Add(node);
-
+                    city.carNodes[cell.x, y, cell.z] = node;
                     // Create links, predictively (assuming regular grid)
                     // TODO optimize: very bad loop
                     for (int dy = -1; dy <= 1; ++dy)
@@ -200,27 +226,6 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
-
-        /* Transform streetContainer = new GameObject().transform;
-         streetContainer.name = "Streets";
-         streetContainer.parent = city.transform;
-         streetContainer.localScale = Vector3.one;*/
-
-        // ADD streets
-        /*foreach (Region region in city.regions)
-        {
-            if(region.richness>0.5f)
-            {
-                Vector3 nexus = new Vector3((int)region.LocalPosition.x, (int)region.LocalPosition.y, (int)region.LocalPosition.z);
-                for (int i = 0; i < city.size.x; i++)
-                {
-                    TryDestroyCell(nexus + new Vector3(i, 0, 0) + city.size / 2);
-                    TryDestroyCell(nexus - new Vector3(i, 0, 0) + city.size / 2);
-                    TryDestroyCell(nexus + new Vector3(0, 0, i) + city.size / 2);
-                    TryDestroyCell(nexus - new Vector3(0, 0, i) + city.size / 2);
-                }
-            }
-        }*/
     }
 
     // helpers

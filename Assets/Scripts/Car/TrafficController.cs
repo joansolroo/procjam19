@@ -5,13 +5,59 @@ using UnityEngine;
 public class TrafficController : MonoBehaviour
 {
     public City city;
-
     public int RoadSize = 3;
+    [SerializeField] int cars = 100;
+    [SerializeField] float maxCarDistanceInCells = 5;
+
+    [SerializeField] ParticlePool carPool;
+    [SerializeField] List<CarAI> activeCars;
+
+    Transform cameraTransform;
+    Vector3 trafficCenter;
 
     public class Path
     {
         public GraphSparse<Vector3>.Node[] path;
         public List<Vector3> checkpoints;
+    }
+
+    private void Start()
+    {
+        cameraTransform = Camera.main.transform;
+    }
+    bool created = false;
+    private void Update()
+    {
+        trafficCenter = cameraTransform.position + cameraTransform.forward * 100;
+        if (!created && city.carRoads != null)
+        {
+            for (int c = 0; c < cars; ++c)
+            {
+                AddCar();
+            }
+            created = true;
+        }
+        CheckCars();
+    }
+
+    void AddCar()
+    {
+        CarAI car = carPool.Take<CarAI>();
+        activeCars.Add(car);
+        car.gameObject.SetActive(true);
+    }
+    private void CheckCars()
+    {
+        for(int c = activeCars.Count-1;c>=0;--c)
+        {
+            CarAI car = activeCars[c];
+            if (Vector3.Distance(car.transform.position, cameraTransform.position)>city.transform.lossyScale.x* maxCarDistanceInCells)
+            {
+                car.Destroy();
+                activeCars.RemoveAt(c);
+                AddCar();
+            }
+        }
     }
     /*public Path GetPath(GraphSparse<Vector3>.Node origin, GraphSparse<Vector3>.Node target)
     {
@@ -22,11 +68,20 @@ public class TrafficController : MonoBehaviour
         path.checkpoints = p;
         return path;
     }*/
+    public GraphSparse<Vector3>.Node GetStartingPoint()
+    {
+        Vector3Int targetCell = city.WorldToCell(trafficCenter);
+        targetCell.x = (int) Mathf.Clamp(targetCell.x + Random.Range(-maxCarDistanceInCells/2, maxCarDistanceInCells/2), 0, city.size.x);
+        targetCell.y = (int)Random.Range(0, 5);
+        targetCell.z = (int)Mathf.Clamp(targetCell.z + Random.Range(-maxCarDistanceInCells/2, maxCarDistanceInCells/2), 0, city.size.z);
+        var node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
+        return node;
+    }
+
     public GraphSparse<Vector3>.Node GetRandomNode()
     {
         return city.carRoads.nodes[Random.Range(0, city.carRoads.nodes.Count)];
     }
-
     /*
      * Gives a random next node
      */
@@ -85,6 +140,12 @@ public class TrafficController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
+        Gizmos.DrawWireSphere(Camera.main.transform.position, city.transform.lossyScale.x * maxCarDistanceInCells);
+        Gizmos.DrawWireSphere(trafficCenter, city.transform.lossyScale.x * maxCarDistanceInCells);
+    }
+    /*
+    private void OnDrawGizmos()
+    {
         if (city!=null && city.carRoads != null)
         {
 
@@ -121,5 +182,5 @@ public class TrafficController : MonoBehaviour
                 }
             }
         }
-    }
+    }*/
 }

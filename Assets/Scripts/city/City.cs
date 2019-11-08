@@ -16,7 +16,7 @@ public class City : TerrainElement
     public float personVisibilityRadius = 100;
 
     public GraphSparse<Vector3> carRoads;
-
+    public GraphSparse<Vector3>.Node[,,] carNodes;
     void Update()
     {
         for (int i = 0; i < blocks.GetLength(0); i++)
