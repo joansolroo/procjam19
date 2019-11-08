@@ -10,6 +10,7 @@ public class ParticlePool : GameElement
     public int maxInstance = 5;
 
     private List<Particle> pool = new List<Particle>();
+    private List<Particle> available = new List<Particle>();
     public int lastInstanceIndex;
 
     private void OnEnable()
@@ -28,7 +29,15 @@ public class ParticlePool : GameElement
     
     public GameObject Take()
     {
-        if(pool.Count < maxInstance)
+        if (available.Count > 0)
+        {
+            Particle particle = available[0];
+            available.RemoveAt(0);
+            particle.ResetParticle();
+            particle.transform.parent = this.transform;
+            return particle.gameObject;
+        }
+        else if(pool.Count < maxInstance)
         {
             Particle particle = Instantiate(prefabs[Random.Range(0,prefabs.Length)]);
             particle.pool = this;
@@ -52,6 +61,6 @@ public class ParticlePool : GameElement
     }
     public void Release(Particle p)
     {
-        Debug.LogWarning("Particle release: not implemented.");
+        available.Add(p);
     }
 }

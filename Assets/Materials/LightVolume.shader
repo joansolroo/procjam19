@@ -12,7 +12,7 @@ Shader "Perso/LightVolume"
     }
     SubShader
     {
-		Tags {"Queue" = "Transparent" "RenderType" = "Opaque" }
+		Tags {"Queue" = "Transparent" "RenderType" = "Transparent" }
         LOD 100
 
 		ZWrite Off
@@ -67,7 +67,7 @@ Shader "Perso/LightVolume"
 				float dust = saturate(tex2D(_MainTex, (i.pos.xy + _DustOffset)/1024).x - 0.5) * d;
 
 				fixed4 col = _Color;
-				col.a = pow(i.uv.x, _Power) * asin(d) + _Dust * dust;
+				col.a *= pow(i.uv.x, 2) * asin(d) + _Dust * dust;
                 UNITY_APPLY_FOG(i.fogCoord, col);
 
 				//float3 u = 0.5*normalize(i.n) + 0.5;

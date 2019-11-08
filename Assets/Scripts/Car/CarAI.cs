@@ -40,7 +40,7 @@ public class CarAI : Particle
     {
         if (randomWalk)
         {
-            current = traffic.GetRandomNode();
+            current = traffic.GetStartingPoint();
             next = traffic.GetRandomWalk(current);
             checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
             this.transform.position = checkpoint;
@@ -57,7 +57,8 @@ public class CarAI : Particle
 
     protected override void DoDestroy()
     {
-
+        this.gameObject.SetActive(false);
+        pool.Release(this);
     }
 
 
