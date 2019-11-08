@@ -68,7 +68,7 @@ public class City : TerrainElement
             }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmos2()
     {
         if (carRoads != null)
         {

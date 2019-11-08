@@ -16,7 +16,7 @@ public class BuildingFactory : MonoBehaviour
     public Dictionary<int, List<Building>> buildingList = new Dictionary<int, List<Building>>();
     public Dictionary<int, List<Building>> megaBuildingList = new Dictionary<int, List<Building>>();
 
-    void Start()
+    public void Generate()
     {
         generatedBuildingCount = 0;
         for (int h = (int)(startHeight / step); h<(int)(stopHeight / step)+2; h++)

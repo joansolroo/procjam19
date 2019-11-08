@@ -17,6 +17,7 @@ public class CityGenerator : MonoBehaviour
         if (seed < 0)
             seed = Random.Range(0, 4000000);
         Random.InitState(seed);
+        factory.Generate();
         Generate();
     }
 
