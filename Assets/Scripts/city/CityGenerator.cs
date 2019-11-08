@@ -226,6 +226,48 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        /* Transform streetContainer = new GameObject().transform;
+         streetContainer.name = "Streets";
+         streetContainer.parent = city.transform;
+         streetContainer.localScale = Vector3.one;*/
+
+        // ADD streets
+        /*foreach (Region region in city.regions)
+        {
+            if(region.richness>0.5f)
+            {
+                Vector3 nexus = new Vector3((int)region.LocalPosition.x, (int)region.LocalPosition.y, (int)region.LocalPosition.z);
+                for (int i = 0; i < city.size.x; i++)
+                {
+                    TryDestroyCell(nexus + new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(i, 0, 0) + city.size / 2);
+                    TryDestroyCell(nexus + new Vector3(0, 0, i) + city.size / 2);
+                    TryDestroyCell(nexus - new Vector3(0, 0, i) + city.size / 2);
+                }
+            }
+        }*/
+
+        Regroup();
+    }
+
+    private void Regroup()
+    {
+        int groupSize = (int)city.size.x / 10;
+        for (int x = 0; x < city.size.x; x += groupSize)
+        {
+            for (int z = 0; z < city.size.z; x += groupSize)
+            {
+                GameObject group = new GameObject();
+                group.name = "group " + x.ToString() + " " + z.ToString();
+                group.transform.parent = transform;
+                group.transform.localScale = new Vector3(groupSize, 1, groupSize);
+                group.transform.localPosition = new Vector3(x, 0, z) - city.size / 2 + 0.5f * new Vector3(groupSize, 0, groupSize);
+            }
+        }
+>>>>>>> Stashed changes
     }
 
     // helpers
