@@ -509,11 +509,15 @@ MonoBehaviour:
   floor: {fileID: 1329887290}
   streetTexture: {fileID: 6477759041299872019, guid: ecae44c6744888f48b519ba02b9aa7ee,
     type: 3}
+  groups: []
   streets: []
-  blockVisibilityRadius: 900
+  blockVisibilityRadius: 1000
   blockVisibilityOffset: 46
   pedestrianDensity: 30
   personVisibilityRadius: 100
+  lateralVisibilityRadius: 300
+  windowVisibilityRadius: 700
+  roofVisibilityRadius: 700
 --- !u!114 &7681804411061927425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -529,6 +533,7 @@ MonoBehaviour:
   city: {fileID: 7681804411061927426}
   streetTexture: {fileID: 136283086}
   factory: {fileID: 7681804409460420707}
+  groupSize: 2
   enableBlockMerge: 0
   seed: -1
 --- !u!114 &1422824990

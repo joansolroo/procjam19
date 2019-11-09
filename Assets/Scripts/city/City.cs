@@ -8,16 +8,104 @@ public class City : TerrainElement
     public GameObject floor;
     public GameObject streetTexture;
     public Block[,] blocks;
+    public List<Group> groups;
     public List<Street> streets;
 
     public float blockVisibilityRadius = 10;
     public float blockVisibilityOffset = 30;
     public int pedestrianDensity = 30;
     public float personVisibilityRadius = 100;
+    public float lateralVisibilityRadius = 300;
+    public float windowVisibilityRadius = 500;
+    public float roofVisibilityRadius = 700;
 
     public GraphSparse<Vector3> carRoads;
     public GraphSparse<Vector3>.Node[,,] carNodes;
     void Update()
+    {
+        bool person, lateral, roof;
+        foreach (Group group in groups)
+        {
+            Vector3 p = Camera.main.transform.InverseTransformPoint(group.transform.position);
+            float offset = Mathf.Sqrt(group.size.x * group.size.x + group.size.z * group.size.z);
+            bool visible = p.z > -offset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;
+
+            if(visible)
+            {
+                group.gameObject.SetActive(true);
+
+                foreach(Block b in group.blocks)
+                {
+                    float distance = p.magnitude;
+                    person = distance < personVisibilityRadius;
+
+                    // pepole
+                    if (person && !b.hasPersons)
+                    {
+                        b.hasPersons = true;
+                        b.building.GeneratePersons((b.building.sharedBuilding ? 2 * pedestrianDensity : pedestrianDensity));
+                    }
+                    else if (!person && b.hasPersons)
+                    {
+                        b.hasPersons = false;
+                        foreach (GameObject pepole in b.building.persons)
+                            pepole.SetActive(false);
+                        b.building.persons.Clear();
+                    }
+
+                    
+                    if(b.building)
+                    {
+                        // windows
+                        if(b.building.lodwindow)
+                        {
+                            if(distance < windowVisibilityRadius)
+                            {
+                                b.building.lodwindow.enabled = true;
+                            }
+                            else
+                            {
+                                b.building.lodwindow.enabled = false;
+                            }
+                        }
+
+
+                        // laterals
+                        if(distance < lateralVisibilityRadius)
+                        {
+                            foreach(LODProxy proxy in b.building.lodlateral)
+                                proxy.SetState(true);
+                        }
+                        else
+                        {
+
+                            foreach (LODProxy proxy in b.building.lodlateral)
+                                proxy.SetState(false);
+                        }
+
+                        // roof
+                        if (distance < roofVisibilityRadius)
+                        {
+                            foreach (LODProxy proxy in b.building.lodroof)
+                                proxy.SetState(true);
+                        }
+                        else
+                        {
+
+                            foreach (LODProxy proxy in b.building.lodroof)
+                                proxy.SetState(false);
+                        }
+                    }
+
+                }
+            }
+            else
+            {
+                group.gameObject.SetActive(false);
+            }
+        }
+    }
+    void Update2()
     {
         for (int i = 0; i < blocks.GetLength(0); i++)
             for (int j = 0; j < blocks.GetLength(1); j++)

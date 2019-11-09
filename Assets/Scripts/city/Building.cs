@@ -35,6 +35,11 @@ public class Building : TerrainElement
     private static float epsilon = 0.0001f;
     private List<GameObject> blocs = new List<GameObject>();
 
+    [Header("LOD related")]
+    public MeshRenderer lodwindow;
+    public List<LODProxy> lodlateral = new List<LODProxy>();
+    public List<LODProxy> lodroof = new List<LODProxy>();
+    
     void Start()
     {
         if(generateOnstart)
@@ -62,6 +67,10 @@ public class Building : TerrainElement
         if (generateWindows) GenerateWindows();
         if (generateRoof) PlaceRoofEquipement();
         if (generateLateral) PlaceLateralEquipement();
+    }
+    public void Link()
+    {
+
     }
     public void GeneratePersons(int personCount = 10)
     {
@@ -207,8 +216,8 @@ public class Building : TerrainElement
         windows.transform.parent = transform;
         windows.transform.localPosition = Vector3.zero;
         windows.transform.localScale = Vector3.one;
-        MeshRenderer renderer = windows.AddComponent<MeshRenderer>();
-        renderer.materials = windowMaterials;
+        lodwindow = windows.AddComponent<MeshRenderer>();
+        lodwindow.materials = windowMaterials;
         MeshFilter mf = windows.AddComponent<MeshFilter>();
         mf.mesh = new Mesh();
         Mesh mesh = mf.mesh;
@@ -250,6 +259,8 @@ public class Building : TerrainElement
                 name.transform.localPosition = blocs[0].transform.localPosition + new Vector3(pos[i].x * blocs[0].transform.localScale.x / 2, blocs[0].transform.localScale.y / 2, pos[i].y * blocs[0].transform.localScale.z / 2);
                 name.transform.localScale = 0.15f * Vector3.one;
                 name.transform.localEulerAngles = new Vector3(0, ori[i], 0);
+
+                lodroof.Add(name.GetComponent<LODProxy>());
             }
 
             if (nameIndex < megaStructureEquipementTemplate.Length)
@@ -260,6 +271,8 @@ public class Building : TerrainElement
                 equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y / 2, 0);
                 equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
                 equipement.transform.localScale = Vector3.one;
+
+                lodroof.Add(equipement.GetComponent<LODProxy>());
             }
         }
         else if (Random.Range(0f, 1f) > 0.2f)
@@ -271,6 +284,8 @@ public class Building : TerrainElement
             equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y / 2, 0);
             equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
             equipement.transform.localScale = Vector3.one;
+
+            lodroof.Add(equipement.GetComponent<LODProxy>());
         }
     }
     private void PlaceLateralEquipement()
@@ -328,6 +343,8 @@ public class Building : TerrainElement
             equipement.transform.localPosition = p;
             equipement.transform.localEulerAngles = ori[i];
             equipement.transform.localScale = Vector3.one;
+
+            lodlateral.Add(equipement.GetComponent<LODProxy>());
         }
     }
     public void GeneratePaths()

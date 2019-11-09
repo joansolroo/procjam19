@@ -221,6 +221,8 @@ public class CityGenerator : MonoBehaviour
     }
     private void Regroup()
     {
+        city.groups = new List<Group>();
+
         for (int x = 0; x < city.size.x; x += groupSize)
         {
             for (int z = 0; z < city.size.z; z += groupSize)
@@ -250,6 +252,7 @@ public class CityGenerator : MonoBehaviour
                 g.center = Vector3.zero;
                 g.size = s * city.transform.localScale.x;
                 g.containMegaStructure = containMegaStructure;
+                city.groups.Add(g);
             }
         }
     }
