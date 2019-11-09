@@ -69,6 +69,6 @@ public class BuildingFactory : MonoBehaviour
     public Building GetMegaBuilding(float height)
     {
         int index = (int)(Mathf.Clamp(height, startHeight, stopHeight) / step);
-        return Instantiate(buildingList[index][Random.Range(0, buildingList[index].Count)]);
+        return Instantiate(megaBuildingList[index][Random.Range(0, megaBuildingList[index].Count)]);
     }
 }

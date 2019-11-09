@@ -7,8 +7,8 @@ public class CityGenerator : MonoBehaviour
     public City city;
     public AutoMergeChildMeshes streetTexture;
     public BuildingFactory factory;
+    public int groupSize = 2;
     public bool enableBlockMerge = false;
-
     public int seed = -1;
 
     // Start is called before the first frame update
@@ -17,11 +17,22 @@ public class CityGenerator : MonoBehaviour
         if (seed < 0)
             seed = Random.Range(0, 4000000);
         Random.InitState(seed);
+        factory.generateMegastructure = enableBlockMerge;
         factory.Generate();
         Generate();
     }
 
     void Generate()
+    {
+        GenerateBlocks();
+        GenerateAvenue();
+        GenerateBuildings();
+        GenerateRoads();
+        Regroup();
+    }
+
+    //  generation pipeline
+    private void GenerateBlocks()
     {
         city.blocks = new Block[(int)city.size.x, (int)city.size.z];
 
@@ -76,8 +87,9 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
-
-        // create avenue
+    }
+    private void GenerateAvenue()
+    {
         foreach (Region region in city.regions)
         {
             if (region.richness > 0.5f)
@@ -93,8 +105,9 @@ public class CityGenerator : MonoBehaviour
                 }
             }
         }
-
-        // block stuff
+    }
+    private void GenerateBuildings()
+    {
         for (int x = 0; x < city.size.x; ++x)
         {
             for (int z = 0; z < city.size.z; ++z)
@@ -123,6 +136,7 @@ public class CityGenerator : MonoBehaviour
                     building.transform.parent = block.transform;
                     building.LocalPosition = new Vector3(0.5f, 0, 0.5f);
                     building.transform.localScale = Vector3.one;
+                    building.transform.localEulerAngles = new Vector3(0, -90 * Random.Range(-1, 2), 0);
                     building.gameObject.SetActive(true);
                     building.GeneratePaths();
 
@@ -135,14 +149,12 @@ public class CityGenerator : MonoBehaviour
                 {
                     SimpleBuildingGenerate(block);
                 }
+
+                block.size = new Vector3(1, block.building ? block.building.size.y : 0, 1);
             }
         }
-
-        GenerateRoads();
-        Regroup();
     }
-
-    void GenerateRoads()
+    private void GenerateRoads()
     {
         // ROADS
         int height = 5;
@@ -207,10 +219,8 @@ public class CityGenerator : MonoBehaviour
             }
         }
     }
-
     private void Regroup()
     {
-        int groupSize = (int)city.size.x / 10;
         for (int x = 0; x < city.size.x; x += groupSize)
         {
             for (int z = 0; z < city.size.z; z += groupSize)
@@ -218,8 +228,28 @@ public class CityGenerator : MonoBehaviour
                 GameObject group = new GameObject();
                 group.name = "group " + x.ToString() + " " + z.ToString();
                 group.transform.parent = transform;
-                group.transform.localScale = new Vector3(groupSize, 1, groupSize);
-                group.transform.localPosition = new Vector3(x, 0, z) - city.size / 2 + 0.5f * new Vector3(groupSize, 0, groupSize);
+                group.transform.localScale = Vector3.one;
+                group.transform.localPosition = new Vector3(x, 0, z) - city.size / 2 + 0.5f * new Vector3(groupSize, 0, groupSize) - 0.5f * new Vector3(1, 0, 1);
+                Group g = group.AddComponent<Group>();
+                g.blocks = new Block[groupSize, groupSize];
+
+                Vector3 c = Vector3.zero;
+                Vector3 s = new Vector3(groupSize, 0, groupSize);
+                bool containMegaStructure = false;
+                for (int k = 0; k < groupSize; k++) 
+                {
+                    for (int l = 0; l < groupSize; l++)
+                    {
+                        city.blocks[x + k, z + l].gameObject.transform.parent = group.transform;
+                        c += city.blocks[x + k, z + l].gameObject.transform.localPosition;
+                        s.y = Mathf.Max(s.y, city.blocks[x + k, z + l].size.y);
+                        containMegaStructure |= (city.blocks[x + k, z + l].building!=null && city.blocks[x + k, z + l].building.sharedBuilding);
+                        g.blocks[k, l] = city.blocks[x + k, z + l];
+                    }
+                }
+                g.center = Vector3.zero;
+                g.size = s * city.transform.localScale.x;
+                g.containMegaStructure = containMegaStructure;
             }
         }
     }
@@ -279,6 +309,7 @@ public class CityGenerator : MonoBehaviour
         building.transform.parent = block.transform;
         building.LocalPosition = Vector3.zero;
         building.transform.localScale = Vector3.one;
+        building.transform.localEulerAngles = new Vector3(0, -90 * Random.Range(-1, 2), 0);
         building.gameObject.SetActive(true);
         building.GeneratePaths();
         block.building = building;

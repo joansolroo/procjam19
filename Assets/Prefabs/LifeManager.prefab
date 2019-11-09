@@ -1,5 +1,52 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3111747825311422978
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 709634133259437657}
+  - component: {fileID: 7423129481299674623}
+  m_Layer: 0
+  m_Name: PersonParticleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &709634133259437657
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3111747825311422978}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -281.3, y: 0, z: -190.2}
+  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_Children: []
+  m_Father: {fileID: 8434237860367993952}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7423129481299674623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3111747825311422978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c90e7d14d7da7374db72bdd8500e36db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabs:
+  - {fileID: 8260527735689630649, guid: d25098422d49de943942e6140bdd8816, type: 3}
+  maxInstance: 500
+  lastInstanceIndex: 0
 --- !u!1 &8434237860367993958
 GameObject:
   m_ObjectHideFlags: 0
@@ -26,9 +73,10 @@ Transform:
   m_GameObject: {fileID: 8434237860367993958}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 281.3, y: 0, z: 190.2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_Children:
   - {fileID: 8434237860572307875}
+  - {fileID: 709634133259437657}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   city: {fileID: 0}
-  peoplePool: {fileID: 0}
+  peoplePool: {fileID: 7423129481299674623}
 --- !u!1 &8434237860572307878
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,7 +161,7 @@ MonoBehaviour:
   - {fileID: 3568900967676528188}
   - {fileID: 3568900966792603847}
   - {fileID: 3568900967584104038}
-  maxInstance: 100
+  maxInstance: 300
   lastInstanceIndex: 0
 --- !u!1001 &3334355820350404685
 PrefabInstance:
@@ -127,40 +175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car-particle
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496331, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: pool
-      value: 
-      objectReference: {fileID: 8434237860572307873}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[0].x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].y
+      propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[3].x
-      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496334, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -217,25 +235,55 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedHorizontal
-      value: 50
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 8434237860572307873}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: randomWalk
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[0].x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[3].x
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedVertical
-      value: 50
+      propertyPath: verticalSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: rotationSmooth
-      value: 100
+      propertyPath: vleanLimit
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ae2d0d8e0bdbf364c92f1b1636d310b2, type: 3}
@@ -269,40 +317,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car-particle (3)
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496331, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: pool
-      value: 
-      objectReference: {fileID: 8434237860572307873}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[0].x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].y
+      propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[3].x
-      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496334, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -359,25 +377,55 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedHorizontal
-      value: 50
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 8434237860572307873}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: randomWalk
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[0].x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[3].x
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedVertical
-      value: 50
+      propertyPath: verticalSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: rotationSmooth
-      value: 100
+      propertyPath: vleanLimit
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2912563697296609086, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -421,40 +469,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car-particle (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496331, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: pool
-      value: 
-      objectReference: {fileID: 8434237860572307873}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[0].x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].y
+      propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[3].x
-      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496334, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -511,25 +529,55 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedHorizontal
-      value: 50
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 8434237860572307873}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: randomWalk
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[0].x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[3].x
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedVertical
-      value: 50
+      propertyPath: verticalSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: rotationSmooth
-      value: 100
+      propertyPath: vleanLimit
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2912563696537961046, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -573,40 +621,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car-particle (4)
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496331, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: pool
-      value: 
-      objectReference: {fileID: 8434237860572307873}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[0].x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].y
+      propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[3].x
-      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496334, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -663,25 +681,55 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedHorizontal
-      value: 50
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 8434237860572307873}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: randomWalk
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[0].x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[3].x
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedVertical
-      value: 50
+      propertyPath: verticalSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: rotationSmooth
-      value: 100
+      propertyPath: vleanLimit
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2912563696575220380, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -725,40 +773,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Car-particle (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496331, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: pool
-      value: 
-      objectReference: {fileID: 8434237860572307873}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[0].x
-      value: -20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[1].y
+      propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[2].y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: checkpoints.Array.data[3].x
-      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496334, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
@@ -815,25 +833,55 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedHorizontal
-      value: 50
+      propertyPath: pool
+      value: 
+      objectReference: {fileID: 8434237860572307873}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: randomWalk
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[0].x
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[2].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4939083338136496332, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
+        type: 3}
+      propertyPath: checkpoints.Array.data[3].x
+      value: -20
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: maxSpeedVertical
-      value: 50
+      propertyPath: verticalSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}
-      propertyPath: rotationSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4939083338136496333, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
-        type: 3}
-      propertyPath: rotationSmooth
-      value: 100
+      propertyPath: vleanLimit
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2912563697748260394, guid: ae2d0d8e0bdbf364c92f1b1636d310b2,
         type: 3}

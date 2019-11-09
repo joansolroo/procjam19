@@ -333,16 +333,17 @@ public class Building : TerrainElement
     public void GeneratePaths()
     {
         List<Vector3> footPath = new List<Vector3>();
-        float d = 0;
-        footPath.Add(transform.TransformPoint(new Vector3(-size.x / 2, d, -size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(-size.x / 2, d, size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(size.x / 2, d, size.z / 2)));
-        footPath.Add(transform.TransformPoint(new Vector3(size.x / 2, d, -size.z / 2)));
+        float d = 0.5f * ((int)(size.x) + 1) - 0.12f;// 0.38f;
+
+        footPath.Add(transform.TransformPoint(new Vector3(-d, 0, -d)));
+        footPath.Add(transform.TransformPoint(new Vector3(-d, 0,  d)));
+        footPath.Add(transform.TransformPoint(new Vector3( d, 0,  d)));
+        footPath.Add(transform.TransformPoint(new Vector3( d, 0, -d)));
         paths.Add(footPath);
     }
 
     // helpers
-    private void OnDrawGizmos()
+    private void OnDrawGizmos2()
     {
         Gizmos.color = Color.green;
         foreach (List<Vector3> path in paths)
