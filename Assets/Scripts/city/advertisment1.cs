@@ -7,6 +7,7 @@ public class advertisment1 : MonoBehaviour
 {
     public TextMeshPro frontText;
     public TextMeshPro backText;
+    public bool randomColor = true;
     public Gradient neonColor;
 
     public string[] textList;
@@ -28,6 +29,7 @@ public class advertisment1 : MonoBehaviour
     void Start()
     {
         SetText(textList[Random.Range(0, textList.Length)]);
-        SetColor(neonColor.Evaluate(Random.Range(0f, 1f)));
+        if(randomColor)
+            SetColor(neonColor.Evaluate(Random.Range(0f, 1f)));
     }
 }

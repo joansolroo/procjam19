@@ -6,10 +6,11 @@ public class LODProxy : MonoBehaviour
 {
     private MeshRenderer[] meshrenderers;
     private LODProxy[] proxies;
-    void Start()
+
+    void Awake()
     {
         meshrenderers = GetComponentsInChildren<MeshRenderer>();
-        proxies = GetComponentsInChildren<LODProxy>();
+        //proxies = GetComponentsInChildren<LODProxy>();
     }
 
     // Update is called once per frame
@@ -17,7 +18,7 @@ public class LODProxy : MonoBehaviour
     {
         foreach (MeshRenderer mr in meshrenderers)
             mr.enabled = enable;
-        foreach (LODProxy p in proxies)
-            p.SetState(enable);
+        //foreach (LODProxy p in proxies)
+        //    p.SetState(enable);
     }
 }

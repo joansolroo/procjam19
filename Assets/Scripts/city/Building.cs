@@ -19,6 +19,7 @@ public class Building : TerrainElement
     public string personParticleManager = "PersonParticleManager";
     private int textureIndex;
     public bool sharedBuilding = false;
+    [Range(0.0f, 1.0f)] public float lateralDensity = 0.5f;
 
     public Material[] windowMaterials;
     public Texture[] textureList;
@@ -284,7 +285,7 @@ public class Building : TerrainElement
             equipement.transform.localPosition = blocs[0].transform.localPosition + new Vector3(0, blocs[0].transform.localScale.y / 2, 0);
             equipement.transform.localEulerAngles = new Vector3(0, Random.Range(0, 2) == 1 ? 90 : 0, 0);
             equipement.transform.localScale = Vector3.one;
-
+            
             lodroof.Add(equipement.GetComponent<LODProxy>());
         }
     }
@@ -302,7 +303,7 @@ public class Building : TerrainElement
         {
             GameObject b = blocs[i];
             Vector3 p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2);
-            if (IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
+            if (Random.Range(0f, 1f) < lateralDensity && IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, dp)));
@@ -310,7 +311,7 @@ public class Building : TerrainElement
             }
 
             p = b.transform.localPosition + new Vector3(b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2);
-            if (IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon)))
+            if (Random.Range(0f, 1f) < lateralDensity && IsEmptySpace(blocs, p + new Vector3(epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(dp, 0, 0) : new Vector3(0, 0, -dp)));
@@ -318,7 +319,7 @@ public class Building : TerrainElement
             }
 
             p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), b.transform.localScale.z / 2);
-            if (IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
+            if (Random.Range(0f, 1f) < lateralDensity && IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, epsilon)))
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, dp)));
@@ -326,7 +327,7 @@ public class Building : TerrainElement
             }
 
             p = b.transform.localPosition + new Vector3(-b.transform.localScale.x / 2, -b.transform.localScale.y / 2 + epsilon + offset * (i + 1), -b.transform.localScale.z / 2);
-            if (IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon))) 
+            if (Random.Range(0f, 1f) < lateralDensity && IsEmptySpace(blocs, p + new Vector3(-epsilon, 0, 0)) && IsEmptySpace(blocs, p + new Vector3(0, 0, -epsilon))) 
             {
                 bool r = Random.Range(0, 2) == 1;
                 availablePositions.Add(p + (r ? new Vector3(-dp, 0, 0) : new Vector3(0, 0, -dp)));

@@ -11,8 +11,8 @@ public class City : TerrainElement
     public List<Group> groups;
     public List<Street> streets;
 
-    public float blockVisibilityRadius = 10;
-    public float blockVisibilityOffset = 30;
+    public float blockVisibilityRadius = 1000;
+    //public float blockVisibilityOffset = 30;
     public int pedestrianDensity = 30;
     public float personVisibilityRadius = 100;
     public float lateralVisibilityRadius = 300;
@@ -23,7 +23,6 @@ public class City : TerrainElement
     public GraphSparse<Vector3>.Node[,,] carNodes;
     void Update()
     {
-        bool person, lateral, roof;
         foreach (Group group in groups)
         {
             Vector3 p = Camera.main.transform.InverseTransformPoint(group.transform.position);
@@ -36,26 +35,24 @@ public class City : TerrainElement
 
                 foreach(Block b in group.blocks)
                 {
-                    float distance = p.magnitude;
-                    person = distance < personVisibilityRadius;
-
-                    // pepole
-                    if (person && !b.hasPersons)
+                    if (b.building)
                     {
-                        b.hasPersons = true;
-                        b.building.GeneratePersons((b.building.sharedBuilding ? 2 * pedestrianDensity : pedestrianDensity));
-                    }
-                    else if (!person && b.hasPersons)
-                    {
-                        b.hasPersons = false;
-                        foreach (GameObject pepole in b.building.persons)
-                            pepole.SetActive(false);
-                        b.building.persons.Clear();
-                    }
+                        float distance = Camera.main.transform.InverseTransformPoint(b.transform.position).magnitude;
 
+                        // pepole
+                        if (distance < personVisibilityRadius && !b.hasPersons)
+                        {
+                            b.hasPersons = true;
+                            b.building.GeneratePersons((b.building.sharedBuilding ? 2 * pedestrianDensity : pedestrianDensity));
+                        }
+                        else if (distance >= personVisibilityRadius && b.hasPersons)
+                        {
+                            b.hasPersons = false;
+                            foreach (GameObject pepole in b.building.persons)
+                                pepole.SetActive(false);
+                            b.building.persons.Clear();
+                        }
                     
-                    if(b.building)
-                    {
                         // windows
                         if(b.building.lodwindow)
                         {
@@ -105,6 +102,7 @@ public class City : TerrainElement
             }
         }
     }
+    /*
     void Update2()
     {
         for (int i = 0; i < blocks.GetLength(0); i++)
@@ -154,7 +152,7 @@ public class City : TerrainElement
                     }
                 }
             }
-    }
+    }*/
 
     private void OnDrawGizmos2()
     {
