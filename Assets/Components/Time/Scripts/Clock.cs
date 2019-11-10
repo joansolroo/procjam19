@@ -16,6 +16,9 @@ public class Clock : MonoBehaviour
     [Header("Status")]
     [SerializeField] public int globalBeat = -1;
     [SerializeField] public int beat = -1;
+    [SerializeField] float totalTime;
+    [SerializeField] float expectedTime;
+    [SerializeField] float error;
     #endregion
 
     #region Events
@@ -30,9 +33,7 @@ public class Clock : MonoBehaviour
         StartCoroutine(DoTicking());
     }
 
-    float totalTime;
-    float expectedTime;
-    float error;
+    
 
     IEnumerator DoTicking()
     {

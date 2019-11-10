@@ -8,7 +8,7 @@ public class Markov : MonoBehaviour
     {
         public int current;
         public GraphDense graph;
-
+       
         public MarkovNavigation(GraphDense graph)
         {
             ChangeGraph(graph);
@@ -56,9 +56,17 @@ public class Markov : MonoBehaviour
     }
     [SerializeField] Clock metronome;
     [SerializeField] Song song;
+   
     [SerializeField] Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource> sources = new Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource>();
     AudioSource defaultSource;
 
+    [Header("Status")]
+    [SerializeField] SongPart currentPart;
+    MarkovNavigation navigationPart;
+    MarkovNavigation[] navigationChannel;
+    [SerializeField] int partBeat;
+    [SerializeField] int[] channelBeat;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -85,11 +93,7 @@ public class Markov : MonoBehaviour
         currentRowIdx = song.transitions.entry;
         */
     }
-    MarkovNavigation navigationPart;
-    public int partBeat;
-    MarkovNavigation[] navigationChannel;
-    public int[] channelBeat;
-    SongPart currentPart;
+  
     void ResetPartProgress()
     {
         partBeat = 0;
@@ -101,6 +105,10 @@ public class Markov : MonoBehaviour
         {
             navigationChannel[c] = new MarkovNavigation(currentPart.channels[c].transitions);
             channelBeat[c] = 0;
+        }
+        if (currentPart.mixerSnapshot != null)
+        {
+            currentPart.mixerSnapshot.TransitionTo(0);
         }
     }
 
