@@ -671,6 +671,38 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 82e6ac19bd4186a4189f351ebbe3aa56, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 68745164087cb8c4e9035fdd219210de, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: ea59d4e12951a8e45a2c4b985b16e09a, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 906c1a53ec69a9942a88a058f065dff8, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[4]
+      value: 
+      objectReference: {fileID: 2100000, guid: ee1929fdb32c2d1489e4c5fb414a2a35, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: materialTemplates.Array.data[5]
+      value: 
+      objectReference: {fileID: 2100000, guid: f091416bca1ed1f44a2783debff3da13, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
+      propertyPath: glass
+      value: 
+      objectReference: {fileID: 2100000, guid: de7d405fbe5cbbf46af710f65d6b2015, type: 2}
+    - target: {fileID: 2017164549, guid: 4621f6dab2f73d14d9fc02f4f1e00c3c, type: 3}
       propertyPath: carPool
       value: 
       objectReference: {fileID: 2276339593044752916}
