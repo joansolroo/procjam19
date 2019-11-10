@@ -6,7 +6,7 @@ using UnityEngine;
 public class ParticlePool : GameElement
 {
     public static Dictionary<string, ParticlePool> pools = new Dictionary<string, ParticlePool>();
-    public Particle[] prefabs;
+    public ParticleFactory factory;
     public int maxInstance = 5;
 
     private List<Particle> pool = new List<Particle>();
@@ -39,20 +39,22 @@ public class ParticlePool : GameElement
         }
         else if(pool.Count < maxInstance)
         {
-            Particle particle = Instantiate(prefabs[Random.Range(0,prefabs.Length)]);
+            Particle particle = factory.GetParticle();// Instantiate(factory.generatedCars[Random.Range(0, factory.generatedCars.Length)]).GetComponent<Particle>();
             particle.pool = this;
             pool.Add(particle);
             lastInstanceIndex = pool.Count - 1;
 
-            particle.ResetParticle();
             particle.transform.parent = this.transform;
+            particle.ResetParticle();
+            
             return particle.gameObject;
         }
         else
         {
-            GameObject go = pool[lastInstanceIndex].gameObject;
+            Particle particle = pool[lastInstanceIndex];
             lastInstanceIndex = (lastInstanceIndex + 1) % maxInstance;
-            return go;
+            particle.ResetParticle();
+            return particle.gameObject;
         }
     }
     public T Take<T>()

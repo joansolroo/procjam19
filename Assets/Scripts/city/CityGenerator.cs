@@ -6,7 +6,9 @@ public class CityGenerator : MonoBehaviour
 {
     public City city;
     public AutoMergeChildMeshes streetTexture;
-    public BuildingFactory factory;
+    public BuildingFactory buildingactory;
+    public CarFactory carFactory;
+    public PersonFactory personFactory;
     public int groupSize = 2;
     public bool enableBlockMerge = false;
     public float blockMergeRatio = 0.05f;
@@ -18,8 +20,10 @@ public class CityGenerator : MonoBehaviour
         if (seed < 0)
             seed = Random.Range(0, 4000000);
         Random.InitState(seed);
-        factory.generateMegastructure = enableBlockMerge;
-        factory.Generate();
+        buildingactory.generateMegastructure = enableBlockMerge;
+        buildingactory.Generate();
+        carFactory.Generate();
+        personFactory.Generate();
         Generate();
     }
 
@@ -133,7 +137,7 @@ public class CityGenerator : MonoBehaviour
                 // BUILDING FACTORY
                 if (enableBlockMerge && Random.value < blockMergeRatio && AvailableForMergeBlock(x, z))
                 {
-                    Building building = factory.GetMegaBuilding(Random.Range(0.9f, 1.5f) * block.richness * 1.1f);
+                    Building building = buildingactory.GetMegaBuilding(Random.Range(0.9f, 1.5f) * block.richness * 1.1f);
                     building.transform.parent = block.transform;
                     building.LocalPosition = new Vector3(0.5f, 0, 0.5f);
                     building.transform.localScale = Vector3.one;
@@ -361,7 +365,7 @@ public class CityGenerator : MonoBehaviour
     }
     private void SimpleBuildingGenerate(Block block)
     {
-        Building building = factory.GetBuilding(Random.Range(0.9f, 1.5f) * block.richness);
+        Building building = buildingactory.GetBuilding(Random.Range(0.9f, 1.5f) * block.richness);
         building.transform.parent = block.transform;
         building.LocalPosition = Vector3.zero;
         building.transform.localScale = Vector3.one;

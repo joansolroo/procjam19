@@ -18,6 +18,13 @@ public class BuildingFactory : MonoBehaviour
 
     public void Generate()
     {
+        Transform BuildingContainer = new GameObject().transform;
+        BuildingContainer.gameObject.name = "BuildingContainer";
+        BuildingContainer.parent = transform;
+        BuildingContainer.localPosition = Vector3.zero;
+        BuildingContainer.localScale = Vector3.one;
+        BuildingContainer.localRotation = Quaternion.identity;
+
         generatedBuildingCount = 0;
         for (int h = (int)(startHeight / step); h<(int)(stopHeight / step)+2; h++)
         {
@@ -25,7 +32,7 @@ public class BuildingFactory : MonoBehaviour
             for (int i=0; i<itemsPerStep; i++)
             {
                 Building building = Instantiate<Building>(buildingTemplate);
-                building.transform.parent = transform;
+                building.transform.parent = BuildingContainer;
                 building.gameObject.name = h.ToString() + '_' + i.ToString();
                 building.LocalPosition = Vector3.zero;
                 float d = Random.Range(0.7f, 0.8f);
@@ -40,13 +47,20 @@ public class BuildingFactory : MonoBehaviour
 
         if(generateMegastructure)
         {
+            Transform MegaBuildingContainer = new GameObject().transform;
+            MegaBuildingContainer.gameObject.name = "MegaBuildingContainer";
+            MegaBuildingContainer.parent = transform;
+            MegaBuildingContainer.localPosition = Vector3.zero;
+            MegaBuildingContainer.localScale = Vector3.one;
+            MegaBuildingContainer.localRotation = Quaternion.identity;
+
             for (int h = (int)(startHeight / step); h < (int)(stopHeight / step)+2; h++)
             {
                 megaBuildingList[h] = new List<Building>();
                 for (int i = 0; i < itemsPerStep; i++)
                 {
                     Building building = Instantiate<Building>(buildingTemplate);
-                    building.transform.parent = transform;
+                    building.transform.parent = MegaBuildingContainer;
                     building.gameObject.name = "mega_" + h.ToString() + '_' + i.ToString();
                     building.LocalPosition = Vector3.zero;
                     float d = Random.Range(1.7f, 1.8f);
