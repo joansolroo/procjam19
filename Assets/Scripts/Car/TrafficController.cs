@@ -51,11 +51,9 @@ public class TrafficController : MonoBehaviour
         for(int c = activeCars.Count-1;c>=0;--c)
         {
             CarAI car = activeCars[c];
-            if (Vector3.Distance(car.transform.position, cameraTransform.position)>city.transform.lossyScale.x* maxCarDistanceInCells)
+            if (Vector3.Distance(car.transform.position, trafficCenter) >city.transform.lossyScale.x* maxCarDistanceInCells)
             {
-                car.Destroy();
-                activeCars.RemoveAt(c);
-                AddCar();
+                car.ResetParticle();
             }
         }
     }
@@ -70,19 +68,25 @@ public class TrafficController : MonoBehaviour
     }*/
     public GraphSparse<Vector3>.Node GetStartingPoint()
     {
-        
+        Vector3Int targetCell = new Vector3Int(0,0,0);
+        targetCell.x = (int)(trafficCenter.x / 50 + city.size.x / 2 + 0.5f);
+        targetCell.z = (int)(trafficCenter.z / 50 + city.size.z / 2 + 0.5f);     
 
         GraphSparse<Vector3>.Node node=null;
         int tries = 0;
         do
         {
-            Vector3Int targetCell = city.WorldToCell(trafficCenter);
-            targetCell.x = (int)Mathf.Clamp(targetCell.x + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.x);
-            targetCell.y = (int)Random.Range(0, 5);
-            targetCell.z = (int)Mathf.Clamp(targetCell.z + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.z);
+            float d = maxCarDistanceInCells * 0.9f;
+            Vector2 displacement = Random.Range(0.5f,1f) * d * new Vector2(Random.Range(-d, d), Random.Range(-d, d)).normalized;
+            Vector2Int displacementInt = new Vector2Int((int)(displacement.x) +1, (int)(displacement.y) +1);
             
-          
-            if(Vector3.Distance(city.CellToWorld(targetCell), trafficCenter)> maxCarDistanceInCells / 4){
+            targetCell.x = (int)Mathf.Clamp(targetCell.x + displacementInt.x, 0, city.size.x);
+            targetCell.y = (int)Random.Range(0, 5);
+            targetCell.z = (int)Mathf.Clamp(targetCell.z + displacementInt.y, 0, city.size.z);
+           
+
+            if (Vector3.Distance(city.CellToWorld(targetCell), trafficCenter)> maxCarDistanceInCells / 3)
+            {
                 node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
             }
         } while (node == null && tries < 10);
@@ -125,13 +129,14 @@ public class TrafficController : MonoBehaviour
     {
         int previousId = previous.id;
         int nextId = previousId;
+
         do
         {
-            nextId = Random.Range(0, current.links.Count);
+            nextId = current.links[Random.Range(0, current.links.Count)].to;
         } while (current.links.Count > 1 && nextId == previousId);
 
         // Debug.Log("From:" + current.id + ", goto:" + nextId + "/" + current.links.Count);
-        return city.carRoads.nodes[current.links[nextId].to];
+        return city.carRoads.nodes[nextId];
     }
     public Vector3 GetRoadPoint(GraphSparse<Vector3>.Node node, Vector3 direction)
     {
@@ -150,11 +155,11 @@ public class TrafficController : MonoBehaviour
         }
         else if (direction.z > 0)
         {
-            offset = new Vector3(-1, -1, 0);
+            offset = new Vector3(1, -1, 0);
         }
         else if (direction.z < 0)
         {
-            offset = new Vector3(1, -1, 0);
+            offset = new Vector3(-1, -1, 0);
         }
         else if (direction.y > 0)
         {

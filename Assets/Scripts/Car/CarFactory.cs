@@ -15,7 +15,6 @@ public class CarFactory : ParticleFactory
     
     [Header("Particle attributes")]
     public ParticlePool carPool;
-    public City carCity;
     public TrafficController carTrafic;
 
     [Header("Generated artefacts")]
@@ -48,7 +47,6 @@ public class CarFactory : ParticleFactory
 
             CarAI p = generatedCars[i].GetComponent<CarAI>();
             p.pool = carPool;
-            p.city = carCity;
             p.traffic = carTrafic;
 
             Transform model = generatedCars[i].GetComponent<Car>().model;

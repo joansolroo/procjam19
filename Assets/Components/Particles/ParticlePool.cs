@@ -33,8 +33,8 @@ public class ParticlePool : GameElement
         {
             Particle particle = available[0];
             available.RemoveAt(0);
-            particle.ResetParticle();
             particle.transform.parent = this.transform;
+            particle.ResetParticle();
             return particle.gameObject;
         }
         else if(pool.Count < maxInstance)
