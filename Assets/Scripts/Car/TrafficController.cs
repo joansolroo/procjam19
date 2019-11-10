@@ -138,27 +138,27 @@ public class TrafficController : MonoBehaviour
         Vector3 offset = Vector3.zero;
         if (direction.x > 0)
         {
-            offset = new Vector3(0, 1, 1);
+            offset = new Vector3(0, 1, -1);
         }
         else if (direction.x < 0)
         {
-            offset = new Vector3(0, 1, -1);
+            offset = new Vector3(0, 1, 1);
         }
         else if (direction.z > 0)
         {
-            offset = new Vector3(1, -1, 0);
+            offset = new Vector3(-1, -1, 0);
         }
         else if (direction.z < 0)
         {
-            offset = new Vector3(-1, -1, 0);
+            offset = new Vector3(1, -1, 0);
         }
         else if (direction.y > 0)
         {
-            offset = new Vector3(1, 0, 1) * 2;
+            offset = new Vector3(-1, 0, -1) * 2;
         }
         else if (direction.y < 0)
         {
-            offset = new Vector3(-1, 0, -1) * 2;
+            offset = new Vector3(1, 0, 1) * 2;
         }
         return offset;
     }

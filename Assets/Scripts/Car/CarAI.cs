@@ -21,6 +21,8 @@ public class CarAI : Particle
     public int currentCheckpoint = 0;
     Vector3 initPosition;
     Vector3 checkpoint;
+    Vector3 checkpointRoadBeginning;
+    Vector3 checkpointRoadEnd;
 
     [Header("Status")]
     [SerializeField] float gas = 0;
@@ -29,6 +31,7 @@ public class CarAI : Particle
     [SerializeField] float vertical = 0;
     public Vector3 forwardPlane;
     public Vector3 targetPlane;
+    public Vector3 positionOnPath;
 
     public GameObject GetGameObject()
     {
@@ -43,6 +46,8 @@ public class CarAI : Particle
             current = traffic.GetStartingPoint();
             next = traffic.GetRandomWalk(current);
             checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
+            checkpointRoadBeginning = traffic.GetRoadPoint(current, next.data - current.data);
+            checkpointRoadEnd = traffic.GetRoadPoint(next, next.data - current.data);
             this.transform.position = checkpoint;
             targetisCurrentRoad = true;
         }
@@ -81,6 +86,8 @@ public class CarAI : Particle
                     checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
                     targetisCurrentRoad = true;
                 }
+                checkpointRoadBeginning = traffic.GetRoadPoint(current, next.data - current.data);
+                checkpointRoadEnd = traffic.GetRoadPoint(next, next.data - current.data);
             }
             else
             {
@@ -105,22 +112,36 @@ public class CarAI : Particle
         }
         if (!Destroyed)
         {
+            positionOnPath = Vector3.Project(this.transform.position - checkpointRoadBeginning, checkpointRoadEnd - checkpointRoadBeginning) + checkpointRoadBeginning;
+            Vector3 errorCorrection = (positionOnPath - this.transform.position);
+            Vector3 targetPosition;
+            if (errorCorrection.sqrMagnitude > checkpointMinDistance)
+            {
+                targetPosition = checkpoint + errorCorrection * 10;
+            }else
+            {
+                targetPosition = checkpoint;
+            }
+           
             gas = Mathf.MoveTowards(gas, 1, Time.deltaTime);
-
+            
             if (fancySteer)
             {
                 forwardPlane = new Vector3(this.transform.forward.x, 0, this.transform.forward.z);
-                targetPlane = new Vector3(checkpoint.x - this.transform.position.x, 0, checkpoint.z - this.transform.position.z).normalized;
+                targetPlane = new Vector3(targetPosition.x - this.transform.position.x, 0, targetPosition.z - this.transform.position.z).normalized;
                 steerUnclamped = Mathf.Atan2(forwardPlane.z, forwardPlane.x) - Mathf.Atan2(targetPlane.z, targetPlane.x);
                 steerUnclamped = (steerUnclamped / Mathf.PI + 1) % (2.0f) - 1f;
                 steer = Mathf.Clamp(steerUnclamped, -1, 1);
             }
             else
             {
-                this.transform.LookAt(checkpoint);
+                var targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
+
+                // Smoothly rotate towards the target point.
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, car.rotationSpeed * Time.deltaTime);
                 steer = 0;
             }
-            vertical = Mathf.Clamp(checkpoint.y - this.transform.position.y, -1, 1);
+            vertical = Mathf.Clamp(targetPosition.y - this.transform.position.y, -1, 1);
 
             car.Move(gas, steer, vertical);
         }
@@ -135,6 +156,8 @@ public class CarAI : Particle
         {
             Gizmos.color = Color.gray;
             Gizmos.DrawLine(this.transform.position, checkpoint);
+            Gizmos.DrawLine(this.transform.position, positionOnPath);
+            Gizmos.DrawLine(checkpointRoadBeginning, checkpointRoadEnd);
         }
         else
         {
