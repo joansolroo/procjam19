@@ -26,6 +26,11 @@ public class PlayerMovement : MonoBehaviour
         float speed = Mathf.Clamp01(car.direction.magnitude);
         Vector3 targetCameraPosition = cameraOffset + new Vector3(steer * pursuitScale.x * (0.5f + speed * 0.5f), vert * pursuitScale.y * (0.5f + speed * 0.5f), Mathf.Lerp(-cameraDistance.x, -cameraDistance.y, speed / 5));
         camera.transform.localPosition = Vector3.MoveTowards(camera.transform.localPosition, targetCameraPosition,Time.deltaTime*2) ;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     
