@@ -223,6 +223,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   metronome: {fileID: 0}
   song: {fileID: 11400000, guid: d26d383bfcd329c45aa508eb6281e654, type: 2}
+  currentPart: {fileID: 0}
   partBeat: 0
   channelBeat: 
 --- !u!4 &383683936

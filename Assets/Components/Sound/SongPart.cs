@@ -17,6 +17,7 @@ public class SongPart : ScriptableObject
     public SongChannel[] channels;
     public int duration = 4;
 
+    public UnityEngine.Audio.AudioMixerSnapshot mixerSnapshot;
     /*public Graph transitions;
 
     void OnValidate()

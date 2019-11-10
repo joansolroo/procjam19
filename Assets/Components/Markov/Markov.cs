@@ -8,7 +8,7 @@ public class Markov : MonoBehaviour
     {
         public int current;
         public GraphDense graph;
-
+       
         public MarkovNavigation(GraphDense graph)
         {
             ChangeGraph(graph);
@@ -56,9 +56,17 @@ public class Markov : MonoBehaviour
     }
     [SerializeField] Clock metronome;
     [SerializeField] Song song;
+   
     [SerializeField] Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource> sources = new Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource>();
     AudioSource defaultSource;
 
+    [Header("Status")]
+    [SerializeField] SongPart currentPart;
+    MarkovNavigation navigationPart;
+    MarkovNavigation[] navigationChannel;
+    [SerializeField] int partBeat;
+    [SerializeField] int[] channelBeat;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -85,11 +93,7 @@ public class Markov : MonoBehaviour
         currentRowIdx = song.transitions.entry;
         */
     }
-    MarkovNavigation navigationPart;
-    public int partBeat;
-    MarkovNavigation[] navigationChannel;
-    public int[] channelBeat;
-    SongPart currentPart;
+  
     void ResetPartProgress()
     {
         partBeat = 0;
@@ -101,6 +105,10 @@ public class Markov : MonoBehaviour
         {
             navigationChannel[c] = new MarkovNavigation(currentPart.channels[c].transitions);
             channelBeat[c] = 0;
+        }
+        if (currentPart.mixerSnapshot != null)
+        {
+            currentPart.mixerSnapshot.TransitionTo(0);
         }
     }
 
@@ -124,7 +132,7 @@ public class Markov : MonoBehaviour
         {
             int current = navigationPart.current;
             int next = navigationPart.Navigate();
-            Debug.Log("PART Transition:" + current + "->" + next);
+            //Debug.Log("PART Transition:" + current + "->" + next);
 
             if (current != next)
             {
@@ -146,13 +154,13 @@ public class Markov : MonoBehaviour
                 {
                     toPlay = channel.clips[current];
                 }
-                Debug.Log("> CHANNEL:" + c + ", enter:" + current);
+                //Debug.Log("> CHANNEL:" + c + ", enter:" + current);
             }
             // TODO: improve. This double if is because the first time a part loops it has a missing beat
             if((channelBeat[c]>= channel.duration))
             {
                 int next = navigationChannel[c].Navigate();
-                Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
+                //Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
                 if (channel.clips[next] != null)
                 {
                     toPlay = channel.clips[next];
@@ -176,7 +184,11 @@ public class Markov : MonoBehaviour
                     }
                     else
                     {
-                        source = gameObject.AddComponent<AudioSource>();
+                        GameObject soundcontainer = new GameObject();
+                        soundcontainer.transform.parent = this.transform;
+                        soundcontainer.transform.localPosition = Vector3.zero;
+                        soundcontainer.name = "Channel:"+mixerGroup.name;
+                        source = soundcontainer.AddComponent<AudioSource>();
                         source.outputAudioMixerGroup = mixerGroup;
                         sources[mixerGroup] = source;
                     }
