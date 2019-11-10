@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class CityGenerator : MonoBehaviour
 {
+    public int seed = -1;
     public City city;
     public AutoMergeChildMeshes streetTexture;
     public BuildingFactory buildingactory;
     public CarFactory carFactory;
     public PersonFactory personFactory;
     public int groupSize = 2;
-    public bool enableBlockMerge = false;
+    public bool enableBlockMerge = false; 
     public float blockMergeRatio = 0.05f;
-    public int seed = -1;
-
+    public bool enableAvenues = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +30,7 @@ public class CityGenerator : MonoBehaviour
     void Generate()
     {
         GenerateBlocks();
-        GenerateAvenue();
+        if(enableAvenues) GenerateAvenue();
         GenerateBuildings();
         GenerateRoads();
         Regroup();
