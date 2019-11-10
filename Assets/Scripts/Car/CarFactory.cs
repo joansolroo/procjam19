@@ -10,7 +10,9 @@ public class CarFactory : ParticleFactory
     public GameObject[] frontTemplates;
     public GameObject[] middleTemplates;
     public GameObject[] backTemplates;
-
+    public Material[] materialTemplates;
+    public Material glass;
+    
     [Header("Particle attributes")]
     public ParticlePool carPool;
     public City carCity;
@@ -31,6 +33,12 @@ public class CarFactory : ParticleFactory
         generatedCars = new GameObject[modelCount];
         for (int i=0; i< modelCount; i++)
         {
+            Material[] material = new Material[4];
+            material[0] = materialTemplates[Random.Range(0, materialTemplates.Length)];
+            material[1] = materialTemplates[Random.Range(0, materialTemplates.Length)];
+            material[2] = materialTemplates[Random.Range(0, materialTemplates.Length)];
+            material[3] = glass;
+
             generatedCars[i] = Instantiate(carBase);
             generatedCars[i].name = "car_" + i.ToString();
             generatedCars[i].transform.parent = CarsContainer;
@@ -43,26 +51,29 @@ public class CarFactory : ParticleFactory
             p.city = carCity;
             p.traffic = carTrafic;
 
+            Transform model = generatedCars[i].GetComponent<Car>().model;
+            
             GameObject front = Instantiate(frontTemplates[Random.Range(0, frontTemplates.Length)]);
             front.name = "front";
-            front.transform.parent = generatedCars[i].transform;
+            front.transform.parent = model;
             front.transform.localPosition = Vector3.zero;
             front.transform.localScale = Vector3.one;
-            front.transform.localRotation = Quaternion.identity;
+            Material[] m = { material[0], material[1], material[2] };
+            front.GetComponent<MeshRenderer>().materials = m;
 
             GameObject middle = Instantiate(middleTemplates[Random.Range(0, middleTemplates.Length)]);
             middle.name = "middle";
-            middle.transform.parent = generatedCars[i].transform;
+            middle.transform.parent = model;
             middle.transform.localPosition = Vector3.zero;
             middle.transform.localScale = Vector3.one;
-            middle.transform.localRotation = Quaternion.identity;
+            middle.GetComponent<MeshRenderer>().materials = material;
 
             GameObject back = Instantiate(backTemplates[Random.Range(0, backTemplates.Length)]);
             back.name = "back";
-            back.transform.parent = generatedCars[i].transform;
+            back.transform.parent = model;
             back.transform.localPosition = Vector3.zero;
             back.transform.localScale = Vector3.one;
-            back.transform.localRotation = Quaternion.identity;
+            back.GetComponent<MeshRenderer>().materials = material;
         }
     }
 
