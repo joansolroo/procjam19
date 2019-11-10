@@ -6,6 +6,7 @@ public class WeatherManager : MonoBehaviour
 {
     [Header("Links")]
     [SerializeField] Camera mainCamera;
+    public City city;
 
     [Header("Fog")]
     [SerializeField] bool useFog;
@@ -37,6 +38,7 @@ public class WeatherManager : MonoBehaviour
         float h = Mathf.Max(mainCamera.transform.position.y, 0.1f);
         fogDensity = Mathf.Min(0.05f, Mathf.Pow(h, -1.3f));
         RenderSettings.fogDensity = fogDensity;
+        city.blockVisibilityRadius = Mathf.Clamp(h/10, 0.3f, 1f) * 1000;// 100 * Mathf.Max(h, 0.3f, 10f) * ();
         mainCamera.backgroundColor = fogColor;
         
         Color ff = fogColor;

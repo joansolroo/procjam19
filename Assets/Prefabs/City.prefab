@@ -530,6 +530,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b974edbc2ecb9b48b8a443913fd4064, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 2970997
   city: {fileID: 7681804411061927426}
   streetTexture: {fileID: 136283086}
   buildingactory: {fileID: 7681804409460420707}
@@ -537,8 +538,8 @@ MonoBehaviour:
   personFactory: {fileID: 5657732335768722435}
   groupSize: 4
   enableBlockMerge: 1
-  blockMergeRatio: 0.05
-  seed: 2970997
+  blockMergeRatio: 0.1
+  enableAvenues: 0
 --- !u!114 &1422824990
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -554,7 +555,7 @@ MonoBehaviour:
   city: {fileID: 7681804411061927426}
   RoadSize: 3
   cars: 200
-  maxCarDistanceInCells: 3
+  maxCarDistanceInCells: 6
   carPool: {fileID: 2276339593044752916}
   activeCars: []
 --- !u!1 &7681804411163886507
@@ -1022,6 +1023,10 @@ PrefabInstance:
       propertyPath: groundDensity
       value: 0.11
       objectReference: {fileID: 0}
+    - target: {fileID: 885304692, guid: 72d28650d80e86a4d993d6bd4c174d4e, type: 3}
+      propertyPath: city
+      value: 
+      objectReference: {fileID: 7681804411061927426}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72d28650d80e86a4d993d6bd4c174d4e, type: 3}
 --- !u!4 &5988294730184888305 stripped

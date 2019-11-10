@@ -27,6 +27,12 @@ public class LightTrail : MonoBehaviour
         Vector3 position = parent.position;
         Vector3 movement = position - prevPosition;
         prevPosition = position;
+
+        if(movement.magnitude > 5f)
+        {
+            positions1.Clear();
+            positions2.Clear();
+        }
         
         positions1.Insert(0, this.transform.TransformPoint(-0.5f, 0, 0));
         positions2.Insert(0, this.transform.TransformPoint(0.5f, 0, 0));
