@@ -16,6 +16,7 @@ public class Building : TerrainElement
     public GameObject blocTemplate;
     public GameObject windowTemplate;
     public GameObject roofTemplate;
+    public GameObject cityLightTemplate;
     public string personParticleManager = "PersonParticleManager";
     private int textureIndex;
     public bool sharedBuilding = false;
@@ -41,9 +42,11 @@ public class Building : TerrainElement
     public MeshRenderer[] lodbuilding;
     public List<LODProxy> lodlateral = new List<LODProxy>();
     public List<LODProxy> lodroof = new List<LODProxy>();
+    public List<LODProxy> lodlight = new List<LODProxy>();
     public bool visibleBuilding = true;
     public bool visibleLateral = true;
     public bool visibleroof = true;
+    public bool visiblelights = true;
 
     void Start()
     {
@@ -73,6 +76,7 @@ public class Building : TerrainElement
         if (generateWindows) GenerateWindows();
         if (generateRoof) PlaceRoofEquipement();
         if (generateLateral) PlaceLateralEquipement();
+        if (generateLights) PlaceLights();
     }
     public void GeneratePersons(int personCount = 10)
     {
@@ -352,6 +356,24 @@ public class Building : TerrainElement
             equipement.transform.localScale = Vector3.one;
 
             lodlateral.Add(equipement.GetComponent<LODProxy>());
+        }
+    }
+    private void PlaceLights()
+    {
+        float d = 0.5f * ((int)(size.x) + 1) - 0.1f;
+        Vector3[] pos = { new Vector3(-d, 0, -d / 2), new Vector3(-d, 0, d / 2), new Vector3(d, 0, -d / 2), new Vector3(d, 0, d / 2), new Vector3(-d / 2, 0, -d), new Vector3(d / 2, 0, -d), new Vector3(-d / 2, 0, d), new Vector3(d / 2, 0, d) };
+        int[] ori = { 180, 180, 0, 0, 90, 90, -90, -90 };
+
+        for(int i=0; i< pos.Length; i++)
+        {
+            GameObject go = Instantiate(cityLightTemplate);
+            go.transform.parent = transform;
+            go.name = "light";
+            go.transform.localPosition = pos[i];
+            go.transform.localScale = 0.8f * Vector3.one;
+            go.transform.localEulerAngles = new Vector3(0,ori[i], 0);
+
+            lodlight.Add(go.GetComponent<LODProxy>());
         }
     }
     public void GeneratePaths()

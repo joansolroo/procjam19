@@ -44,16 +44,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   size: {x: 0, y: 0, z: 0}
+  generateOnstart: 0
+  generateWindows: 1
+  generateRoof: 1
+  generateLateral: 1
+  generateLights: 1
   blocTemplate: {fileID: 1519269557454621887, guid: da2defa4a523d534999667e9f4f1f429,
     type: 3}
   windowTemplate: {fileID: 7315090748754782694, guid: 081c9be5514eb984f93953d65f0f9ca5,
     type: 3}
   roofTemplate: {fileID: 6836988052636193617, guid: d3701103a402c234aa9ef5311c2ae8e1,
     type: 3}
-  groundTemplate: {fileID: 7684029060594953985, guid: c13b63084d7e446459dd07875e262e1b,
+  cityLightTemplate: {fileID: 870480847322942005, guid: 57f5b13c33850bc40a7ff6f990189ac4,
     type: 3}
   personParticleManager: PersonParticleManager
   sharedBuilding: 0
+  lateralDensity: 0.5
   windowMaterials:
   - {fileID: 2100000, guid: 6c950170705f09b4aa7e980ffb0f8b8f, type: 2}
   - {fileID: 2100000, guid: 1df3cc2ae86455343b87542ed239d9e7, type: 2}
@@ -89,3 +95,12 @@ MonoBehaviour:
   - {fileID: 634401544232353195, guid: b27fa02cebbd14845a71a9dfca49f4de, type: 3}
   - {fileID: 965190768829911144, guid: f07ba7ab793f46342867c167b32779bc, type: 3}
   persons: []
+  lodwindow: {fileID: 0}
+  lodbuilding: []
+  lodlateral: []
+  lodroof: []
+  lodlight: []
+  visibleBuilding: 1
+  visibleLateral: 1
+  visibleroof: 1
+  visiblelights: 1

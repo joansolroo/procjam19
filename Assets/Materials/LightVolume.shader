@@ -6,8 +6,8 @@ Shader "Perso/LightVolume"
     {
 		_Color("Main Color", Color) = (1,1,1,0.5)
         _MainTex ("Texture", 2D) = "white" {}
-		_Dust("Dust noise", float) = 0
-		_DustOffset("Dust offset", Vector) = (0,0,0,0)
+		//_Dust("Dust noise", float) = 0
+		//_DustOffset("Dust offset", Vector) = (0,0,0,0)
 		_Power("Light power", float) = 0
     }
     SubShader
@@ -30,8 +30,8 @@ Shader "Perso/LightVolume"
             #include "UnityCG.cginc"
 
 			fixed4 _Color;
-			float _Dust;
-			float2 _DustOffset;
+			//float _Dust;
+			//float2 _DustOffset;
 			float _Power;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -60,14 +60,14 @@ Shader "Perso/LightVolume"
 
             fixed4 frag (v2f i) : SV_Target
             {
-				float3 v = _WorldSpaceCameraPos - i.posWorld.xyz;
+				//float3 v = _WorldSpaceCameraPos - i.posWorld.xyz;
 				float3 viewDirection = normalize(_WorldSpaceCameraPos - i.posWorld.xyz);
 				float3 normal = normalize(i.normalDir + 0.001*viewDirection);
 				float d = saturate(dot(normal, viewDirection));
-				float dust = saturate(tex2D(_MainTex, (i.pos.xy + _DustOffset)/1024).x - 0.5) * d;
+				//float dust = saturate(tex2D(_MainTex, (i.pos.xy + _DustOffset)/1024).x - 0.5) * d;
 
 				fixed4 col = _Color;
-				col.a *= pow(i.uv.x, 2) * asin(d) + _Dust * dust;
+				col.a *= pow(i.uv.x, 2) * d;// +_Dust * dust;
                 UNITY_APPLY_FOG(i.fogCoord, col);
 
 				//float3 u = 0.5*normalize(i.n) + 0.5;

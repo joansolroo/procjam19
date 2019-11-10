@@ -18,6 +18,7 @@ public class City : TerrainElement
     public float lateralVisibilityRadius = 300;
     public float windowVisibilityRadius = 500;
     public float roofVisibilityRadius = 700;
+    public float lightsVisibilityRadius = 300;
 
     public GraphSparse<Vector3> carRoads;
     public GraphSparse<Vector3>.Node[,,] carNodes;
@@ -37,6 +38,7 @@ public class City : TerrainElement
                 {
                     if (b.building)
                     {
+                        // building blocs
                         if(!b.building.visibleBuilding)
                         {
                             b.building.visibleBuilding = true;
@@ -94,6 +96,20 @@ public class City : TerrainElement
                             foreach (LODProxy proxy in b.building.lodroof)
                                 proxy.SetState(false);
                         }
+
+                        // lights
+                        if (distance < lightsVisibilityRadius && !b.building.visiblelights)
+                        {
+                            b.building.visiblelights = true;
+                            foreach (LODProxy proxy in b.building.lodlight)
+                                proxy.SetState(true);
+                        }
+                        else if (distance >= lightsVisibilityRadius && b.building.visiblelights)
+                        {
+                            b.building.visiblelights = false;
+                            foreach (LODProxy proxy in b.building.lodlight)
+                                proxy.SetState(false);
+                        }
                     }
 
                 }
@@ -123,10 +139,13 @@ public class City : TerrainElement
                             proxy.SetState(false);
                         foreach (MeshRenderer mr in b.building.lodbuilding)
                             mr.enabled = false;
+                        foreach (LODProxy proxy in b.building.lodlight)
+                            proxy.SetState(false);
 
                         b.building.visibleroof = false;
                         b.building.visibleLateral = false;
                         b.building.visibleBuilding = false;
+                        b.building.visiblelights = false;
                     }
                 }
             }
