@@ -360,6 +360,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: City
       objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: size.x
+      value: 32
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: size.z
+      value: 32
+      objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927427, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -425,5 +435,20 @@ PrefabInstance:
       propertyPath: rain
       value: 
       objectReference: {fileID: 1544188376}
+    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: generateRoof
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: generateLateral
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: generateLights
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
