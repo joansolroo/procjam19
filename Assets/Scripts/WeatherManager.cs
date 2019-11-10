@@ -54,6 +54,7 @@ public class WeatherManager : MonoBehaviour
         Vector3 camPosition = mainCamera.transform.position;
         Vector3 cameraVelocity = cameraPrevPosition - camPosition;
         cameraPrevPosition = mainCamera.transform.position;
+        rain.RainHeight = mainCamera.transform.position.y + 10;
         if (rainExposed)
         {
             if(!rainOnCamera.IsPlaying)
