@@ -160,7 +160,7 @@ public class TrafficController : MonoBehaviour
         {
             offset = new Vector3(1, 0, 1) * 2;
         }
-        return offset;
+        return offset*RoadSize;
     }
     private void OnDrawGizmos()
     {
