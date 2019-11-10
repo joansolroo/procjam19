@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
         float vert = Input.GetAxis("Vertical"); // Up and down
         if (invertVertical) vert *= -1;
 
-        car.Move(gas, steer, vert);
+        car.Move(gas * Mathf.Clamp(gas + transform.position.y / 30,0,5), steer, vert);
 
         ClampPosition();
         float speed = Mathf.Clamp01(car.direction.magnitude);
