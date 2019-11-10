@@ -72,7 +72,7 @@ public class TrafficController : MonoBehaviour
     {
         
 
-        GraphSparse<Vector3>.Node node;
+        GraphSparse<Vector3>.Node node=null;
         int tries = 0;
         do
         {
@@ -80,7 +80,11 @@ public class TrafficController : MonoBehaviour
             targetCell.x = (int)Mathf.Clamp(targetCell.x + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.x);
             targetCell.y = (int)Random.Range(0, 5);
             targetCell.z = (int)Mathf.Clamp(targetCell.z + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.z);
-            node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
+            
+          
+            if(Vector3.Distance(city.CellToWorld(targetCell), trafficCenter)> maxCarDistanceInCells / 4){
+                node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
+            }
         } while (node == null && tries < 10);
         if (node == null)
         {
