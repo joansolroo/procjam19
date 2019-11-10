@@ -348,11 +348,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Building
       objectReference: {fileID: 0}
-    - target: {fileID: 8704442033876906547, guid: baf7df2bffb10f04e837a608cc9b3e49,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1312013454266200244, guid: baf7df2bffb10f04e837a608cc9b3e49,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -406,26 +401,6 @@ PrefabInstance:
     - target: {fileID: 1312013454266200244, guid: baf7df2bffb10f04e837a608cc9b3e49,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
-        type: 3}
-      propertyPath: generateLights
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
-        type: 3}
-      propertyPath: generateLateral
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
-        type: 3}
-      propertyPath: generateRoof
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1286069290850190998, guid: baf7df2bffb10f04e837a608cc9b3e49,
-        type: 3}
-      propertyPath: generateWindows
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -521,10 +496,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1419862704, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
-      propertyPath: buildingTemplate
-      value: 
-      objectReference: {fileID: 1216411943}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: enableBlockMerge
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: blockMergeRatio
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 8275012844997405650, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: rainOnCamera
@@ -535,5 +516,9 @@ PrefabInstance:
       propertyPath: rain
       value: 
       objectReference: {fileID: 2077085106842942834}
+    - target: {fileID: 1419862704, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
+      propertyPath: buildingTemplate
+      value: 
+      objectReference: {fileID: 1216411943}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}

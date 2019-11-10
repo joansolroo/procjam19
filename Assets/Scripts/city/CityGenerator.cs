@@ -11,6 +11,7 @@ public class CityGenerator : MonoBehaviour
     public PersonFactory personFactory;
     public int groupSize = 2;
     public bool enableBlockMerge = false;
+    public float blockMergeRatio = 0.05f;
     public int seed = -1;
 
     // Start is called before the first frame update
@@ -134,7 +135,7 @@ public class CityGenerator : MonoBehaviour
                 block.richness /= radius * radius;
 
                 // BUILDING FACTORY
-                if (enableBlockMerge && Random.Range(0f, 1f) > 0.95f && AvailableForMergeBlock(x, z))
+                if (enableBlockMerge && Random.value < blockMergeRatio && AvailableForMergeBlock(x, z))
                 {
                     Building building = buildingactory.GetMegaBuilding(Random.Range(0.9f, 1.5f) * block.richness * 1.1f);
                     building.transform.parent = block.transform;
@@ -143,6 +144,11 @@ public class CityGenerator : MonoBehaviour
                     building.transform.localEulerAngles = new Vector3(0, -90 * Random.Range(-1, 2), 0);
                     building.gameObject.SetActive(true);
                     building.GeneratePaths();
+
+                    block.superBlock = block;
+                    city.blocks[x + 1, z].superBlock = block;
+                    city.blocks[x, z + 1].superBlock = block;
+                    city.blocks[x + 1, z + 1].superBlock = block;
 
                     block.building = building;
                     city.blocks[x + 1, z].building = building;
@@ -174,44 +180,91 @@ public class CityGenerator : MonoBehaviour
                 {
                     Block block = city.blocks[(int)Mathf.Clamp(x, 0, city.size.x - 1), (int)Mathf.Clamp(z, 0, city.size.z - 1)];
 
-                    // create nodes, in a grid
-                    int id = (int)(x * (city.size.z + 1) + z + y * (city.size.x + 1) * (city.size.z + 1));
-                    GraphSparse<Vector3>.Node node = new GraphSparse<Vector3>.Node();
-                    node.id = id;
-                    Vector3Int cell = new Vector3Int(x, 0, z);
-                    node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * (50 / 2) * (block.richness + 0.5f) / 2 + 5, -50 / 2);
-                    node.links = new List<GraphSparse<Vector3>.Link>();
 
-                    city.carRoads.nodes.Add(node);
-                    city.carNodes[cell.x, y, cell.z] = node;
-                    // Create links, predictively (assuming regular grid)
-                    // TODO optimize: very bad loop
-                    for (int dy = -1; dy <= 1; ++dy)
+                    bool ValidRoadNode = true;
+                    if (block.superBlock != null)
                     {
-                        int y2 = y + dy;
-                        if (y2 >= 0 && y2 < height)
+                        int x2 = x - 1;
+                        int z2 = z - 1;
+                        if (x2 >= 0 && x2 < city.size.x
+                            && z2 >= 0 && z2 < city.size.z)
                         {
-                            for (int dx = -1; dx <= 1; ++dx)
+                            Block block2 = city.blocks[x2, z2];
+
+                            if (block.superBlock == block2.superBlock)
                             {
-                                int x2 = x + dx;
-                                if (x2 >= 0 && x2 <= city.size.x)
+                                ValidRoadNode = false;
+                            }
+                        }
+                    }
+                    if (ValidRoadNode)
+                    {
+
+                        // create nodes, in a grid
+                        int id = (int)(x * (city.size.z + 1) + z + y * (city.size.x + 1) * (city.size.z + 1));
+                        GraphSparse<Vector3>.Node node = new GraphSparse<Vector3>.Node();
+                        node.id = id;
+                        Vector3Int cell = new Vector3Int(x, 0, z);
+                        node.data = city.CellToWorld(cell) + new Vector3(-50 / 2, y * (50 / 2) * (block.richness + 0.5f) / 2 + 5, -50 / 2);
+                        node.links = new List<GraphSparse<Vector3>.Link>();
+
+                        city.carRoads.nodes.Add(node);
+                        city.carNodes[cell.x, y, cell.z] = node;
+                        // Create links, predictively (assuming regular grid)
+
+                    }
+                    else
+                    {
+                        city.carRoads.nodes.Add(null);
+                        city.carNodes[x, y, z] = null;
+                    }
+                }
+            }
+        }
+        // TODO optimize: very bad loop
+        for (int y = 0; y < height; ++y)
+        {
+            for (int x = 0; x <= city.size.x; ++x)
+            {
+                for (int z = 0; z <= city.size.z; ++z)
+                {
+                    for (int dx = -1; dx <= 1; ++dx)
+                    {
+                        int x2 = x + dx;
+                        if (x2 >= 0 && x2 <= city.size.x)
+                        {
+                            for (int dz = -1; dz <= 1; ++dz)
+                            {
+                                int z2 = z + dz;
+                                if (z2 >= 0 && z2 <= city.size.z)
                                 {
-                                    for (int dz = -1; dz <= 1; ++dz)
+                                    for (int dy = -1; dy <= 1; ++dy)
                                     {
-                                        int z2 = z + dz;
-                                        if (z2 >= 0 && z2 <= city.size.z)
+                                        GraphSparse<Vector3>.Node node = city.carNodes[x, y, z];
+                                        if (node != null)
                                         {
-                                            // TODO optimize: this test can be improved by simply not doing a loop
-                                            if ((dx != 0 || dz != 0 || dy != 0) && ((Mathf.Abs(dy) + Mathf.Abs(dx) + Mathf.Abs(dz)) < 2))
+                                            Block block = city.blocks[(int)Mathf.Clamp(x, 0, city.size.x - 1), (int)Mathf.Clamp(z, 0, city.size.z - 1)];
+
+                                            int y2 = y + dy;
+                                            if (y2 >= 0 && y2 < height)
                                             {
-                                                int id2 = (int)(x2 * (city.size.z + 1) + z2 + y2 * (city.size.x + 1) * (city.size.z + 1));
-                                                GraphSparse<Vector3>.Link link = new GraphSparse<Vector3>.Link
+                                                // TODO optimize: this test can be improved by simply not doing a loop
+                                                if ((dx != 0 || dz != 0 || dy != 0) && ((Mathf.Abs(dy) + Mathf.Abs(dx) + Mathf.Abs(dz)) < 2))
                                                 {
-                                                    from = node.id,
-                                                    to = id2,
-                                                    probability = 1
-                                                };
-                                                node.links.Add(link);
+                                                    GraphSparse<Vector3>.Node node2 = city.carNodes[x2, y2, z2];
+                                                    if (node2 != null)
+                                                    {
+                                                        int id2 = (int)(x2 * (city.size.z + 1) + z2 + y2 * (city.size.x + 1) * (city.size.z + 1));
+
+                                                        GraphSparse<Vector3>.Link link = new GraphSparse<Vector3>.Link
+                                                        {
+                                                            from = node.id,
+                                                            to = id2,
+                                                            probability = 1
+                                                        };
+                                                        node.links.Add(link);
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -242,14 +295,14 @@ public class CityGenerator : MonoBehaviour
                 Vector3 c = Vector3.zero;
                 Vector3 s = new Vector3(groupSize, 0, groupSize);
                 bool containMegaStructure = false;
-                for (int k = 0; k < groupSize; k++) 
+                for (int k = 0; k < groupSize; k++)
                 {
                     for (int l = 0; l < groupSize; l++)
                     {
                         city.blocks[x + k, z + l].gameObject.transform.parent = group.transform;
                         c += city.blocks[x + k, z + l].gameObject.transform.localPosition;
                         s.y = Mathf.Max(s.y, city.blocks[x + k, z + l].size.y);
-                        containMegaStructure |= (city.blocks[x + k, z + l].building!=null && city.blocks[x + k, z + l].building.sharedBuilding);
+                        containMegaStructure |= (city.blocks[x + k, z + l].building != null && city.blocks[x + k, z + l].building.sharedBuilding);
                         g.blocks[k, l] = city.blocks[x + k, z + l];
                     }
                 }

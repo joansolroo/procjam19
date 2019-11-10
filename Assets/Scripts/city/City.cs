@@ -129,7 +129,10 @@ public class City : TerrainElement
                             b.building.persons.Clear();
                         }
 
-                        b.building.lodwindow.enabled = false;
+                        if (b.building.lodwindow)
+                        {
+                            b.building.lodwindow.enabled = false;
+                        }
                         foreach (LODProxy proxy in b.building.lodlateral)
                             proxy.SetState(false);
                         foreach (LODProxy proxy in b.building.lodroof)

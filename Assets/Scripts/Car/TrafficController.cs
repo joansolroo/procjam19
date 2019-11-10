@@ -70,23 +70,48 @@ public class TrafficController : MonoBehaviour
     }*/
     public GraphSparse<Vector3>.Node GetStartingPoint()
     {
-        Vector3Int targetCell = city.WorldToCell(trafficCenter);
-        targetCell.x = (int) Mathf.Clamp(targetCell.x + Random.Range(-maxCarDistanceInCells/2, maxCarDistanceInCells/2), 0, city.size.x);
-        targetCell.y = (int)Random.Range(0, 5);
-        targetCell.z = (int)Mathf.Clamp(targetCell.z + Random.Range(-maxCarDistanceInCells/2, maxCarDistanceInCells/2), 0, city.size.z);
-        var node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
+        
+
+        GraphSparse<Vector3>.Node node;
+        int tries = 0;
+        do
+        {
+            Vector3Int targetCell = city.WorldToCell(trafficCenter);
+            targetCell.x = (int)Mathf.Clamp(targetCell.x + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.x);
+            targetCell.y = (int)Random.Range(0, 5);
+            targetCell.z = (int)Mathf.Clamp(targetCell.z + Random.Range(-maxCarDistanceInCells / 2, maxCarDistanceInCells / 2), 0, city.size.z);
+            node = city.carNodes[targetCell.x, targetCell.y, targetCell.z];
+        } while (node == null && tries < 10);
+        if (node == null)
+        {
+            Debug.LogWarning("No available road");
+        }
         return node;
     }
 
     public GraphSparse<Vector3>.Node GetRandomNode()
     {
-        return city.carRoads.nodes[Random.Range(0, city.carRoads.nodes.Count)];
+        GraphSparse<Vector3>.Node node;
+        int tries = 0;
+        do
+        {
+            node = city.carRoads.nodes[Random.Range(0, city.carRoads.nodes.Count)];
+        } while (node == null && tries<10);
+        if(node == null)
+        {
+            Debug.LogWarning("No available road");
+        }
+        return node;
     }
     /*
      * Gives a random next node
      */
     public GraphSparse<Vector3>.Node GetRandomWalk(GraphSparse<Vector3>.Node current)
     {
+        if (current == null)
+        {
+            Debug.LogError("Current node is null");
+        }
         return city.carRoads.nodes[current.links[Random.Range(0, current.links.Count)].to];
     }
     /*
@@ -137,14 +162,12 @@ public class TrafficController : MonoBehaviour
         }
         return offset;
     }
-
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(Camera.main.transform.position, city.transform.lossyScale.x * maxCarDistanceInCells);
         Gizmos.DrawWireSphere(trafficCenter, city.transform.lossyScale.x * maxCarDistanceInCells);
     }
-    /*
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (city!=null && city.carRoads != null)
         {
@@ -152,35 +175,42 @@ public class TrafficController : MonoBehaviour
             GraphSparse<Vector3> roads = city.carRoads;
             foreach (GraphSparse<Vector3>.Node node1 in roads.nodes)
             {
-                Gizmos.color = Color.white;
-                Gizmos.DrawCube(node1.data, Vector3.one * 3 * 2);
-                foreach (GraphSparse<Vector3>.Link link in node1.links)
+                if (node1 != null)
                 {
-                    GraphSparse<Vector3>.Node node2 = roads.nodes[link.to];
-                    Gizmos.color = Color.gray;
-                    Gizmos.DrawLine(node1.data, node2.data);
+                    Gizmos.color = Color.white;
+                    Gizmos.DrawCube(node1.data, Vector3.one * 3 * 2);
+                    foreach (GraphSparse<Vector3>.Link link in node1.links)
+                    {
+                        GraphSparse<Vector3>.Node node2 = roads.nodes[link.to];
+                        if (node1 != null)
+                        {
+                            Gizmos.color = Color.gray;
+                            Gizmos.DrawLine(node1.data, node2.data);
 
-                    Vector3 direction = node2.data - node1.data;
-                    Vector3 offset = GetOffset(direction);
-                    Color color = Color.black;
-                    if (direction.x != 0)
-                    {
-                        color = Color.green;
+                            Vector3 direction = node2.data - node1.data;
+                            Vector3 offset = GetOffset(direction);
+                            Color color = Color.black;
+                            if (direction.x != 0)
+                            {
+                                color = Color.green;
+                            }
+                            else if (direction.z != 0)
+                            {
+                                color = Color.red;
+                            }
+
+                            else if (direction.y != 0)
+                            {
+                                color = Color.blue;
+                            }
+
+                            Gizmos.color = color;
+                            Gizmos.DrawLine(node1.data + offset * RoadSize, node2.data + offset * RoadSize);
+                        }
                     }
-                    else if (direction.z != 0)
-                    {
-                        color = Color.red;
-                    }
-                   
-                    else if (direction.y != 0)
-                    {
-                        color = Color.blue;
-                    }
-                    
-                    Gizmos.color = color;
-                    Gizmos.DrawLine(node1.data + offset * RoadSize, node2.data + offset * RoadSize);
+
                 }
             }
         }
-    }*/
+    }
 }

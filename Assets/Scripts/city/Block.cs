@@ -10,4 +10,6 @@ public class Block : TerrainElement
     public bool hasPersons = false;
     public float richness;
     public bool isAvenue = false;
+
+    public Block superBlock;
 }
