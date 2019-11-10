@@ -18,6 +18,7 @@ public class City : TerrainElement
     public float lateralVisibilityRadius = 300;
     public float windowVisibilityRadius = 500;
     public float roofVisibilityRadius = 700;
+    public float lightsVisibilityRadius = 300;
 
     public GraphSparse<Vector3> carRoads;
     public GraphSparse<Vector3>.Node[,,] carNodes;

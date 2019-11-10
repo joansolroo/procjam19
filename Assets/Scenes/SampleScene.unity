@@ -524,12 +524,12 @@ PrefabInstance:
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.x
-      value: 64
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.z
-      value: 64
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
@@ -624,22 +624,22 @@ PrefabInstance:
     - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: generateWindows
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: generateRoof
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: generateLateral
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: generateLights
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
       propertyPath: cars
@@ -653,7 +653,7 @@ PrefabInstance:
     - target: {fileID: 7681804409460420707, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: itemsPerStep
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
