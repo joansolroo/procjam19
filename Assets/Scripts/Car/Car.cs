@@ -6,7 +6,7 @@ public class Car : MonoBehaviour
 {
     [Header("Links")]
     [SerializeField] CharacterController controller;
-    [SerializeField] Transform model;
+    public Transform model;
     [SerializeField] Transform cameraParent;
 
     [Header("Parameters")]
