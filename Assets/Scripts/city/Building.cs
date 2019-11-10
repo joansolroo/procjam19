@@ -364,7 +364,7 @@ public class Building : TerrainElement
         Vector3[] pos = { new Vector3(-d, 0, -d / 2), new Vector3(-d, 0, d / 2), new Vector3(d, 0, -d / 2), new Vector3(d, 0, d / 2), new Vector3(-d / 2, 0, -d), new Vector3(d / 2, 0, -d), new Vector3(-d / 2, 0, d), new Vector3(d / 2, 0, d) };
         int[] ori = { 180, 180, 0, 0, 90, 90, -90, -90 };
 
-        for(int i=0; i<6; i++)
+        for(int i=0; i< pos.Length; i++)
         {
             GameObject go = Instantiate(cityLightTemplate);
             go.transform.parent = transform;
