@@ -135,7 +135,7 @@ PrefabInstance:
     - target: {fileID: 5574944231836656086, guid: 1b8f6287780296041aa7f8675e98ada9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4
+      value: -24
       objectReference: {fileID: 0}
     - target: {fileID: 5574944231836656086, guid: 1b8f6287780296041aa7f8675e98ada9,
         type: 3}
@@ -145,7 +145,7 @@ PrefabInstance:
     - target: {fileID: 5574944231836656086, guid: 1b8f6287780296041aa7f8675e98ada9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -44.4
+      value: -26.1
       objectReference: {fileID: 0}
     - target: {fileID: 5574944231836656086, guid: 1b8f6287780296041aa7f8675e98ada9,
         type: 3}
@@ -509,16 +509,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: enableBlockMerge
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: blockMergeRatio
-      value: 0.1
-      objectReference: {fileID: 0}
     - target: {fileID: 8275012844997405650, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: rainOnCamera
@@ -533,14 +523,6 @@ PrefabInstance:
         type: 3}
       propertyPath: generateWindows
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
-      propertyPath: cars
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
-      propertyPath: maxCarDistanceInCells
-      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 24317598797007668, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}

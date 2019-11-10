@@ -99,11 +99,6 @@ public class CarAI : Particle
         Vector3 delta = traffic.GetOffset(next.data - current.data);
         if ((this.transform.position - (next.data + delta)).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
         {
-            /*if (randomWalk)
-            {
-                checkpoint = traffic.GetRoadPoint(next, next.data - current.data);
-            }*/
-
             var tmp  = traffic.GetRandomWalk(next, far);
             current = next;
             next = far;
@@ -117,16 +112,21 @@ public class CarAI : Particle
             correction = correction.normalized * correctionSpeed * Time.deltaTime;
         else correction = Vector3.zero;
         Vector3 movement = (next.data + delta - transform.position).normalized * speed * Time.deltaTime;
-        //transform.position = Vector3.MoveTowards(transform.position, perfect + (current.data + delta), correctionSpeed * Time.deltaTime);
-        //transform.position = Vector3.MoveTowards(transform.position, next.data + delta, speed * Time.deltaTime);
+
         controller.Move(correction + movement);
 
         Vector3 horizontal = next.data - current.data;
         horizontal.y = 0;
         if (horizontal.sqrMagnitude != 0)
             lastNonZeroHorizontal = horizontal.normalized;
-        smoothDirection = (1 - aimingFilter) * smoothDirection + aimingFilter * lastNonZeroHorizontal;
-        transform.LookAt(transform.position + smoothDirection);
+        //smoothDirection = (1 - aimingFilter) * smoothDirection + aimingFilter * lastNonZeroHorizontal;
+
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(lastNonZeroHorizontal, Vector3.up), 180*Time.deltaTime);
+
+
+
+
+        //transform.LookAt(transform.position + smoothDirection);
 
         /*if ((this.transform.position - checkpoint).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
         {
