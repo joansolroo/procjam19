@@ -516,6 +516,56 @@ PrefabInstance:
       propertyPath: rain
       value: 
       objectReference: {fileID: 2077085106842942834}
+    - target: {fileID: 24317598797007668, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: checkpointMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167587626709, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: checkpointMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167073930633, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: checkpointMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132168337453938, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: checkpointMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167484220883, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: checkpointMinDistance
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 24317598797007669, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167073930632, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167484220882, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132167587626708, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6565132168337453939, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1419862704, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
       propertyPath: buildingTemplate
       value: 
