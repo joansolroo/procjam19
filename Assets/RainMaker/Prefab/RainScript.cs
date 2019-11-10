@@ -19,6 +19,7 @@ namespace DigitalRuby.RainMaker
         [Tooltip("The top y value of the mist particles")]
         public float RainMistHeight = 3.0f;
 
+
         private void UpdateRain()
         {
             // keep rain and mist above the player

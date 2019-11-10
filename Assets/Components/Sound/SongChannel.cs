@@ -7,6 +7,7 @@ public class SongChannel : ScriptableObject
 {
     [SerializeField] public AudioClip[] clips;
     [SerializeField] public int duration = 1;
+    [SerializeField] public UnityEngine.Audio.AudioMixerGroup mixerGroup;
 
     public GraphDense transitions;
 

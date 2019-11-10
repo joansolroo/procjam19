@@ -14,7 +14,7 @@ public class lowpass : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        filter = GameObject.Find("Test_song").GetComponent<AudioLowPassFilter>();
+        filter = gameObject.GetComponent<AudioLowPassFilter>();
     }
 
     // Update is called once per frame
