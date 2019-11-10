@@ -15,36 +15,26 @@ MonoBehaviour:
   clips:
   - {fileID: 0}
   - {fileID: 8300000, guid: 2d6c54c43afea714aadb445b032dbce1, type: 3}
-  - {fileID: 8300000, guid: 5bdb5333d5989804189d49735fce4e5c, type: 3}
-  - {fileID: 8300000, guid: 72426ad1b7ffda64b955a332fdd7fa32, type: 3}
+  - {fileID: 8300000, guid: 483ccd789822e79478525361229ea27c, type: 3}
   duration: 16
   transitions:
     entry: 0
     exit: 0
-    nodeCount: 4
+    nodeCount: 3
     nodeData:
-    - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0.5
-      - 0.5
-      - 0.5
-      - 0.5
+      - 0
+      - 0.7
+      - 0.3
     - probabilities:
+      - 0.1
       - 0.5
-      - 0.5
-      - 0.5
-      - 0.5
+      - 0.4
     - probabilities:
-      - 0.5
-      - 0.5
-      - 0.5
-      - 0.5
-    - probabilities:
-      - 0.5
-      - 0.5
-      - 0.5
-      - 0.5
+      - 0.1
+      - 0.3
+      - 0.6

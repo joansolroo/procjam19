@@ -13,14 +13,20 @@ MonoBehaviour:
   m_Name: intro - drum
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 8300000, guid: 895906440300faf40aa4414a80a3a2af, type: 3}
+  - {fileID: 0}
+  - {fileID: 8300000, guid: 574c16993a251ed4a893f9f2ba1b659d, type: 3}
   duration: 16
   transitions:
     entry: 0
     exit: 0
-    nodeCount: 1
+    nodeCount: 2
     nodeData:
+    - {fileID: 0}
     - {fileID: 0}
     transitions:
     - probabilities:
       - 0
+      - 1
+    - probabilities:
+      - 0
+      - 1
