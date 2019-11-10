@@ -21,11 +21,12 @@ public class Car : MonoBehaviour
     public float inertia = 0.1f;
 
     [Header("Status")]
-    [SerializeField] public Vector3 direction;
+    [SerializeField] Vector3 direction;
     Vector3 verticalDirection;
     Vector3 horizontalDirection;
     Vector3 lastNonZeroHorizontalDirection;
     Vector3 currentDirection;
+    [SerializeField] public Vector3 velocity;
     float previousGas;
     void Start()
     {
@@ -42,16 +43,21 @@ public class Car : MonoBehaviour
             lastNonZeroHorizontalDirection = (horizontalDirection * currentGas).normalized;
 
         direction = verticalDirection * gravity * maxSpeedVertical + horizontalDirection * currentGas * maxSpeedHorizontal;
-        controller.Move(direction * Time.deltaTime);
+
+        Vector3 prevPosition = this.transform.position;
+        Vector3 expectedMovement = direction * Time.deltaTime + new Vector3(0, vert, 0) * verticalSpeed * Time.deltaTime;
+        controller.Move(expectedMovement);
         if (steer != 0)
         {
             this.transform.Rotate(Vector3.up, rotationSpeed * steer);
         }
-        transform.localPosition += new Vector3(0, vert, 0) * verticalSpeed * Time.deltaTime;
-     
-
+        this.velocity = this.transform.position - prevPosition;
+        Vector3 normalizedVelocity=velocity;
+        if(expectedMovement.x!=0) normalizedVelocity.x /= expectedMovement.x;
+        if (expectedMovement.y != 0) normalizedVelocity.y /= expectedMovement.y;
+        if (expectedMovement.z != 0) normalizedVelocity.z /= expectedMovement.z;
         HorizontalLean(model, steer, hleanLimit, .1f);
-        VerticalLean(model, vert, vleanLimit, .1f);
+        VerticalLean(model, vert, vleanLimit* normalizedVelocity.y, .1f);
     }
     
     void HorizontalLean(Transform target, float axis, float leanLimit, float lerpTime)

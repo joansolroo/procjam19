@@ -8,6 +8,7 @@ public class CarAI : Particle
     [SerializeField] Car car;
     public City city;
     public TrafficController traffic;
+    [SerializeField] Collider movementPrediction;
 
     [Header("AI")]
     [SerializeField] float checkpointMinDistance = 1f;
@@ -15,6 +16,9 @@ public class CarAI : Particle
     [SerializeField] bool randomWalk = true;
     GraphSparse<Vector3>.Node current;
     GraphSparse<Vector3>.Node next;
+
+    [SerializeField] bool predictive = false;
+    [SerializeField] float patience = 10;
 
     [SerializeField] Vector3[] checkpoints;
     [SerializeField] bool loop = true;
@@ -32,6 +36,9 @@ public class CarAI : Particle
     public Vector3 forwardPlane;
     public Vector3 targetPlane;
     public Vector3 positionOnPath;
+    [SerializeField] float currentPatience;
+    [SerializeField] bool angry = false;
+
 
     public GameObject GetGameObject()
     {
@@ -41,6 +48,7 @@ public class CarAI : Particle
     bool targetisCurrentRoad = true;
     protected override void DoCreate()
     {
+        currentPatience = patience;
         if (randomWalk)
         {
             current = traffic.GetStartingPoint();
@@ -118,13 +126,14 @@ public class CarAI : Particle
             if (errorCorrection.sqrMagnitude > checkpointMinDistance)
             {
                 targetPosition = checkpoint + errorCorrection * 10;
-            }else
+            }
+            else
             {
                 targetPosition = checkpoint;
             }
-           
+
             gas = Mathf.MoveTowards(gas, 1, Time.deltaTime);
-            
+
             if (fancySteer)
             {
                 forwardPlane = new Vector3(this.transform.forward.x, 0, this.transform.forward.z);
@@ -136,13 +145,34 @@ public class CarAI : Particle
             else
             {
                 var targetRotation = Quaternion.LookRotation(targetPosition - transform.position);
-
                 // Smoothly rotate towards the target point.
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, car.rotationSpeed * Time.deltaTime);
                 steer = 0;
             }
             vertical = Mathf.Clamp(targetPosition.y - this.transform.position.y, -1, 1);
 
+            if (predictive)
+            {
+                bool hit = Physics.OverlapSphere(movementPrediction.transform.position, 1 / 4).Length > 0;
+                if (!hit || angry)
+                {
+                    currentPatience += Time.deltaTime;
+                    if (angry && currentPatience > patience / 2)
+                    {
+                        angry = false;
+                    }
+                }
+                else
+                {
+                    currentPatience -= Time.deltaTime;
+                    gas = 0;
+                    if (currentPatience <= 0)
+                    {
+                        angry = true;
+                    }
+                }
+                Mathf.Clamp(currentPatience, 0, patience);
+            }
             car.Move(gas, steer, vertical);
         }
     }
