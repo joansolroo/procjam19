@@ -15,4 +15,5 @@ MonoBehaviour:
   channels:
   - {fileID: 11400000, guid: bad54d4ffe5eced45b2445debd5bcb22, type: 2}
   - {fileID: 11400000, guid: fdbd3209caa4ebc4293559d826f73e27, type: 2}
-  duration: 64
+  - {fileID: 11400000, guid: 085dccd50777cf445aaf13afbddf51b9, type: 2}
+  duration: 80

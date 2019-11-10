@@ -25,8 +25,8 @@ MonoBehaviour:
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0.2
-      - 0.8
+      - 0.1
+      - 0.9
     - probabilities:
-      - 0.2
-      - 0.8
+      - 0.1
+      - 0.9

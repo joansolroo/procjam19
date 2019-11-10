@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 051af12b755e92e4abe275fb9d6f6c18, type: 3}
-  m_Name: intro - bass
+  m_Name: intro - ambiant
   m_EditorClassIdentifier: 
   clips:
   - {fileID: 0}
-  - {fileID: 8300000, guid: 8bd297f466fecd84bb780167498a16bb, type: 3}
+  - {fileID: 8300000, guid: 6580ae4d1d6c35c4782e0810905afa47, type: 3}
   duration: 16
   transitions:
     entry: 0

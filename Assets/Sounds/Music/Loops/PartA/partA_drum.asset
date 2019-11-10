@@ -17,7 +17,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3f76cd1e47040ec40b2ec3eccad218e0, type: 3}
   duration: 16
   transitions:
-    entry: 0
+    entry: 1
     exit: 0
     nodeCount: 2
     nodeData:
@@ -26,7 +26,7 @@ MonoBehaviour:
     transitions:
     - probabilities:
       - 0.1
-      - 0.1
+      - 0.8
     - probabilities:
-      - 0.9
-      - 0.9
+      - 0.1
+      - 0.8

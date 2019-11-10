@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 051af12b755e92e4abe275fb9d6f6c18, type: 3}
-  m_Name: intro - bass
+  m_Name: partB - pad
   m_EditorClassIdentifier: 
   clips:
   - {fileID: 0}
-  - {fileID: 8300000, guid: 8bd297f466fecd84bb780167498a16bb, type: 3}
+  - {fileID: 8300000, guid: faec717c5527af246892cb8da75d832e, type: 3}
   duration: 16
   transitions:
-    entry: 0
+    entry: 1
     exit: 0
     nodeCount: 2
     nodeData:
@@ -25,8 +25,8 @@ MonoBehaviour:
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0
       - 1
+      - 0
     - probabilities:
       - 0
       - 1

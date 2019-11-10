@@ -17,4 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5c3c93a2111f4be46b07dbedcbf0f910, type: 2}
   - {fileID: 11400000, guid: b24cb0c1cb91b8c4e8fd2472eaefc0d2, type: 2}
   - {fileID: 11400000, guid: dc56a316269466248a17d774fdd685f6, type: 2}
-  duration: 128
+  duration: 64

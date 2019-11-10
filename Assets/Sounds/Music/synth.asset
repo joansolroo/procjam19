@@ -13,13 +13,27 @@ MonoBehaviour:
   m_Name: synth
   m_EditorClassIdentifier: 
   parts:
+  - {fileID: 11400000, guid: e1b2f9e950f54ad46b64b19fac6a648a, type: 2}
   - {fileID: 11400000, guid: 23396c1f8d5d3c34498c3ef27d7c48e3, type: 2}
+  - {fileID: 11400000, guid: a56c635086f544a46a3261c57a50fead, type: 2}
   transitions:
-    nodeCount: 1
     entry: 0
     exit: 0
+    nodeCount: 3
     nodeData:
+    - {fileID: 11400000, guid: e1b2f9e950f54ad46b64b19fac6a648a, type: 2}
     - {fileID: 11400000, guid: 23396c1f8d5d3c34498c3ef27d7c48e3, type: 2}
+    - {fileID: 11400000, guid: a56c635086f544a46a3261c57a50fead, type: 2}
     transitions:
     - probabilities:
       - 0
+      - 1
+      - 0
+    - probabilities:
+      - 0
+      - 0.6
+      - 0.4
+    - probabilities:
+      - 0
+      - 0.4
+      - 0.6
