@@ -132,7 +132,7 @@ public class Markov : MonoBehaviour
         {
             int current = navigationPart.current;
             int next = navigationPart.Navigate();
-            Debug.Log("PART Transition:" + current + "->" + next);
+            //Debug.Log("PART Transition:" + current + "->" + next);
 
             if (current != next)
             {
@@ -154,13 +154,13 @@ public class Markov : MonoBehaviour
                 {
                     toPlay = channel.clips[current];
                 }
-                Debug.Log("> CHANNEL:" + c + ", enter:" + current);
+                //Debug.Log("> CHANNEL:" + c + ", enter:" + current);
             }
             // TODO: improve. This double if is because the first time a part loops it has a missing beat
             if((channelBeat[c]>= channel.duration))
             {
                 int next = navigationChannel[c].Navigate();
-                Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
+                //Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
                 if (channel.clips[next] != null)
                 {
                     toPlay = channel.clips[next];
@@ -184,7 +184,11 @@ public class Markov : MonoBehaviour
                     }
                     else
                     {
-                        source = gameObject.AddComponent<AudioSource>();
+                        GameObject soundcontainer = new GameObject();
+                        soundcontainer.transform.parent = this.transform;
+                        soundcontainer.transform.localPosition = Vector3.zero;
+                        soundcontainer.name = "Channel:"+mixerGroup.name;
+                        source = soundcontainer.AddComponent<AudioSource>();
                         source.outputAudioMixerGroup = mixerGroup;
                         sources[mixerGroup] = source;
                     }
