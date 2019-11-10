@@ -360,36 +360,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: City
       objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: pedestrianDensity
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: size.x
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: size.z
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: roofVisibilityRadius
-      value: 500
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: lightsVisibilityRadius
-      value: 100
-      objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927427, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -445,21 +415,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: enableBlockMerge
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: seed
-      value: 2970997
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: groupSize
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 8275012844997405650, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: rainOnCamera
@@ -470,39 +425,5 @@ PrefabInstance:
       propertyPath: rain
       value: 
       objectReference: {fileID: 1544188376}
-    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: generateWindows
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: generateRoof
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: generateLateral
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8881742081077471118, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: generateLights
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
-      propertyPath: cars
-      value: 200
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804409460420707, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: step
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7681804409460420707, guid: 1973d0ab59775de46bb127ddbea29f1f,
-        type: 3}
-      propertyPath: itemsPerStep
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}

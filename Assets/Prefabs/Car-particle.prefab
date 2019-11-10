@@ -307,6 +307,7 @@ MonoBehaviour:
   lifeTime: 0
   car: {fileID: 4939083338136496333}
   city: {fileID: 0}
+  traffic: {fileID: 0}
   checkpointMinDistance: 1
   fancySteer: 0
   randomWalk: 0
@@ -776,7 +777,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4939083339281997846
 Transform:
   m_ObjectHideFlags: 0

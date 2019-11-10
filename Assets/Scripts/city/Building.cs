@@ -17,7 +17,7 @@ public class Building : TerrainElement
     public GameObject windowTemplate;
     public GameObject roofTemplate;
     public GameObject cityLightTemplate;
-    public string personParticleManager = "PersonParticleManager";
+    public ParticlePool personPool;
     private int textureIndex;
     public bool sharedBuilding = false;
     [Range(0.0f, 1.0f)] public float lateralDensity = 0.5f;
@@ -80,14 +80,6 @@ public class Building : TerrainElement
     }
     public void GeneratePersons(int personCount = 10)
     {
-        // get particle pool
-        ParticlePool personPool = ParticlePool.pools[personParticleManager];
-        if (personPool == null)
-        {
-            Debug.LogError("ParticlePool of name : " + personParticleManager + ", not found");
-            return;
-        }
-
         // ask for new guys and generate them
         for (int i=0; i< personCount; i++)
         {

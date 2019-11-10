@@ -12,13 +12,14 @@ public class WeatherManager : MonoBehaviour
     [SerializeField] Color fogColor;
     [SerializeField] [Range(0,0.1f)]float fogDensity;
     [SerializeField] Renderer[] floorFog;
+    public float groundDensity = 0.02f;
+
     [Header("Rain")]
     [SerializeField] float rainAmount;
     [SerializeField] RainCameraController rainOnCamera;
     [SerializeField] DigitalRuby.RainMaker.RainScript rain;
     [SerializeField] bool rainExposed = true;
-
-    public float ffa = 0.1f;
+    
 
     Vector3 cameraPrevPosition;
     // Start is called before the first frame update
@@ -39,8 +40,7 @@ public class WeatherManager : MonoBehaviour
         mainCamera.backgroundColor = fogColor;
         
         Color ff = fogColor;
-        ffa = Mathf.Max(0.05f, 0.02f * Mathf.Pow(h, 0.6f));
-        ff.a = ffa;
+        ff.a = Mathf.Max(0.05f, groundDensity * Mathf.Pow(h, 0.6f));
         foreach (Renderer fog in floorFog)
             fog.material.SetColor("_TintColor", ff);
 
