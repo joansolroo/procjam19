@@ -44,15 +44,17 @@ public class ParticlePool : GameElement
             pool.Add(particle);
             lastInstanceIndex = pool.Count - 1;
 
-            particle.ResetParticle();
             particle.transform.parent = this.transform;
+            particle.ResetParticle();
+            
             return particle.gameObject;
         }
         else
         {
-            GameObject go = pool[lastInstanceIndex].gameObject;
+            Particle particle = pool[lastInstanceIndex];
             lastInstanceIndex = (lastInstanceIndex + 1) % maxInstance;
-            return go;
+            particle.ResetParticle();
+            return particle.gameObject;
         }
     }
     public T Take<T>()
