@@ -368,12 +368,12 @@ PrefabInstance:
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.x
-      value: 16
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: size.z
-      value: 16
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7681804411061927426, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
@@ -484,6 +484,19 @@ PrefabInstance:
         type: 3}
       propertyPath: generateLights
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
+      propertyPath: cars
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1422824990, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
+      propertyPath: maxCarDistanceInCells
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7681804409460420707, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: itemsPerStep
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
