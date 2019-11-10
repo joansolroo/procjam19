@@ -457,7 +457,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frontText: {fileID: 3340593219991969586}
   backText: {fileID: 8665937614763784535}
-  randomColor: 0
+  randomColor: 1
   neonColor:
     serializedVersion: 2
     key0: {r: 0, g: 0.95924544, b: 1, a: 1}

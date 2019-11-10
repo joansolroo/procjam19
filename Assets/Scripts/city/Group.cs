@@ -8,6 +8,7 @@ public class Group : MonoBehaviour
     public Vector3 size;
     public bool containMegaStructure;
     public Block[,] blocks;
+    public bool visible = true;
 
     private void OnDrawGizmos2()
     {
