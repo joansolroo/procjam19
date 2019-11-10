@@ -38,9 +38,13 @@ public class Building : TerrainElement
 
     [Header("LOD related")]
     public MeshRenderer lodwindow;
+    public MeshRenderer[] lodbuilding;
     public List<LODProxy> lodlateral = new List<LODProxy>();
     public List<LODProxy> lodroof = new List<LODProxy>();
-    
+    public bool visibleBuilding = true;
+    public bool visibleLateral = true;
+    public bool visibleroof = true;
+
     void Start()
     {
         if(generateOnstart)
@@ -61,17 +65,14 @@ public class Building : TerrainElement
     public void Init(int b = 3)
     {
         textureIndex = Random.Range(0, textureList.Length);
-        
+
         // process
+        lodbuilding = new MeshRenderer[2 * b];
         for (int i = 0; i < b; i++)
             PlaceBlocs(i);
         if (generateWindows) GenerateWindows();
         if (generateRoof) PlaceRoofEquipement();
         if (generateLateral) PlaceLateralEquipement();
-    }
-    public void Link()
-    {
-
     }
     public void GeneratePersons(int personCount = 10)
     {
@@ -112,8 +113,9 @@ public class Building : TerrainElement
         go.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, p.y, (int)(p.z * roundy) / roundy);
         go.name = this.transform.position.ToString() + "." + i;
 
-        go.GetComponent<MeshRenderer>().material.SetTexture("_MainTex", textureList[textureIndex]);
-        go.GetComponent<MeshRenderer>().material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
+        MeshRenderer gomr = go.GetComponent<MeshRenderer>();
+        gomr.material.SetTexture("_MainTex", textureList[textureIndex]);
+        gomr.material.mainTextureScale = new Vector2(2 * go.transform.localScale.x * roundy, 2 * go.transform.localScale.y * roundy);
         blocs.Add(go);
 
         //  place roof
@@ -121,9 +123,13 @@ public class Building : TerrainElement
         roofgo.transform.parent = transform;
         roofgo.SetActive(true);
         Vector3 s2 = new Vector3(sidesize, sidesize, sidesize);
-        roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, 1, (int)(s2.z * roundy) / roundy);
+        roofgo.transform.localScale = new Vector3((int)(s2.x * roundy) / roundy, (int)(s2.z * roundy) / roundy, 1);// (int)(s2.z * roundy) / roundy);
         roofgo.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, go.transform.localScale.y + epsilon, (int)(p.z * roundy) / roundy);
         roofgo.name = "roof";
+
+        // maj of mesh rederer pointers
+        lodbuilding[2 * i] = gomr;
+        lodbuilding[2 * i + 1] = roofgo.GetComponent<MeshRenderer>();
     }
     private void GenerateWindows()
     {
