@@ -1036,9 +1036,9 @@ MonoBehaviour:
   car: {fileID: 5574944231106949092}
   invertVertical: 0
   camera: {fileID: 5574944231018130641}
-  cameraOffset: {x: 0, y: 0.4, z: -2}
+  cameraOffset: {x: 0, y: 0.8, z: -2.5}
   pursuitScale: {x: 0.8, y: 0.4}
-  cameraDistance: {x: 0, y: 5}
+  cameraDistance: {x: 0, y: 10}
 --- !u!143 &5574944231106949093
 CharacterController:
   m_ObjectHideFlags: 0
@@ -6011,6 +6011,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2477025702172623597, guid: 34d8cb67d50510e4f94e4656bac1a62e,
+        type: 3}
+      propertyPath: car
+      value: 
+      objectReference: {fileID: 5574944231106949089}
     - target: {fileID: 2477025702172623585, guid: 34d8cb67d50510e4f94e4656bac1a62e,
         type: 3}
       propertyPath: OutputAudioMixerGroup
@@ -6027,11 +6032,6 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2477025702172623597, guid: 34d8cb67d50510e4f94e4656bac1a62e,
-        type: 3}
-      propertyPath: car
-      value: 
-      objectReference: {fileID: 5574944231106949089}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34d8cb67d50510e4f94e4656bac1a62e, type: 3}
 --- !u!1 &2477025702960555550 stripped

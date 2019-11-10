@@ -20,10 +20,10 @@ public class PlayerMovement : MonoBehaviour
         float vert = Input.GetAxis("Vertical"); // Up and down
         if (invertVertical) vert *= -1;
 
-        car.Move(gas, steer, vert);
+        car.Move(gas * Mathf.Clamp(gas + transform.position.y / 30,0,5), steer, vert);
 
         ClampPosition();
-        float speed = Mathf.Clamp01(car.velocity.magnitude);
+        float speed = Mathf.Clamp01(car.direction.magnitude);
         Vector3 targetCameraPosition = cameraOffset + new Vector3(steer * pursuitScale.x * (0.5f + speed * 0.5f), vert * pursuitScale.y * (0.5f + speed * 0.5f), Mathf.Lerp(-cameraDistance.x, -cameraDistance.y, speed / 5));
         camera.transform.localPosition = Vector3.MoveTowards(camera.transform.localPosition, targetCameraPosition,Time.deltaTime*2) ;
     }
