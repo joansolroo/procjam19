@@ -21,7 +21,7 @@ public class Car : MonoBehaviour
     public float inertia = 0.1f;
 
     [Header("Status")]
-    [SerializeField] Vector3 direction;
+    [SerializeField] public Vector3 direction;
     Vector3 verticalDirection;
     Vector3 horizontalDirection;
     Vector3 lastNonZeroHorizontalDirection;
