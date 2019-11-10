@@ -38,10 +38,10 @@ public abstract class Particle : GameElement
     }
     public void ResetParticle()
     {
-        destroyed = false;
         DoCreate();
         this.time = lifeTime;
         OnCreate?.Invoke();
+        destroyed = false;
     }
     protected void Update()
     {

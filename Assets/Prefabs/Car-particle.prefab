@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9036819169719519287}
-  - component: {fileID: 6502850425213775428}
   m_Layer: 0
   m_Name: model
   m_TagString: Untagged
@@ -30,21 +29,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4939083338136496334}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &6502850425213775428
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4612073282846925243}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.41
-  m_Height: 6.51
-  m_Direction: 2
-  m_Center: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &4939083337446687232
 GameObject:
   m_ObjectHideFlags: 0
@@ -87,6 +72,7 @@ GameObject:
   - component: {fileID: 4939083338136496330}
   - component: {fileID: 4939083338136496333}
   - component: {fileID: 4939083338136496332}
+  - component: {fileID: 7073449703969240263}
   m_Layer: 0
   m_Name: Car-particle
   m_TagString: Untagged
@@ -121,8 +107,8 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1
-  m_Radius: 0.5
+  m_Height: 2.18
+  m_Radius: 2.89
   m_SlopeLimit: 90
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
@@ -135,7 +121,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4939083338136496331}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c8054062fc4a15d4ba191c2eb18bec73, type: 3}
   m_Name: 
@@ -153,6 +139,7 @@ MonoBehaviour:
   vleanLimit: 30
   inertia: 0.1
   direction: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &4939083338136496332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,25 +153,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pool: {fileID: 0}
-  useLifetime: 1
+  useLifetime: 0
   lifeTime: 0
-  car: {fileID: 4939083338136496333}
-  city: {fileID: 0}
+  controller: {fileID: 4939083338136496330}
   traffic: {fileID: 0}
   checkpointMinDistance: 1
-  fancySteer: 0
-  randomWalk: 1
-  checkpoints:
-  - {x: 0, y: 0, z: 0}
-  - {x: 10, y: 20, z: 0}
-  - {x: 10, y: 20, z: 50}
-  - {x: 0, y: 0, z: 50}
-  loop: 1
-  currentCheckpoint: 0
-  gas: 0
-  steer: 0
-  steerUnclamped: 0
-  vertical: 0
-  forwardPlane: {x: 0, y: 0, z: 0}
-  targetPlane: {x: 0, y: 0, z: 0}
-  positionOnPath: {x: 0, y: 0, z: 0}
+  speed: 4
+  correctionSpeed: 8
+  speedDispertion: 0.5
+  aimingFilter: 0.03
+  smoothDirection: {x: 0, y: 0, z: 0}
+--- !u!136 &7073449703969240263
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4939083338136496331}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 1.41
+  m_Height: 6.51
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0}

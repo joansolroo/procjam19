@@ -5,12 +5,28 @@ using UnityEngine;
 public class CarAI : Particle
 {
     [Header("links")]
-    [SerializeField] Car car;
-    public City city;
+    public CharacterController controller;
     public TrafficController traffic;
-    [SerializeField] Collider movementPrediction;
+    /*[SerializeField] Car car;
+    public City city;
+    
+    [SerializeField] Collider movementPrediction;*/
 
     [Header("AI")]
+    GraphSparse<Vector3>.Node current;
+    GraphSparse<Vector3>.Node next;
+    GraphSparse<Vector3>.Node far;
+    public float checkpointMinDistance = 1f;
+    public float speed = 6f;
+    public float correctionSpeed = 12f;
+    public float speedDispertion = 1f;
+
+    [Header("Filters")]
+    private Vector3 lastNonZeroHorizontal;
+    public float aimingFilter = 0.1f;
+    public Vector3 smoothDirection = Vector3.zero;
+
+    /*
     [SerializeField] float checkpointMinDistance = 1f;
     [SerializeField] bool fancySteer = false;
     [SerializeField] bool randomWalk = true;
@@ -37,7 +53,7 @@ public class CarAI : Particle
     public Vector3 targetPlane;
     public Vector3 positionOnPath;
     [SerializeField] float currentPatience;
-    [SerializeField] bool angry = false;
+    [SerializeField] bool angry = false;*/
 
 
     public GameObject GetGameObject()
@@ -45,31 +61,23 @@ public class CarAI : Particle
         return gameObject;
     }
 
-    bool targetisCurrentRoad = true;
+    bool initialized = false;
     protected override void DoCreate()
     {
-        currentPatience = patience;
-        if (randomWalk)
-        {
-            current = traffic.GetStartingPoint();
-            next = traffic.GetRandomWalk(current);
-            checkpoint = traffic.GetRoadPoint(current, next.data - current.data);
-            checkpointRoadBeginning = traffic.GetRoadPoint(current, next.data - current.data);
-            checkpointRoadEnd = traffic.GetRoadPoint(next, next.data - current.data);
-            this.transform.position = checkpoint;
-            targetisCurrentRoad = true;
-        }
-        else
-        {
-            currentCheckpoint = 0;
-            initPosition = this.transform.position;
-            checkpoint = checkpoints[currentCheckpoint] + initPosition;
-        }
-        this.transform.LookAt(checkpoint);
+        initialized = false;
+        /*current = traffic.GetStartingPoint();
+        next = traffic.GetRandomWalk(current);
+        far = traffic.GetRandomWalk(current,next);
+        transform.position = current.data;
+        speed = speed + Random.Range(-speedDispertion, speedDispertion);
+        lastNonZeroHorizontal = new Vector3(0, 0, 1);*/
     }
 
     protected override void DoDestroy()
     {
+        current = null;
+        next = null;
+        far = null;
         this.gameObject.SetActive(false);
         pool.Release(this);
     }
@@ -77,7 +85,50 @@ public class CarAI : Particle
 
     protected override void DoTick()
     {
-        if ((this.transform.position - checkpoint).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
+        if (!initialized)
+        {
+            current = traffic.GetStartingPoint();
+        next = traffic.GetRandomWalk(current);
+        far = traffic.GetRandomWalk(current,next);
+        transform.position = current.data;
+        speed = speed + Random.Range(-speedDispertion, speedDispertion);
+        lastNonZeroHorizontal = new Vector3(0, 0, 1);
+            initialized = true;
+            return;
+        }
+        Vector3 delta = traffic.GetOffset(next.data - current.data);
+        if ((this.transform.position - (next.data + delta)).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
+        {
+            /*if (randomWalk)
+            {
+                checkpoint = traffic.GetRoadPoint(next, next.data - current.data);
+            }*/
+
+            var tmp  = traffic.GetRandomWalk(next, far);
+            current = next;
+            next = far;
+            far = tmp;
+            delta = traffic.GetOffset(next.data - current.data);
+        }
+        
+        Vector3 perfect = Vector3.Project(transform.position - (current.data + delta), (next.data + delta) - (current.data + delta));
+        Vector3 correction = perfect + (current.data + delta) - transform.position;
+        if (correction.sqrMagnitude > 0.5f)
+            correction = correction.normalized * correctionSpeed * Time.deltaTime;
+        else correction = Vector3.zero;
+        Vector3 movement = (next.data + delta - transform.position).normalized * speed * Time.deltaTime;
+        //transform.position = Vector3.MoveTowards(transform.position, perfect + (current.data + delta), correctionSpeed * Time.deltaTime);
+        //transform.position = Vector3.MoveTowards(transform.position, next.data + delta, speed * Time.deltaTime);
+        controller.Move(correction + movement);
+
+        Vector3 horizontal = next.data - current.data;
+        horizontal.y = 0;
+        if (horizontal.sqrMagnitude != 0)
+            lastNonZeroHorizontal = horizontal.normalized;
+        smoothDirection = (1 - aimingFilter) * smoothDirection + aimingFilter * lastNonZeroHorizontal;
+        transform.LookAt(transform.position + smoothDirection);
+
+        /*if ((this.transform.position - checkpoint).sqrMagnitude < (checkpointMinDistance * checkpointMinDistance))
         {
             if (randomWalk)
             {
@@ -174,35 +225,20 @@ public class CarAI : Particle
                 Mathf.Clamp(currentPatience, 0, patience);
             }
             car.Move(gas, steer, vertical);
-        }
+        }*/
     }
 
     private void OnDrawGizmos()
     {
-
-        int prev = 0;
-        Vector3 position = Application.isPlaying ? initPosition : this.transform.position;
-        if (randomWalk)
+        if (current != null)
         {
+            Gizmos.color = Color.white;
+            Gizmos.DrawLine(this.transform.position, next.data);
+            Gizmos.DrawLine(this.transform.position, current.data);
             Gizmos.color = Color.gray;
-            Gizmos.DrawLine(this.transform.position, checkpoint);
-            Gizmos.DrawLine(this.transform.position, positionOnPath);
-            Gizmos.DrawLine(checkpointRoadBeginning, checkpointRoadEnd);
-        }
-        else
-        {
-            Gizmos.color = Color.gray;
-            Gizmos.DrawLine(this.transform.position, position + checkpoints[currentCheckpoint]);
+            Gizmos.DrawLine(current.data, next.data);
             Gizmos.color = Color.black;
-            for (int current = 1; current < checkpoints.Length; ++current)
-            {
-                Gizmos.DrawLine(position + checkpoints[prev], position + checkpoints[current]);
-                prev = current;
-            }
-            if (loop)
-            {
-                Gizmos.DrawLine(position + checkpoints[prev], position + checkpoints[0]);
-            }
+            Gizmos.DrawLine(next.data, far.data);
         }
     }
 }
