@@ -419,22 +419,6 @@ MonoBehaviour:
     m_NumAlphaKeys: 3
   size: 20
   speedSize: 10
---- !u!111 &774245154
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2477025702960555550}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: c45545ab806ac0a43b2382e75baf36d6, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: c45545ab806ac0a43b2382e75baf36d6, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!1 &1390787397
 GameObject:
   m_ObjectHideFlags: 0
@@ -543,6 +527,22 @@ Transform:
   m_Father: {fileID: 188670235}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!111 &774245154
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2477025702960555550}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: c45545ab806ac0a43b2382e75baf36d6, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: c45545ab806ac0a43b2382e75baf36d6, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &5574944230512574434
 GameObject:
   m_ObjectHideFlags: 0
@@ -6010,16 +6010,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2114018624668370759, guid: 34d8cb67d50510e4f94e4656bac1a62e,
-        type: 3}
-      propertyPath: BPM
-      value: 96
-      objectReference: {fileID: 0}
     - target: {fileID: 2477025702172623585, guid: 34d8cb67d50510e4f94e4656bac1a62e,
         type: 3}
-      propertyPath: m_Volume
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 5091377809902975965, guid: fd360ce3f3e1d4a4dbc5ffd6fba0f0fa,
+        type: 2}
     - target: {fileID: 2477025702172623590, guid: 34d8cb67d50510e4f94e4656bac1a62e,
         type: 3}
       propertyPath: m_Enabled
