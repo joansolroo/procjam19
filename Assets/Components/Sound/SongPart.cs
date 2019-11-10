@@ -16,6 +16,7 @@ public class SongPart : ScriptableObject
 {
     public SongChannel[] channels;
     public int duration = 4;
+
     /*public Graph transitions;
 
     void OnValidate()

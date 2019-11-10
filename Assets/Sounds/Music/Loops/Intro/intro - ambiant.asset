@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: intro - ambiant
   m_EditorClassIdentifier: 
   clips:
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 6580ae4d1d6c35c4782e0810905afa47, type: 3}
   - {fileID: 8300000, guid: 6580ae4d1d6c35c4782e0810905afa47, type: 3}
   duration: 16
+  mixerGroup: {fileID: 790658951208535821, guid: fd360ce3f3e1d4a4dbc5ffd6fba0f0fa,
+    type: 2}
   transitions:
     entry: 0
     exit: 0

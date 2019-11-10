@@ -56,14 +56,15 @@ public class Markov : MonoBehaviour
     }
     [SerializeField] Clock metronome;
     [SerializeField] Song song;
-    [SerializeField] AudioSource source;
+    [SerializeField] Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource> sources = new Dictionary<UnityEngine.Audio.AudioMixerGroup, AudioSource>();
+    AudioSource defaultSource;
 
     // Start is called before the first frame update
     void Start()
     {
         metronome.OnTick += Tick;
         navigationPart = new MarkovNavigation(song.transitions);
-
+        defaultSource = GetComponent<AudioSource>();
         /*
         // debug mode
         // Creates a crappy song to test transitions
@@ -104,8 +105,14 @@ public class Markov : MonoBehaviour
     }
 
     bool first = true;
+    bool initialized = false;
     void Tick()
     {
+        if (!initialized)
+        {
+            initialized = true;
+            return;
+        }
         bool resetted = false;
         if(first)
         {
@@ -132,26 +139,50 @@ public class Markov : MonoBehaviour
         {
             SongChannel channel = currentPart.channels[c];
             int current = navigationChannel[c].current;
+            AudioClip toPlay = null;
             if (resetted)
             {
                 if (channel.clips[current] != null)
                 {
-                    source.PlayOneShot(channel.clips[current]);
+                    toPlay = channel.clips[current];
                 }
                 Debug.Log("> CHANNEL:" + c + ", enter:" + current);
             }
             // TODO: improve. This double if is because the first time a part loops it has a missing beat
-            if((channelBeat[c] == partBeat-1 && channelBeat[c]>= channel.duration-1)
-             || (channelBeat[c] < partBeat-1 && channelBeat[c] >= channel.duration))
+            if((channelBeat[c]>= channel.duration))
             {
                 int next = navigationChannel[c].Navigate();
                 Debug.Log("> CHANNEL:" + c + ", Transition:" + current + "->" + next);
                 if (channel.clips[next] != null)
                 {
-                    source.PlayOneShot(channel.clips[next]);
+                    toPlay = channel.clips[next];
                 }
 
                 channelBeat[c] = 0;
+            }
+            if (toPlay != null)
+            {
+                AudioSource source;
+                var mixerGroup = channel.mixerGroup;
+                if(mixerGroup== null)
+                {
+                    source = defaultSource;
+                }
+                else
+                {
+                    if (sources.ContainsKey(mixerGroup))
+                    {
+                        source = sources[mixerGroup];
+                    }
+                    else
+                    {
+                        source = gameObject.AddComponent<AudioSource>();
+                        source.outputAudioMixerGroup = mixerGroup;
+                        sources[mixerGroup] = source;
+                    }
+                }
+                source.pitch = metronome.BPM / song.BPM;
+                source.PlayOneShot(toPlay);
             }
             ++channelBeat[c];
         }

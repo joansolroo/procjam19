@@ -7,7 +7,7 @@ public class Song : ScriptableObject
 {
     public SongPart[] parts;
     public GraphDense transitions;
-
+    public float BPM = 96;
     void OnValidate()
     {
         if (transitions == null)

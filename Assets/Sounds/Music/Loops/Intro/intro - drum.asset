@@ -16,6 +16,8 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 8300000, guid: 574c16993a251ed4a893f9f2ba1b659d, type: 3}
   duration: 16
+  mixerGroup: {fileID: -4874796517972501000, guid: fd360ce3f3e1d4a4dbc5ffd6fba0f0fa,
+    type: 2}
   transitions:
     entry: 0
     exit: 0
@@ -25,8 +27,8 @@ MonoBehaviour:
     - {fileID: 0}
     transitions:
     - probabilities:
-      - 0
-      - 1
+      - 0.5
+      - 0.5
     - probabilities:
       - 0
       - 1

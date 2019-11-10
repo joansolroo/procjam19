@@ -6,7 +6,7 @@ public class Clock : MonoBehaviour
 {
     #region Time
     [Header("Time")]
-    [SerializeField] int BPM = 120;
+    [SerializeField] public int BPM = 120;
     float beatDuration;
     [SerializeField] int beats = 4;
     #endregion
@@ -27,7 +27,6 @@ public class Clock : MonoBehaviour
 
     private void Start()
     {
-        beatDuration = 60f / BPM;
         StartCoroutine(DoTicking());
     }
 
@@ -44,6 +43,7 @@ public class Clock : MonoBehaviour
         float startTime = currentTime;
         while (true)
         {
+            beatDuration = 60f / BPM;
             OnTick?.Invoke();
             if (beat % beats == 0)
             {
