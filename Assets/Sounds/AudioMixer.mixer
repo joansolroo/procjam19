@@ -85,7 +85,6 @@ AudioMixerGroupController:
   m_Send: 00000000000000000000000000000000
   m_Effects:
   - {fileID: -9066136300819256812}
-  - {fileID: -1452968748345669835}
   m_UserColorIndex: 0
   m_Mute: 0
   m_Solo: 0
@@ -120,28 +119,6 @@ AudioMixerEffectController:
   m_EffectName: Attenuation
   m_MixLevel: 2b0a2a8f6a51e534881a6582a0a479c1
   m_Parameters: []
-  m_SendTarget: {fileID: 0}
-  m_EnableWetMix: 0
-  m_Bypass: 0
---- !u!244 &-1452968748345669835
-AudioMixerEffectController:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_EffectID: 3d8337fec5040854dbbc4126aa1d63bb
-  m_EffectName: Flange
-  m_MixLevel: 88dc02765b483694fb21520cfd8b4175
-  m_Parameters:
-  - m_ParameterName: Drymix
-    m_GUID: 6e26dcb39a09e804b88cb10f753e73c0
-  - m_ParameterName: Wetmix
-    m_GUID: 2df2903cd8c382c43a6fab93f100f458
-  - m_ParameterName: Depth
-    m_GUID: 4b61314e800d21345a3d05e28646283f
-  - m_ParameterName: Rate
-    m_GUID: 5969bb42e38c20141b8ea57c54978faa
   m_SendTarget: {fileID: 0}
   m_EnableWetMix: 0
   m_Bypass: 0
