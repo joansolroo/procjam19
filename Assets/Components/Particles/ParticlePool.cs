@@ -26,7 +26,15 @@ public class ParticlePool : GameElement
     {
         lastInstanceIndex = 0;
     }
-    
+
+    private void Update()
+    {
+       foreach(Particle p in pool)
+        {
+            if (p.gameObject.activeSelf && p.Alive)
+                p.UpdateParticle();
+        }
+    }
     public GameObject Take()
     {
         if (available.Count > 0)

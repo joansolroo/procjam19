@@ -10,7 +10,10 @@ public abstract class Particle : GameElement
     public float lifeTime;
     protected float time;
     bool destroyed = false;
-
+    public bool Alive
+    {
+        get { return !destroyed; }
+    }
     #region Events
     public delegate void ParticleEvent();
     public ParticleEvent OnCreate;
@@ -43,7 +46,7 @@ public abstract class Particle : GameElement
         OnCreate?.Invoke();
         destroyed = false;
     }
-    protected void Update()
+    public void UpdateParticle()
     {
         if(useLifetime && lifeTime > 0)
         {

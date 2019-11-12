@@ -14,12 +14,6 @@ public class Cars : Particle
         GenerateCars();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void GenerateCars()
     {
         // Pick a random front

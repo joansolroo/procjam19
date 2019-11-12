@@ -34,9 +34,10 @@ public class Person : Particle
         smoothDirection = (path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex]).normalized;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+
+
+    protected override void DoCreate() { }
+    protected override void DoTick() {
         Vector3 direction = path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex];
         pathIndex = (int)pathIndex + Mathf.Clamp(Vector3.Dot((transform.position - path[(int)pathIndex]) / direction.magnitude, direction.normalized), 0f, 1f);
         if (pathIndex >= path.Count)
@@ -48,8 +49,5 @@ public class Person : Particle
         smoothDirection = (1f - smoothAimming) * smoothDirection + smoothAimming * direction.normalized;
         transform.LookAt(transform.position + smoothDirection);
     }
-
-    protected override void DoCreate() { }
-    protected override void DoTick() { }
     protected override void DoDestroy() { }
 }
