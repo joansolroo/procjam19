@@ -94,12 +94,13 @@ public class OcclusionCulling : MonoBehaviour
     }
     public static bool IsVisibleTerrainElement(TerrainElement element)
     {
-        if (!instance.cullTerrainElements)
-        {
-            return true;
-        }
+        
         if (IsVisibleAABB(element))
         {
+            if (!instance.cullTerrainElements)
+            {
+                return true;
+            }
             if (element.colliders != null && element.colliders.Count > 0)
             {
                 foreach (Collider collider in element.colliders)

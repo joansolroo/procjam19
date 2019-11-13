@@ -133,9 +133,18 @@ public class City : TerrainElement
 
     }
 
+    Vector3 camPos;
+    Quaternion camRot;
     void Update()
     {
         Camera camera = Camera.main;
+        
+        if(Vector3.Distance(camPos,camera.transform.position)<0.01f)
+        { return; }
+        else
+        {
+            camPos = camera.transform.position;
+        }
         foreach (Group group in groups)
         {
             //Vector3 p = Camera.main.transform.InverseTransformPoint(group.transform.position);
@@ -232,7 +241,6 @@ public class City : TerrainElement
     {
         if (carRoads != null)
         {
-
             GraphSparse<Vector3> roads = carRoads;
             foreach (GraphSparse<Vector3>.Node node1 in roads.nodes)
             {

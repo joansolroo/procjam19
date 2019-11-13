@@ -7156,6 +7156,11 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4348039285440286073, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: cullTerrainElements
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1329887290, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
       propertyPath: m_IsActive
       value: 1
