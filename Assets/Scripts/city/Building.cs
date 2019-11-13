@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Building : TerrainElement
 {
+    public Vector3 localSize;
     // attributes
     [Header("Pipeline configuration")]
     public bool generateOnstart = false;
@@ -61,7 +62,8 @@ public class Building : TerrainElement
     public void Resize(Vector3 newsize)
     {
         this.transform.localScale = Vector3.one;
-        size = newsize;
+        localSize = newsize;
+        size = localSize * 50;
     }
 
     // generation functions
@@ -77,6 +79,7 @@ public class Building : TerrainElement
         if (generateRoof) PlaceRoofEquipement();
         if (generateLateral) PlaceLateralEquipement();
         if (generateLights) PlaceLights();
+        renderers = GetComponentsInChildren<Renderer>();
     }
     public void GeneratePersons(int personCount = 10)
     {
@@ -99,12 +102,13 @@ public class Building : TerrainElement
         GameObject go = Instantiate(blocTemplate);
         go.transform.parent = transform;
         go.SetActive(true);
+        colliders.Add(go.GetComponent<Collider>());
 
-        float sidesize = (sharedBuilding ? Random.Range(0.4f, 0.6f) : Random.Range(0.6f, 0.9f)) * size.x;
-        Vector3 s = new Vector3(sidesize, (i == 0 ? 1 : Random.Range(0.5f, 0.9f)) * size.y, sidesize);
+        float sidesize = (sharedBuilding ? Random.Range(0.4f, 0.6f) : Random.Range(0.6f, 0.9f)) * localSize.x;
+        Vector3 s = new Vector3(sidesize, (i == 0 ? 1 : Random.Range(0.5f, 0.9f)) * localSize.y, sidesize);
         go.transform.localScale = new Vector3((int)(s.x * roundy) / roundy, (int)(s.y * roundy + 1) / roundy, (int)(s.z * roundy) / roundy);
 
-        Vector3 maxDisplacement = size - go.transform.localScale;
+        Vector3 maxDisplacement = localSize - go.transform.localScale;
         Vector3 p = new Vector3(Random.Range(-maxDisplacement.x / 2, maxDisplacement.x / 2), go.transform.localScale.y / 2, Random.Range(-maxDisplacement.z / 2, maxDisplacement.z / 2));
         go.transform.localPosition = new Vector3((int)(p.x * roundy) / roundy, p.y, (int)(p.z * roundy) / roundy);
         go.name = this.transform.position.ToString() + "." + i;
@@ -296,7 +300,7 @@ public class Building : TerrainElement
         float dp = 0.02f;
         float offset = 0.15f;
 
-        if (sharedBuilding && size.y < 5 * offset)
+        if (sharedBuilding && localSize.y < 5 * offset)
             return;
 
         List<Vector3> availablePositions = new List<Vector3>();
@@ -352,7 +356,7 @@ public class Building : TerrainElement
     }
     private void PlaceLights()
     {
-        float d = 0.5f * ((int)(size.x) + 1) - 0.1f;
+        float d = 0.5f * ((int)(localSize.x) + 1) - 0.1f;
         Vector3[] pos = { new Vector3(-d, 0, -d / 2), new Vector3(-d, 0, d / 2), new Vector3(d, 0, -d / 2), new Vector3(d, 0, d / 2), new Vector3(-d / 2, 0, -d), new Vector3(d / 2, 0, -d), new Vector3(-d / 2, 0, d), new Vector3(d / 2, 0, d) };
         int[] ori = { 180, 180, 0, 0, 90, 90, -90, -90 };
 
@@ -371,7 +375,7 @@ public class Building : TerrainElement
     public void GeneratePaths()
     {
         List<Vector3> footPath = new List<Vector3>();
-        float d = 0.5f * ((int)(size.x) + 1) - 0.12f;// 0.38f;
+        float d = 0.5f * ((int)(localSize.x) + 1) - 0.12f;// 0.38f;
 
         footPath.Add(transform.TransformPoint(new Vector3(-d, 0, -d)));
         footPath.Add(transform.TransformPoint(new Vector3(-d, 0,  d)));

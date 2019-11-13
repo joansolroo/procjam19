@@ -60,6 +60,7 @@ public abstract class Particle : GameElement
         {
             DoTick();
             OnTick?.Invoke();
+            UpdateVisuals();
         }
     }
     public void Destroy()
@@ -71,5 +72,6 @@ public abstract class Particle : GameElement
     }
     protected abstract void DoCreate();
     protected abstract void DoTick();
+    protected abstract void UpdateVisuals();
     protected abstract void DoDestroy();
 }

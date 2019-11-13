@@ -157,6 +157,7 @@ MonoBehaviour:
   lifeTime: 0
   controller: {fileID: 4939083338136496330}
   traffic: {fileID: 0}
+  model: {fileID: 4612073282846925243}
   checkpointMinDistance: 3
   speed: 4
   correctionSpeed: 8

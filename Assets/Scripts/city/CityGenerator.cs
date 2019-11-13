@@ -42,6 +42,7 @@ public class CityGenerator : MonoBehaviour
         city.blocks = new Block[(int)city.size.x, (int)city.size.z];
 
         Transform blockContainer = new GameObject().transform;
+        blockContainer.gameObject.isStatic = true;
         blockContainer.parent = city.transform;
         blockContainer.localPosition = Vector3.zero;
         blockContainer.localScale = Vector3.one;
@@ -54,6 +55,7 @@ public class CityGenerator : MonoBehaviour
             {
                 // SPACE SORTING: BLOCK
                 GameObject b = new GameObject();
+                b.gameObject.isStatic = true;
                 Block block = b.AddComponent<Block>();
                 city.blocks[x, z] = block;
                 block.transform.parent = blockContainer.transform;
@@ -154,13 +156,14 @@ public class CityGenerator : MonoBehaviour
                     city.blocks[x + 1, z].building = building;
                     city.blocks[x, z + 1].building = building;
                     city.blocks[x + 1, z + 1].building = building;
+                    block.building.gameObject.isStatic = true;
                 }
                 else if (block.building == null && !block.isAvenue)
                 {
                     SimpleBuildingGenerate(block);
                 }
 
-                block.size = new Vector3(1, block.building ? block.building.size.y : 0, 1);
+                block.size = new Vector3(1, block.building ? block.building.localSize.y : 0, 1);
             }
         }
     }
@@ -285,6 +288,7 @@ public class CityGenerator : MonoBehaviour
             for (int z = 0; z < city.size.z; z += groupSize)
             {
                 GameObject group = new GameObject();
+                group.gameObject.isStatic = true;
                 group.name = "group " + x.ToString() + " " + z.ToString();
                 group.transform.parent = transform;
                 group.transform.localScale = Vector3.one;

@@ -38,7 +38,7 @@ public class BuildingFactory : MonoBehaviour
                 float d = Random.Range(0.7f, 0.8f);
                 building.Resize(new Vector3(d, h* step, d));
                 building.sharedBuilding = false;
-                building.Init((int)(2 * building.size.y) + 1);
+                building.Init((int)(2 * building.localSize.y) + 1);
 
                 generatedBuildingCount++;
                 buildingList[h].Add(building);
@@ -66,7 +66,7 @@ public class BuildingFactory : MonoBehaviour
                     float d = Random.Range(1.7f, 1.8f);
                     building.Resize(new Vector3(d, h * step, d));
                     building.sharedBuilding = true;
-                    building.Init((int)(4 * building.size.y) + 1);
+                    building.Init((int)(4 * building.localSize.y) + 1);
 
                     generatedBuildingCount++;
                     megaBuildingList[h].Add(building);

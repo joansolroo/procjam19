@@ -11,8 +11,14 @@ public class ParticlePool : GameElement
 
     private List<Particle> pool = new List<Particle>();
     private List<Particle> available = new List<Particle>();
+    private Dictionary<GameObject,Particle> active = new Dictionary<GameObject, Particle>();
+    List<Particle> toRelease = new List<Particle>();
     public int lastInstanceIndex;
 
+    [Header("Stats")]
+    [SerializeField] float updateTime = 0;
+    [SerializeField] int activeParticles = 0;
+    [SerializeField] int badlyActive = 0;
     private void OnEnable()
     {
         pools[this.name] = this;
@@ -29,41 +35,57 @@ public class ParticlePool : GameElement
 
     private void Update()
     {
-       foreach(Particle p in pool)
+       float start = Time.realtimeSinceStartup;
+       int inactive = 0;
+       toRelease.Clear();
+       foreach(GameObject k in active.Keys)
         {
+
+            Particle p = active[k];
             if (p.gameObject.activeSelf && p.Alive)
+            {
                 p.UpdateParticle();
+            }
+            else
+            {
+                toRelease.Add(p);
+                ++inactive;
+            }
         }
+       foreach(Particle p in toRelease)
+        {
+            Release(p);
+        }
+        updateTime = Time.realtimeSinceStartup - start;
+        activeParticles = active.Count;
+        badlyActive = inactive;
     }
     public GameObject Take()
     {
+        Particle particle;
         if (available.Count > 0)
         {
-            Particle particle = available[0];
+            particle = available[0];
             available.RemoveAt(0);
             particle.transform.parent = this.transform;
-            particle.ResetParticle();
-            return particle.gameObject;
         }
         else if(pool.Count < maxInstance)
         {
-            Particle particle = factory.GetParticle();// Instantiate(factory.generatedCars[Random.Range(0, factory.generatedCars.Length)]).GetComponent<Particle>();
+            particle = factory.GetParticle();// Instantiate(factory.generatedCars[Random.Range(0, factory.generatedCars.Length)]).GetComponent<Particle>();
             particle.pool = this;
             pool.Add(particle);
             lastInstanceIndex = pool.Count - 1;
 
             particle.transform.parent = this.transform;
-            particle.ResetParticle();
-            
-            return particle.gameObject;
         }
         else
         {
-            Particle particle = pool[lastInstanceIndex];
+            particle = pool[lastInstanceIndex];
             lastInstanceIndex = (lastInstanceIndex + 1) % maxInstance;
-            particle.ResetParticle();
-            return particle.gameObject;
         }
+        particle.ResetParticle();
+        active[particle.gameObject] = particle;
+        return particle.gameObject;
     }
     public T Take<T>()
     {
@@ -71,6 +93,8 @@ public class ParticlePool : GameElement
     }
     public void Release(Particle p)
     {
+        p.gameObject.SetActive(false);
         available.Add(p);
+        active.Remove(p.gameObject);
     }
 }
