@@ -24,7 +24,7 @@ public class OcclusionCulling : MonoBehaviour
         OnValidate();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         cameraPlanes = GeometryUtility.CalculateFrustumPlanes(camera);
     }
