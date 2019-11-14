@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LightTrail : MonoBehaviour
 {
+    [SerializeField] new Renderer renderer;
     [SerializeField] Transform parent;
     [SerializeField] MeshFilter filter;
     [SerializeField] Gradient color;
@@ -14,12 +15,36 @@ public class LightTrail : MonoBehaviour
     List<Vector3> positions1 = new List<Vector3>();
     List<Vector3> positions2 = new List<Vector3>();
     // Start is called before the first frame update
+    bool initialized = false;
     void Start()
     {
-        prevPosition = parent.position;
-        filter.mesh = new Mesh();
+        if (!initialized)
+        {
+            initialized = true;
+            prevPosition = parent.position;
+            filter.mesh = new Mesh();
+            renderer = GetComponent<Renderer>();
+        }
     }
 
+    private void OnEnable()
+    {
+        if (!initialized)
+            Start();
+        renderer.enabled = true;
+        Clear();
+    }
+    private void OnDisable()
+    {
+        renderer.enabled = false;
+    }
+
+    void Clear()
+    {
+        prevPosition = parent.position;
+        positions1.Clear();
+        positions2.Clear();
+    }
     float targetSize = 0;
     // Update is called once per frame
     void LateUpdate()
@@ -30,8 +55,7 @@ public class LightTrail : MonoBehaviour
 
         if(movement.magnitude > 5f)
         {
-            positions1.Clear();
-            positions2.Clear();
+            Clear();
         }
         
         positions1.Insert(0, this.transform.TransformPoint(-0.5f, 0, 0));

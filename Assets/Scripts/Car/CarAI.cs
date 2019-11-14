@@ -56,7 +56,7 @@ public class CarAI : Particle
     [SerializeField] float currentPatience;
     [SerializeField] bool angry = false;*/
     Renderer[] renderers;
-
+    LightTrail[] trails;
     public GameObject GetGameObject()
     {
         return gameObject;
@@ -67,6 +67,7 @@ public class CarAI : Particle
     {
         initialized = false;
         renderers = model.GetComponentsInChildren<Renderer>();
+        trails = model.GetComponentsInChildren<LightTrail>();
         /*current = traffic.GetStartingPoint();
         next = traffic.GetRandomWalk(current);
         far = traffic.GetRandomWalk(current,next);
@@ -124,6 +125,10 @@ public class CarAI : Particle
 
         bool visible = OcclusionCulling.IsVisibleAABB(controller.bounds) && OcclusionCulling.IsVisibleCollider(controller);
         foreach(Renderer renderer in renderers)
+        {
+            renderer.enabled = visible;
+        }
+        foreach (LightTrail renderer in trails)
         {
             renderer.enabled = visible;
         }

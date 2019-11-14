@@ -647,6 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 801f84bce37481443871704c38027506, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  renderer: {fileID: 0}
   parent: {fileID: 5574944230955163572}
   filter: {fileID: 1051767935}
   color:
@@ -7061,7 +7062,7 @@ PrefabInstance:
     - target: {fileID: 7681804411061927425, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
       propertyPath: seed
-      value: -1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8275012844997405650, guid: 1973d0ab59775de46bb127ddbea29f1f,
         type: 3}
