@@ -44,6 +44,7 @@ public class Building : TerrainElement
     public List<LODProxy> lodlateral = new List<LODProxy>();
     public List<LODProxy> lodroof = new List<LODProxy>();
     public List<LODProxy> lodlight = new List<LODProxy>();
+
     public bool visibleBuilding = true;
     public bool visibleLateral = true;
     public bool visibleroof = true;
@@ -63,7 +64,7 @@ public class Building : TerrainElement
     {
         this.transform.localScale = Vector3.one;
         localSize = newsize;
-        size = localSize * 50;
+        size = new Vector3(localSize.x>1?100:50,localSize.y * 50, localSize.z > 1 ? 100 : 50);
     }
 
     // generation functions
@@ -393,9 +394,18 @@ public class Building : TerrainElement
             for (int i = 0; i < path.Count; i++)
             {
                 Gizmos.DrawLine(path[i], path[(i + 1)% path.Count]);
+                
             }
         }
     }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = visible ? Color.green : Color.red;
+        {
+            Gizmos.DrawWireCube(transform.position + new Vector3(0, size.y / 2, 0), size*0.98f);
+        }
+    }
+
     private bool IsEmptySpace(List<GameObject> blocs, Vector3 p)
     {
         foreach (GameObject g2 in blocs)

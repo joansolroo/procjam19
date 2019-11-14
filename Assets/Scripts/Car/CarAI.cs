@@ -55,7 +55,7 @@ public class CarAI : Particle
     public Vector3 positionOnPath;
     [SerializeField] float currentPatience;
     [SerializeField] bool angry = false;*/
-
+    Renderer[] renderers;
 
     public GameObject GetGameObject()
     {
@@ -66,6 +66,7 @@ public class CarAI : Particle
     protected override void DoCreate()
     {
         initialized = false;
+        renderers = model.GetComponentsInChildren<Renderer>();
         /*current = traffic.GetStartingPoint();
         next = traffic.GetRandomWalk(current);
         far = traffic.GetRandomWalk(current,next);
@@ -122,7 +123,10 @@ public class CarAI : Particle
             lastNonZeroHorizontal = horizontal.normalized;
 
         bool visible = OcclusionCulling.IsVisibleAABB(controller.bounds) && OcclusionCulling.IsVisibleCollider(controller);
-        model.SetActive(visible);
+        foreach(Renderer renderer in renderers)
+        {
+            renderer.enabled = visible;
+        }
     }
     protected override void UpdateVisuals()
     {

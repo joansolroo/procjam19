@@ -1816,7 +1816,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5574944231169907846}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 682507aab4cb5674e849cacf41a3d60e, type: 3}
   m_Name: 
@@ -7160,6 +7160,26 @@ PrefabInstance:
         type: 3}
       propertyPath: cullTerrainElements
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4348039285440286073, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: mask.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 4348039285440286073, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: cullAABBvsSingleOccluder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4348039285440286073, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: cullCollider
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4348039285440286073, guid: 1973d0ab59775de46bb127ddbea29f1f,
+        type: 3}
+      propertyPath: cullAABBvsFustrum
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1329887290, guid: 1973d0ab59775de46bb127ddbea29f1f, type: 3}
       propertyPath: m_IsActive

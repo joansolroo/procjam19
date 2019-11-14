@@ -17,8 +17,20 @@ public class LODProxy : MonoBehaviour
     public void SetState(bool enable)
     {
         foreach (MeshRenderer mr in meshrenderers)
-            mr.enabled = enable;
+        {
+            mr.enabled = enable && OcclusionCulling.IsVisibleAABB(mr.bounds);
+        }
         //foreach (LODProxy p in proxies)
         //    p.SetState(enable);
     }
+
+    private void OnDrawGizmos()
+    {
+        foreach(MeshRenderer renderer in meshrenderers)
+        {
+            Gizmos.color = renderer.enabled ? Color.green : Color.red;
+            Gizmos.DrawWireCube(renderer.bounds.center, renderer.bounds.size);
+        }
+    }
+
 }

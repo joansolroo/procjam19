@@ -6,6 +6,7 @@ public class TerrainElement : MonoBehaviour
 {
     private TerrainElement parent;
     public Vector3 size;
+    public bool visible = true;
     public Bounds Bounds
     {
         get
