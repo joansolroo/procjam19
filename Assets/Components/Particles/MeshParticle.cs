@@ -22,4 +22,9 @@ public class MeshParticle : Particle
     {
         gameObject.SetActive(false);
     }
+
+    protected override void UpdateVisuals()
+    {
+        throw new System.NotImplementedException();
+    }
 }

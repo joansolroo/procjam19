@@ -22,132 +22,166 @@ public class City : TerrainElement
 
     public GraphSparse<Vector3> carRoads;
     public GraphSparse<Vector3>.Node[,,] carNodes;
+
+    void SetBuildingVisibility(Block b, bool visible, float distance)
+    {
+        if (visible)
+        {
+            // building blocs
+            if (visible && !b.building.visibleBuilding)
+            {
+                b.building.visibleBuilding = true;
+                foreach (MeshRenderer mr in b.building.lodbuilding)
+                    mr.enabled = true;
+            }
+
+            // pepole
+            if (distance < personVisibilityRadius && !b.hasPersons)
+            {
+                b.hasPersons = true;
+                b.building.GeneratePersons((b.building.sharedBuilding ? 2 * pedestrianDensity : pedestrianDensity));
+            }
+            else if (distance >= personVisibilityRadius && b.hasPersons)
+            {
+                b.hasPersons = false;
+                foreach (GameObject pepole in b.building.persons)
+                    pepole.SetActive(false);
+                b.building.persons.Clear();
+            }
+
+            // windows
+            if (b.building.lodwindow)
+            {
+                b.building.lodwindow.enabled = distance < windowVisibilityRadius;
+            }
+
+
+            // laterals
+            if (distance < lateralVisibilityRadius && !b.building.visibleLateral)
+            {
+                b.building.visibleLateral = true;
+                foreach (LODProxy proxy in b.building.lodlateral)
+                    proxy.SetState(true);
+            }
+            else if (distance >= lateralVisibilityRadius && b.building.visibleLateral)
+            {
+                b.building.visibleLateral = false;
+                foreach (LODProxy proxy in b.building.lodlateral)
+                    proxy.SetState(false);
+            }
+
+            // roof
+            if (distance < roofVisibilityRadius && !b.building.visibleroof)
+            {
+                b.building.visibleroof = true;
+                foreach (LODProxy proxy in b.building.lodroof)
+                    proxy.SetState(true);
+            }
+            else if (distance >= roofVisibilityRadius && b.building.visibleroof)
+            {
+                b.building.visibleroof = false;
+                foreach (LODProxy proxy in b.building.lodroof)
+                    proxy.SetState(false);
+            }
+
+            // lights
+            if (distance < lightsVisibilityRadius && !b.building.visiblelights)
+            {
+                b.building.visiblelights = true;
+                foreach (LODProxy proxy in b.building.lodlight)
+                    proxy.SetState(true);
+            }
+            else if (distance >= lightsVisibilityRadius && b.building.visiblelights)
+            {
+                b.building.visiblelights = false;
+                foreach (LODProxy proxy in b.building.lodlight)
+                    proxy.SetState(false);
+            }
+        }
+
+        else
+        {
+            if (b.building)
+            {
+                if (b.hasPersons)
+                {
+                    b.hasPersons = false;
+                    foreach (GameObject pepole in b.building.persons)
+                        pepole.SetActive(false);
+                    b.building.persons.Clear();
+                }
+
+                if (b.building.lodwindow)
+                {
+                    b.building.lodwindow.enabled = false;
+                }
+                foreach (LODProxy proxy in b.building.lodlateral)
+                    proxy.SetState(false);
+                foreach (LODProxy proxy in b.building.lodroof)
+                    proxy.SetState(false);
+                foreach (MeshRenderer mr in b.building.lodbuilding)
+                    mr.enabled = false;
+                foreach (LODProxy proxy in b.building.lodlight)
+                    proxy.SetState(false);
+
+                b.building.visibleroof = false;
+                b.building.visibleLateral = false;
+                b.building.visibleBuilding = false;
+                b.building.visiblelights = false;
+            }
+        }
+
+    }
+
+    Vector3 camPos;
+    Quaternion camRot;
     void Update()
     {
+        Camera camera = Camera.main;
+        
+        if(Vector3.Distance(camPos,camera.transform.position)<0.01f)
+        { return; }
+        else
+        {
+            camPos = camera.transform.position;
+        }
         foreach (Group group in groups)
         {
-            Vector3 p = Camera.main.transform.InverseTransformPoint(group.transform.position);
-            float offset = Mathf.Sqrt(group.size.x * group.size.x + group.size.z * group.size.z);
-            bool visible = p.z > -offset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;
+            //Vector3 p = Camera.main.transform.InverseTransformPoint(group.transform.position);
+            // float offset = Mathf.Sqrt(group.size.x * group.size.x + group.size.z * group.size.z);
+            // bool visible = p.z > -offset && p.sqrMagnitude < blockVisibilityRadius * blockVisibilityRadius;
+            bool visible = OcclusionCulling.IsVisibleAABB(group);
 
-            if(visible)
-            { 
-                //group.gameObject.SetActive(true);
-
-                foreach(Block b in group.blocks)
-                {
-                    if (b.building)
-                    {
-                        // building blocs
-                        if(!b.building.visibleBuilding)
-                        {
-                            b.building.visibleBuilding = true;
-                            foreach (MeshRenderer mr in b.building.lodbuilding)
-                                mr.enabled = true;
-                        }
-
-                        float distance = Camera.main.transform.InverseTransformPoint(b.transform.position).magnitude;
-
-                        // pepole
-                        if (distance < personVisibilityRadius && !b.hasPersons)
-                        {
-                            b.hasPersons = true;
-                            b.building.GeneratePersons((b.building.sharedBuilding ? 2 * pedestrianDensity : pedestrianDensity));
-                        }
-                        else if (distance >= personVisibilityRadius && b.hasPersons)
-                        {
-                            b.hasPersons = false;
-                            foreach (GameObject pepole in b.building.persons)
-                                pepole.SetActive(false);
-                            b.building.persons.Clear();
-                        }
-                    
-                        // windows
-                        if(b.building.lodwindow)
-                        {
-                            b.building.lodwindow.enabled = distance < windowVisibilityRadius;
-                        }
-
-
-                        // laterals
-                        if(distance < lateralVisibilityRadius && !b.building.visibleLateral)
-                        {
-                            b.building.visibleLateral = true;
-                            foreach (LODProxy proxy in b.building.lodlateral)
-                                proxy.SetState(true);
-                        }
-                        else if(distance >= lateralVisibilityRadius && b.building.visibleLateral)
-                        {
-                            b.building.visibleLateral = false;
-                            foreach (LODProxy proxy in b.building.lodlateral)
-                                proxy.SetState(false);
-                        }
-
-                        // roof
-                        if (distance < roofVisibilityRadius && !b.building.visibleroof)
-                        {
-                            b.building.visibleroof = true;
-                            foreach (LODProxy proxy in b.building.lodroof)
-                                proxy.SetState(true);
-                        }
-                        else if (distance >= roofVisibilityRadius && b.building.visibleroof)
-                        {
-                            b.building.visibleroof = false;
-                            foreach (LODProxy proxy in b.building.lodroof)
-                                proxy.SetState(false);
-                        }
-
-                        // lights
-                        if (distance < lightsVisibilityRadius && !b.building.visiblelights)
-                        {
-                            b.building.visiblelights = true;
-                            foreach (LODProxy proxy in b.building.lodlight)
-                                proxy.SetState(true);
-                        }
-                        else if (distance >= lightsVisibilityRadius && b.building.visiblelights)
-                        {
-                            b.building.visiblelights = false;
-                            foreach (LODProxy proxy in b.building.lodlight)
-                                proxy.SetState(false);
-                        }
-                    }
-
-                }
-            }
-            else if(!visible && group.visible)
+            if (visible)
             {
-                //group.gameObject.SetActive(false);
+                //group.gameObject.SetActive(true);
                 foreach (Block b in group.blocks)
                 {
                     if (b.building)
                     {
-                        if (b.hasPersons)
-                        {
-                            b.hasPersons = false;
-                            foreach (GameObject pepole in b.building.persons)
-                                pepole.SetActive(false);
-                            b.building.persons.Clear();
-                        }
 
-                        if (b.building.lodwindow)
-                        {
-                            b.building.lodwindow.enabled = false;
-                        }
-                        foreach (LODProxy proxy in b.building.lodlateral)
-                            proxy.SetState(false);
-                        foreach (LODProxy proxy in b.building.lodroof)
-                            proxy.SetState(false);
-                        foreach (MeshRenderer mr in b.building.lodbuilding)
-                            mr.enabled = false;
-                        foreach (LODProxy proxy in b.building.lodlight)
-                            proxy.SetState(false);
+                        bool buildingVisible = OcclusionCulling.IsVisibleTerrainElement(b.building);
+                        float distance = Camera.main.transform.InverseTransformPoint(b.transform.position).magnitude;
 
-                        b.building.visibleroof = false;
-                        b.building.visibleLateral = false;
-                        b.building.visibleBuilding = false;
-                        b.building.visiblelights = false;
+                        SetBuildingVisibility(b, buildingVisible, distance);
                     }
                 }
+                group.visible = true;
+            }
+            else if (group.visible)
+            {
+                foreach (Block b in group.blocks)
+                {
+                    if (b.building)
+                    {
+
+                        bool buildingVisible = false;
+                        float distance = -1;
+
+                        SetBuildingVisibility(b, buildingVisible, distance);
+                    }
+                }
+                group.visible = false;
             }
         }
     }
@@ -207,13 +241,12 @@ public class City : TerrainElement
     {
         if (carRoads != null)
         {
-            
             GraphSparse<Vector3> roads = carRoads;
             foreach (GraphSparse<Vector3>.Node node1 in roads.nodes)
             {
                 int size = 3;
                 Gizmos.color = Color.white;
-                Gizmos.DrawCube(node1.data, Vector3.one*3*2);
+                Gizmos.DrawCube(node1.data, Vector3.one * 3 * 2);
                 foreach (GraphSparse<Vector3>.Link link in node1.links)
                 {
                     GraphSparse<Vector3>.Node node2 = roads.nodes[link.to];
@@ -225,7 +258,7 @@ public class City : TerrainElement
                     Color color = Color.black;
                     if (direction.x > 0)
                     {
-                        offset = new Vector3(0,1,1);
+                        offset = new Vector3(0, 1, 1);
                         color = Color.green;
                     }
                     else if (direction.x < 0)
@@ -245,20 +278,20 @@ public class City : TerrainElement
                     }
                     else if (direction.y > 0)
                     {
-                        offset = new Vector3(1,0,1)*2;
+                        offset = new Vector3(1, 0, 1) * 2;
                         color = Color.blue;
                     }
                     else if (direction.y < 0)
                     {
-                        offset = new Vector3(-1, 0, -1)*2;
+                        offset = new Vector3(-1, 0, -1) * 2;
                         color = Color.blue;
                     }
                     else
                     {
-                        Debug.LogWarning("bad link:"+node1.data+",d: "+direction);
+                        Debug.LogWarning("bad link:" + node1.data + ",d: " + direction);
                     }
                     Gizmos.color = color;
-                    Gizmos.DrawLine(node1.data+offset* size, node2.data+offset* size);
+                    Gizmos.DrawLine(node1.data + offset * size, node2.data + offset * size);
                 }
             }
         }

@@ -6,6 +6,17 @@ public class TerrainElement : MonoBehaviour
 {
     private TerrainElement parent;
     public Vector3 size;
+    public Bounds Bounds
+    {
+        get
+        {
+            Vector3 position = this.transform.position;
+            position.y += size.y/2;
+            return new Bounds(position, size);
+        }
+    }
+    public List<Collider> colliders;
+    public Renderer[] renderers;
     public Vector3Int CellPosition
      {
          get {

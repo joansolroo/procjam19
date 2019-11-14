@@ -12,11 +12,15 @@ public class Person : Particle
     public float smoothAimming = 0.1f;
     public float positionDispertion = 0.8f;
     private Animator animator;
+    Vector3 direction;
+
+   public  new Renderer renderer;
 
     public void Start()
     {
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
+        renderer = GetComponentInChildren<SkinnedMeshRenderer>();
     }
     public void ResetPerson(float size)
     {
@@ -34,10 +38,11 @@ public class Person : Particle
         smoothDirection = (path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex]).normalized;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Vector3 direction = path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex];
+
+
+    protected override void DoCreate() { }
+    protected override void DoTick() {
+        direction = path[(int)(pathIndex + 1) % path.Count] - path[(int)pathIndex];
         pathIndex = (int)pathIndex + Mathf.Clamp(Vector3.Dot((transform.position - path[(int)pathIndex]) / direction.magnitude, direction.normalized), 0f, 1f);
         if (pathIndex >= path.Count)
             pathIndex -= path.Count;
@@ -45,11 +50,18 @@ public class Person : Particle
         Vector3 gravity = controller.isGrounded ? Vector3.zero : -Vector3.up;
         controller.Move(direction.normalized * speed * Time.deltaTime + gravity);
 
-        smoothDirection = (1f - smoothAimming) * smoothDirection + smoothAimming * direction.normalized;
-        transform.LookAt(transform.position + smoothDirection);
+        bool visible = OcclusionCulling.IsVisibleAABB(controller.bounds) && OcclusionCulling.IsVisibleCollider(controller);
+        renderer.enabled = visible;
+        animator.enabled = visible;
     }
-
-    protected override void DoCreate() { }
-    protected override void DoTick() { }
     protected override void DoDestroy() { }
+
+    protected override void UpdateVisuals()
+    {
+        if (renderer.enabled)
+        {
+            smoothDirection = (1f - smoothAimming) * smoothDirection + smoothAimming * direction.normalized;
+            transform.LookAt(transform.position + smoothDirection);
+        }
+    }
 }

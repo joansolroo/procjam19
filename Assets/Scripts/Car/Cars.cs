@@ -14,12 +14,6 @@ public class Cars : Particle
         GenerateCars();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void GenerateCars()
     {
         // Pick a random front
@@ -36,4 +30,9 @@ public class Cars : Particle
     protected override void DoCreate() { }
     protected override void DoTick() { }
     protected override void DoDestroy() { }
+
+    protected override void UpdateVisuals()
+    {
+        throw new System.NotImplementedException();
+    }
 }
