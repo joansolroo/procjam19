@@ -129,6 +129,7 @@ public class ProceduralBuilding : MonoBehaviour
             }
         }
         centroid /= contourCount;
+        centroid += Vector3.up * Random.Range(0, 2f);
         int centroidIdx = vertices.Count;
         uvs.Add(new Vector2(0, 0));
         vertices.Add(centroid);
