@@ -7,9 +7,22 @@ Shader "Perso/PhongShader" {
 		_NoiseThreshold("Noise threshold", Float) = 0.5
 		_Color1("Starting gradient", Color) = (1, 1, 1, 1)
 		_Color2("Ending gradient", Color) = (1, 1, 1, 1)
+		_LightPower("Light power", Float) = 1.1
 		_Shininess("Shininess", Float) = 10 //Shininess
 		_SpecColor("Specular Color", Color) = (1, 1, 1, 1) //Specular highlights color
 	}
+
+	CGINCLUDE
+		float rand(int seed)
+		{
+			return frac(sin(dot(float3(seed, seed, seed), float3(12.9898, 78.233, 45.5432))) * 43758.5453);
+		}
+		float rand(float3 seed)
+		{
+			return frac(sin(dot(seed, float3(12.9898, 78.233, 45.5432))) * 43758.5453);
+		}
+	ENDCG
+
 		SubShader{
 			Tags { "RenderType" = "Opaque" }
 			LOD 200
@@ -32,38 +45,28 @@ Shader "Perso/PhongShader" {
 					uniform float4 _Color;
 					uniform float4 _Color1;
 					uniform float4 _Color2;
+					uniform float _LightPower;
 					uniform float4 _SpecColor;
 					uniform float _Shininess;
-
-					struct appdata
-					{
-						float4 vertex : POSITION;
-						float3 normal : NORMAL;
-						float2 uv : TEXCOORD0;
-					};
-
+					
 					struct v2f
 					{
 						float4 pos : POSITION;
 						float3 normal : NORMAL;
-						float2 uv : TEXCOORD0;
+						float3 uv : TEXCOORD0;
 						float4 posWorld : TEXCOORD1;
 					};
 
-					v2f vert(appdata v)
+					v2f vert(appdata_base v)
 					{
 						v2f o;
 
 						o.posWorld = mul(unity_ObjectToWorld, v.vertex);
 						o.normal = normalize(mul(float4(v.normal, 0.0), unity_WorldToObject).xyz);
 						o.pos = UnityObjectToClipPos(v.vertex);
-						o.uv = float2(TRANSFORM_TEX(v.uv, _Tex));
+						float2 uv = float2(TRANSFORM_TEX(v.texcoord, _Tex));
+						o.uv = float3(uv.x, uv.y, rand(mul(unity_ObjectToWorld, float4(0, 0, 0, 1)).xyz) + rand(o.normal));
 						return o;
-					}
-
-					float rand(int seed)
-					{
-						return frac(sin(dot(float3(seed, seed, seed), float3(12.9898, 78.233, 45.5432))) * 43758.5453);
 					}
 
 					fixed4 frag(v2f i) : COLOR
@@ -88,19 +91,16 @@ Shader "Perso/PhongShader" {
 							specularReflection = attenuation * _LightColor0.rgb * _SpecColor.rgb * pow(max(0.0, dot(reflect(-lightDirection, normalDirection), viewDirection)), _Shininess);
 						}
 
-						float4 texColor = tex2D(_Tex, i.uv);
-						if (texColor.a < 0.01)
+						float4 tex = tex2D(_Tex, i.uv.xy);
+						float3 color = (ambientLighting + diffuseReflection) * tex.xyz + specularReflection;
+						if (tex.a < 0.01)
 						{
-							texColor.a = 1.0;
-							if(rand(((int)i.uv.x + 1) * (int)(i.uv.y + 1)) < _NoiseThreshold)
+							if(rand((int)(100 * i.uv.z) + ((int)i.uv.x + 1) + 50*(int)(i.uv.y + 1)) < _NoiseThreshold)
 							{
 								float t = saturate(1 - rand(((int)i.uv.x + 1) * (int)(i.uv.y + 1)));
-								texColor = 2.0*lerp(_Color1, _Color2, t);
-								texColor.a = 1.0;
+								color = _LightPower * lerp(_Color1, _Color2, t).xyz;
 							}
 						}
-
-						float3 color = (ambientLighting + diffuseReflection) * texColor.xyz + specularReflection;
 						return float4(color, 1.0);
 					}
 				ENDCG
@@ -182,7 +182,7 @@ Shader "Perso/PhongShader" {
 
 				  //float3 color = (diffuseReflection)* tex2D(_Tex, i.uv) + specularReflection;
 			      float4 texColor = tex2D(_Tex, i.uv);
-				  /*
+				  
 				  if (texColor.a < 0.01)
 				  {
 					  texColor.a = 1.0;
@@ -192,7 +192,7 @@ Shader "Perso/PhongShader" {
 						  texColor = 2.0*lerp(_Color1, _Color2, t);
 						  texColor.a = 1.0;
 					  }
-				  }*/
+				  }
 
 				  float3 color = (diffuseReflection) * texColor.xyz + specularReflection;
 				  return float4(color, 1.0);
