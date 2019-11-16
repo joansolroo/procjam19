@@ -52,7 +52,7 @@ public class City : TerrainElement
             // windows
             if (b.building.lodwindow)
             {
-                b.building.lodwindow.enabled = distance < windowVisibilityRadius;
+                b.building.lodwindow.enabled = distance < windowVisibilityRadius && OcclusionCulling.IsVisibleAABB(b.building.lodwindow.bounds);
             }
 
 
@@ -131,15 +131,24 @@ public class City : TerrainElement
             }
         }
 
+        /*
+        if (b.building)
+        {
+            b.building.visible = visible;
+        }*/
     }
 
     Vector3 camPos;
     Quaternion camRot;
+    public bool UpdateWhenNotMoving = false;
+    public float UpdateTime;
+    new Camera camera;
+
     void Update()
     {
-        Camera camera = Camera.main;
-        
-        if(Vector3.Distance(camPos,camera.transform.position)<0.01f)
+         if(camera==null) camera = Camera.main;
+        float startTime = Time.realtimeSinceStartup;
+        if(!UpdateWhenNotMoving && Vector3.Distance(camPos,camera.transform.position)<0.01f)
         { return; }
         else
         {
@@ -164,6 +173,7 @@ public class City : TerrainElement
                         float distance = Camera.main.transform.InverseTransformPoint(b.transform.position).magnitude;
 
                         SetBuildingVisibility(b, buildingVisible, distance);
+                        b.building.visible = buildingVisible;
                     }
                 }
                 group.visible = true;
@@ -179,12 +189,15 @@ public class City : TerrainElement
                         float distance = -1;
 
                         SetBuildingVisibility(b, buildingVisible, distance);
+                        b.building.visible = false;
                     }
                 }
                 group.visible = false;
             }
         }
+        UpdateTime = Time.realtimeSinceStartup - startTime;
     }
+    
     /*
     void Update2()
     {
