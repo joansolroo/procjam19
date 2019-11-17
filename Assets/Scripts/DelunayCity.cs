@@ -39,9 +39,9 @@ public class DelunayCity : MonoBehaviour
     {
         private Bounds bounds;
         private Vector3 center;
-        private Vector3[] contour;
+        private List<Vector3> contour;
 
-        public Cell(Vector3[] contour)
+        public Cell(List<Vector3> contour)
         {
             Contour = contour;
         }
@@ -50,30 +50,31 @@ public class DelunayCity : MonoBehaviour
             Graph graph = new Graph();
             graph.Contour = this;
             graph.nodes = new List<Graph.Node>();
-            for(int i = 0; i < contour.Length;++i)
+            graph.links = new List<Graph.Link>();
+            for (int i = 0; i < contour.Count; ++i)
             {
                 Graph.Node node = new Graph.Node();
                 node.index = i;
                 node.position = contour[i];
                 graph.nodes.Add(node);
             }
-            for (int i = 0; i < contour.Length; ++i)
+            for (int i = 0; i < contour.Count; ++i)
             {
                 Graph.Link link = new Graph.Link();
                 link.from = graph.nodes[i];
-                link.to = graph.nodes[(i+1)%contour.Length];
+                link.to = graph.nodes[(i + 1) % contour.Count];
                 graph.links.Add(link);
             }
             return graph;
         }
         public Cell Deflate(float margin)
         {
-            Vector3[] deflatedContour = new Vector3[Contour.Length];
+            List<Vector3> deflatedContour = new List<Vector3>();
             Vector3 newCenter = Vector3.zero;
-            for (int c = 0; c < Contour.Length; ++c)
+            for (int c = 0; c < Contour.Count; ++c)
             {
                 Vector3 p = (Contour[c] - Center) * (1 - margin) + Center;
-                deflatedContour[c] = p;
+                deflatedContour.Add(p);
                 newCenter += p;
             }
             return new Cell(deflatedContour);
@@ -92,7 +93,7 @@ public class DelunayCity : MonoBehaviour
                 center += p;
             }
             Bounds = new Bounds((min + max) / 2, max - min);
-            this.center = center / contour.Length;
+            this.center = center / contour.Count;
         }
         public List<Vector3> localContour
         {
@@ -108,7 +109,7 @@ public class DelunayCity : MonoBehaviour
         }
 
         public Bounds Bounds { get => bounds; private set => bounds = value; }
-        public Vector3[] Contour
+        public List<Vector3> Contour
         {
             get => contour;
             set
@@ -123,11 +124,11 @@ public class DelunayCity : MonoBehaviour
         {
             return ContainsPoint(Contour, point);
         }
-        public static bool ContainsPoint(Vector3[] polyPoints, Vector3 p)
+        public static bool ContainsPoint(List<Vector3> polyPoints, Vector3 p)
         {
-            var j = polyPoints.Length - 1;
+            var j = polyPoints.Count - 1;
             var inside = false;
-            for (int i = 0; i < polyPoints.Length; j = i++)
+            for (int i = 0; i < polyPoints.Count; j = i++)
             {
                 var pi = polyPoints[i];
                 var pj = polyPoints[j];
@@ -137,13 +138,13 @@ public class DelunayCity : MonoBehaviour
             }
             return inside;
         }
-        public bool Intersect(out Vector3 intersection, Vector3 origin, Vector3 direction, out int segmentIndex)
+        /*public bool Intersect(out Vector3 intersection, Vector3 origin, Vector3 direction, out int segmentIndex)
         {
 
-            for (int i = 0; i < Contour.Length; ++i)
+            for (int i = 0; i < Contour.Count; ++i)
             {
                 Vector3 from = Contour[i];
-                Vector3 to = Contour[(i + 1) % Contour.Length];
+                Vector3 to = Contour[(i + 1) % Contour.Count];
                 if (Math3d.LineLineIntersection(out intersection, origin, direction - origin, from, to - from))
                 {
                     segmentIndex = i;
@@ -153,7 +154,7 @@ public class DelunayCity : MonoBehaviour
             segmentIndex = -1;
             intersection = Vector3.zero;
             return false;
-        }
+        }*/
     }
     List<Cell> cells;
     List<Cell> deflatedCells;
@@ -285,7 +286,7 @@ public class DelunayCity : MonoBehaviour
             }
             Vector3 min = new Vector3(float.MaxValue, 0, float.MaxValue);
             Vector3 max = new Vector3(float.MinValue, 0, float.MinValue);
-            Vector3[] contour = new Vector3[edges.Count];
+            List<Vector3> contour = new List<Vector3>();
             int c = 0;
             foreach (VoronoiEdge<Vertex2> e in edges)
             {
@@ -295,7 +296,7 @@ public class DelunayCity : MonoBehaviour
                 Vector3 p1 = new Vector3(v1.X, 0, v1.Y);
                 centroid += p0;
 
-                contour[c] = p0;
+                contour.Add(p0);
                 /* if (c == region.Edges.Count)
                  {
                      cell.contour.Add(p1);
@@ -319,13 +320,16 @@ public class DelunayCity : MonoBehaviour
     {
         int subdivision = 5;
         cellDivision = new List<Vector3>();
-        for (int idx = 0; idx < deflatedCells.Count; ++idx)
+        blocks = new List<Graph>();
+        foreach (Cell cell in deflatedCells)
         {
-            Cell cell = deflatedCells[idx];
+
+            Graph graph = cell.AsGraph();
+            blocks.Add(graph);
             Bounds bounds = cell.Bounds;
             Vector3 delta = bounds.size / subdivision;
-            Vector3[,] segmented = new Vector3[subdivision + 1, subdivision + 1];
             bool[,] valid = new bool[subdivision + 1, subdivision + 1];
+            Graph.Node[,] nodes = new Graph.Node[subdivision + 1, subdivision + 1];
             for (int x = 0; x <= subdivision; ++x)
             {
                 float u = x / (float)subdivision * bounds.size.x + bounds.min.x;
@@ -336,8 +340,10 @@ public class DelunayCity : MonoBehaviour
                     if (cell.ContainsPoint(point))
                     {
                         valid[x, z] = true;
-                        cellDivision.Add(point);
-                        segmented[x, z] = point;
+                        var node = new Graph.Node();
+                        node.position = point;
+                        graph.nodes.Add(node);
+                        nodes[x, z] = node;
                     }
                 }
             }
@@ -354,31 +360,92 @@ public class DelunayCity : MonoBehaviour
                         if (x2 <= subdivision && !valid[x2, z])
                         {
                             float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
-                            divisions.Add(new KeyValuePair<Vector3,Vector3>(point, Intersects(idx, point, new Vector3(u2, 0, v))));
+                            Vector3 border = new Vector3(u2, 0, v);
+                            var node = new Graph.Node();
+                            int segment;
+                            node.position = Intersects(cell, point, border, out segment);
+                            graph.nodes.Add(node);
+
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = node;
+                            graph.links.Add(link);
+                        }
+                        else
+                        {
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = nodes[x2, z];
+                            graph.links.Add(link);
                         }
                         x2 = x - 1;
                         if (x2 >= 0 && !valid[x2, z])
                         {
                             float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
-                            divisions.Add(new KeyValuePair<Vector3, Vector3>(point, Intersects(idx, point, new Vector3(u2, 0, v))));
+                            Vector3 border = new Vector3(u2, 0, v);
+                            var node = new Graph.Node();
+                            int segment;
+                            node.position = Intersects(cell, point, border, out segment);
+                            graph.nodes.Add(node);
+
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = node;
+                            graph.links.Add(link);
+                        }
+                        else
+                        {
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = nodes[x2, z];
+                            graph.links.Add(link);
                         }
                         int z2 = z + 1;
                         if (z2 <= subdivision && !valid[x, z2])
                         {
                             float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
-                            divisions.Add(new KeyValuePair<Vector3, Vector3>(point, Intersects(idx, point, new Vector3(u, 0, v2))));
+                            Vector3 border = new Vector3(u, 0, v2);
+                            var node = new Graph.Node();
+                            int segment;
+                            node.position = Intersects(cell, point, border, out segment);
+                            graph.nodes.Add(node);
+
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = node;
+                            graph.links.Add(link);
                         }
+                        else
+                        {
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = nodes[x, z2];
+                            graph.links.Add(link);
+                        }
+
                         z2 = z - 1;
                         if (z2 >= 0 && !valid[x, z2])
                         {
                             float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
-                            divisions.Add(new KeyValuePair<Vector3, Vector3>(point, Intersects(idx, point, new Vector3(u, 0, v2))));
+                            Vector3 border = new Vector3(u, 0, v2);
+                            var node = new Graph.Node();
+                            int segment;
+                            node.position = Intersects(cell, point, border, out segment);
+                            graph.nodes.Add(node);
+
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = node;
+                            graph.links.Add(link);
+                        }
+                        else
+                        {
+                            Graph.Link link = new Graph.Link();
+                            link.from = nodes[x, z];
+                            link.to = nodes[x, z2];
+                            graph.links.Add(link);
                         }
                     }
-
-
-
-
                     /*
                         Vector3 p01 = new Vector3(point.x - delta.x, 0, point.z);
                         if (!cell.ContainsPoint(p01))
@@ -427,7 +494,7 @@ public class DelunayCity : MonoBehaviour
         {
             return;
         }
-        int count = 0;
+        /*int count = 0;
         foreach (Cell cell in cells)
         {
             // Gizmos.DrawWireCube(cell.Bounds.center, cell.Bounds.size);
@@ -440,7 +507,20 @@ public class DelunayCity : MonoBehaviour
                 Vector3 p1 = cell.Contour[(c + 1) % cell.Contour.Length];
                 Gizmos.DrawLine(p0, p1);
             }
+        }*/
+
+        foreach (Graph graph in blocks)
+        {
+            foreach (var node in graph.nodes)
+            {
+                Gizmos.DrawSphere(node.position, 0.25f);
+            }
+            foreach (var link in graph.links)
+            {
+                Gizmos.DrawLine(link.from.position, link.to.position);
+            }
         }
+        /*
         for (int idx = 0; idx < deflatedCells.Count; ++idx)
         {
 
@@ -470,25 +550,25 @@ public class DelunayCity : MonoBehaviour
         {
             Gizmos.color = Color.green;
             Gizmos.DrawLine(pair.Key, pair.Value);
-        }
+        }*/
     }
 
-    Vector3 Intersects(int cellIdx, Vector3 origin, Vector3 target)
+    Vector3 Intersects(Cell cell, Vector3 origin, Vector3 target, out int id)
     {
         List<Vector3> list = new List<Vector3>();
-        Cell cell = deflatedCells[cellIdx];
         Vector3 intersection = origin;// origin + Vector3.up ;
         if (cell.ContainsPoint(target))
         {
             intersection = target;
+            id = -1;
         }
         else
         {
             Vector3 result = target;
-            for (int i = 0; i < cell.Contour.Length; ++i)
+            for (int i = 0; i < cell.Contour.Count; ++i)
             {
                 Vector3 from = cell.Contour[i];
-                Vector3 to = cell.Contour[(i + 1) % cell.Contour.Length];
+                Vector3 to = cell.Contour[(i + 1) % cell.Contour.Count];
                 Vector3 result2;
                 Math3d.LineLineIntersection(out result, origin, target - origin, from, to - from);
                 {
@@ -499,12 +579,14 @@ public class DelunayCity : MonoBehaviour
                     }
                 }
             }
+            id = 0;
             intersection = list[0];
             for (int t = 1; t < list.Count; ++t)
             {
                 if (Vector3.Distance(origin, intersection) > Vector3.Distance(origin, list[t]))
                 {
                     intersection = list[t];
+                    id = t;
                 }
             }
         }
