@@ -23,17 +23,101 @@ public class DelunayCity : MonoBehaviour
     {
         public class Node
         {
-            public int index;
+            static int MAX_ID;
+            int index = ++MAX_ID;
             public Vector3 position;
+            public bool shell;
+            public override bool Equals(object obj)
+            {
+                Node other = obj as Node;
+                return obj != null && other.index == this.index;
+            }
+
+            public override int GetHashCode()
+            {
+                return index;
+            }
+            public Node(Vector3 position, bool shell = false)
+            {
+                this.position = position;
+                this.shell = shell;
+            }
         }
         public class Link
         {
+            static int MAX_ID;
+            int index = ++MAX_ID;
             public Node from;
             public Node to;
+            public bool shell = false;
+
+            public override bool Equals(object obj)
+            {
+                Link other = obj as Link;
+                return obj != null && other.index == this.index;
+            }
+
+            public override int GetHashCode()
+            {
+                return index;
+            }
+
+            public Link(Node from, Node to, bool shell = false)
+            {
+                this.from = from;
+                this.to = to;
+                this.shell = shell;
+            }
         }
         public Cell Contour;
         public List<Node> nodes;
         public List<Link> links;
+        public List<List<Link>> segments;
+        public Dictionary<Graph.Node, List<Graph.Node>> neighbours;
+        
+        public void ComputeNeighbours()
+        {
+            neighbours = new Dictionary<Graph.Node, List<Graph.Node>>();
+            //compute closed cells inside the graph
+            foreach (Graph.Link link in this.links)
+            {
+                if (!neighbours.ContainsKey(link.from))
+                    neighbours[link.from] = new List<Graph.Node>();
+                neighbours[link.from].Add(link.to);
+                if (!neighbours.ContainsKey(link.to))
+                    neighbours[link.to] = new List<Graph.Node>();
+                neighbours[link.to].Add(link.from);
+            }
+        }
+
+        public Link Segment(int linkId, Node node)
+        {
+            Link linkToSplit = links[linkId];
+            float nodePosition = (node.position - linkToSplit.from.position).sqrMagnitude;
+            for (int segIdx = 0; segIdx < segments[linkId].Count; ++segIdx)
+            {
+
+                Link segment = segments[linkId][segIdx];
+                float startPosition = (segment.from.position - linkToSplit.from.position).sqrMagnitude;
+                float endPosition = (segment.to.position - linkToSplit.from.position).sqrMagnitude;
+
+                if (nodePosition < startPosition)
+                {
+                    break;
+                }
+                else if (nodePosition < endPosition)
+                {
+                    Link newSegment = new Link(node, segment.to, segment.shell);
+                    segment.to = node;
+                    segments[linkId].Insert(segIdx, newSegment);
+                    links.Add(newSegment);
+                    return newSegment;
+                }
+
+            }
+
+            return null;
+        }
     }
     public class Cell
     {
@@ -51,19 +135,19 @@ public class DelunayCity : MonoBehaviour
             graph.Contour = this;
             graph.nodes = new List<Graph.Node>();
             graph.links = new List<Graph.Link>();
+            graph.segments = new List<List<Graph.Link>>();
             for (int i = 0; i < contour.Count; ++i)
             {
-                Graph.Node node = new Graph.Node();
-                node.index = i;
-                node.position = contour[i];
+                Graph.Node node = new Graph.Node(contour[i], true);
                 graph.nodes.Add(node);
             }
+
             for (int i = 0; i < contour.Count; ++i)
             {
-                Graph.Link link = new Graph.Link();
-                link.from = graph.nodes[i];
-                link.to = graph.nodes[(i + 1) % contour.Count];
+                Graph.Link link = new Graph.Link(graph.nodes[i], graph.nodes[(i + 1) % contour.Count], true);
                 graph.links.Add(link);
+                graph.segments.Add(new List<Graph.Link>());
+                graph.segments[i].Add(link);
             }
             return graph;
         }
@@ -138,30 +222,54 @@ public class DelunayCity : MonoBehaviour
             }
             return inside;
         }
-        /*public bool Intersect(out Vector3 intersection, Vector3 origin, Vector3 direction, out int segmentIndex)
+        public Vector3 Intersects(Vector3 origin, Vector3 target, out int id)
         {
-
-            for (int i = 0; i < Contour.Count; ++i)
+            Vector3 intersection = origin;// origin + Vector3.up ;
+            if (this.ContainsPoint(target))
             {
-                Vector3 from = Contour[i];
-                Vector3 to = Contour[(i + 1) % Contour.Count];
-                if (Math3d.LineLineIntersection(out intersection, origin, direction - origin, from, to - from))
+                intersection = target;
+                id = -1;
+            }
+            else
+            {
+                List<Vector3> list = new List<Vector3>();
+                List<int> listIdx = new List<int>();
+                Vector3 result = target;
+                for (int i = 0; i < this.Contour.Count; ++i)
                 {
-                    segmentIndex = i;
-                    return true;
+                    Vector3 from = this.Contour[i];
+                    Vector3 to = this.Contour[(i + 1) % this.Contour.Count];
+                    Vector3 result2;
+                    Math3d.LineLineIntersection(out result, origin, target - origin, from, to - from);
+                    {
+                        if (this.Bounds.Contains(result))
+                        {
+                            list.Add(result);
+                            listIdx.Add(i);
+                        }
+                    }
+                }
+                intersection = list[0];
+                id = listIdx[0];
+                for (int t = 1; t < list.Count; ++t)
+                {
+                    if (Vector3.Distance(origin, intersection) > Vector3.Distance(origin, list[t]))
+                    {
+                        intersection = list[t];
+                        id = listIdx[t];
+                    }
                 }
             }
-            segmentIndex = -1;
-            intersection = Vector3.zero;
-            return false;
-        }*/
+            return intersection;
+            //return intersection;
+        }
     }
     List<Cell> cells;
     List<Cell> deflatedCells;
     List<Graph> blocks;
+    List<Cell> buildingContours;
     private void Start()
     {
-
         lineMaterial = new Material(Shader.Find("Hidden/Internal-Colored"));
 
         List<Vertex2> vertices = new List<Vertex2>();
@@ -178,9 +286,10 @@ public class DelunayCity : MonoBehaviour
         voronoi = new VoronoiMesh2();
         voronoi.Generate(vertices);
         TranslateToUnity(voronoi);
-        //GenerateBuildings();
+        Subdivide();
+        //GenerateBuildings(buildingContours);
     }
-    void GenerateBuildings()
+    void GenerateBuildings(List<Cell> cells)
     {
         foreach (Cell cell in cells)
         {
@@ -312,7 +421,6 @@ public class DelunayCity : MonoBehaviour
             cells.Add(cell);
             deflatedCells.Add(cell.Deflate(0.1f));
         }
-        Subdivide();
     }
     List<Vector3> cellDivision;
     List<KeyValuePair<Vector3, Vector3>> divisions = new List<KeyValuePair<Vector3, Vector3>>();
@@ -321,6 +429,7 @@ public class DelunayCity : MonoBehaviour
         int subdivision = 5;
         cellDivision = new List<Vector3>();
         blocks = new List<Graph>();
+        buildingContours = new List<Cell>();
         foreach (Cell cell in deflatedCells)
         {
 
@@ -340,13 +449,14 @@ public class DelunayCity : MonoBehaviour
                     if (cell.ContainsPoint(point))
                     {
                         valid[x, z] = true;
-                        var node = new Graph.Node();
-                        node.position = point;
+                        var node = new Graph.Node(point);
                         graph.nodes.Add(node);
                         nodes[x, z] = node;
                     }
                 }
             }
+            List<Graph.Link> unused = new List<Graph.Link>();
+            // create internal nodes and links, divide shell edges when intersecting them 
             for (int x = 0; x <= subdivision; ++x)
             {
                 float u = x / (float)subdivision * bounds.size.x + bounds.min.x;
@@ -361,21 +471,20 @@ public class DelunayCity : MonoBehaviour
                         {
                             float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
                             Vector3 border = new Vector3(u2, 0, v);
-                            var node = new Graph.Node();
+
                             int segment;
-                            node.position = Intersects(cell, point, border, out segment);
+                            Vector3 position = cell.Intersects(point, border, out segment);
+                            var node = new Graph.Node(position, true);
                             graph.nodes.Add(node);
 
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = node;
+                            Graph.Link link = new Graph.Link(nodes[x, z], node);
                             graph.links.Add(link);
+                            Graph.Link shellSegment = graph.Segment(segment, node);
+                            unused.Add(shellSegment);
                         }
                         else
                         {
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = nodes[x2, z];
+                            Graph.Link link = new Graph.Link(nodes[x, z], nodes[x2, z]);
                             graph.links.Add(link);
                         }
                         x2 = x - 1;
@@ -383,21 +492,19 @@ public class DelunayCity : MonoBehaviour
                         {
                             float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
                             Vector3 border = new Vector3(u2, 0, v);
-                            var node = new Graph.Node();
                             int segment;
-                            node.position = Intersects(cell, point, border, out segment);
+                            Vector3 position = cell.Intersects(point, border, out segment);
+                            var node = new Graph.Node(position, true);
                             graph.nodes.Add(node);
 
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = node;
+                            Graph.Link link = new Graph.Link(nodes[x, z], node);
                             graph.links.Add(link);
+                            Graph.Link shellSegment = graph.Segment(segment, node);
+                            unused.Add(shellSegment);
                         }
                         else
                         {
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = nodes[x2, z];
+                            Graph.Link link = new Graph.Link(nodes[x, z], nodes[x2, z]);
                             graph.links.Add(link);
                         }
                         int z2 = z + 1;
@@ -405,21 +512,19 @@ public class DelunayCity : MonoBehaviour
                         {
                             float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
                             Vector3 border = new Vector3(u, 0, v2);
-                            var node = new Graph.Node();
                             int segment;
-                            node.position = Intersects(cell, point, border, out segment);
+                            Vector3 position = cell.Intersects(point, border, out segment);
+                            var node = new Graph.Node(position, true);
                             graph.nodes.Add(node);
 
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = node;
+                            Graph.Link link = new Graph.Link(nodes[x, z], node);
                             graph.links.Add(link);
+                            Graph.Link shellSegment = graph.Segment(segment, node);
+                            unused.Add(shellSegment);
                         }
                         else
                         {
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = nodes[x, z2];
+                            Graph.Link link = new Graph.Link(nodes[x, z], nodes[x, z2]);
                             graph.links.Add(link);
                         }
 
@@ -428,98 +533,170 @@ public class DelunayCity : MonoBehaviour
                         {
                             float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
                             Vector3 border = new Vector3(u, 0, v2);
-                            var node = new Graph.Node();
                             int segment;
-                            node.position = Intersects(cell, point, border, out segment);
+                            Vector3 position = cell.Intersects(point, border, out segment);
+                            var node = new Graph.Node(position, true);
                             graph.nodes.Add(node);
 
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = node;
+                            Graph.Link link = new Graph.Link(nodes[x, z], node);
                             graph.links.Add(link);
+                            Graph.Link shellSegment = graph.Segment(segment, node);
+                            unused.Add(shellSegment);
                         }
                         else
                         {
-                            Graph.Link link = new Graph.Link();
-                            link.from = nodes[x, z];
-                            link.to = nodes[x, z2];
+                            Graph.Link link = new Graph.Link(nodes[x, z], nodes[x, z2]);
                             graph.links.Add(link);
                         }
                     }
-                    /*
-                        Vector3 p01 = new Vector3(point.x - delta.x, 0, point.z);
-                        if (!cell.ContainsPoint(p01))
-                        {
-                            Vector3 intersection;
-                            if (Intersects(idx, point, p01, out intersection))
-                            {
-                                cellDivision.Add(intersection);
-                            }
-                        }
-                        Vector3 p21 = new Vector3(point.x + delta.x, 0, point.z);
-                        if (!cell.ContainsPoint(p21))
-                        {
-                            Vector3 intersection;
-                            if (Intersects(idx, point, p21, out intersection))
-                            {
-                                cellDivision.Add(intersection);
-                            }
-                        }
-                        Vector3 p10 = new Vector3(point.x, 0, point.z - delta.z);
-                        if (!cell.ContainsPoint(p10))
-                        {
-                            Vector3 intersection;
-                            if (Intersects(idx, point, p10, out intersection))
-                            {
-                                cellDivision.Add(intersection);
-                            }
-                        }
-                        Vector3 p12 = new Vector3(point.x, 0, point.z + delta.z);
-                        if (!cell.ContainsPoint(p12))
-                        {
-                            Vector3 intersection;
-                            if (Intersects(idx, point, p12, out intersection))
-                            {
-                                cellDivision.Add(intersection);
-                            }
-                        }
-                    }*/
                 }
             }
+            for (int x = 0; x <= subdivision - 1; ++x)
+            {
+                for (int z = 0; z <= subdivision - 1; ++z)
+                {
+                    if (valid[x, z] && valid[x + 1, z] && valid[x, z + 1] && valid[x + 1, z + 1])
+                    {
+                        List<Vector3> contour = new List<Vector3>();
+                        contour.Add(nodes[x, z].position);
+                        contour.Add(nodes[x + 1, z].position);
+                        contour.Add(nodes[x + 1, z + 1].position);
+                        contour.Add(nodes[x, z + 1].position);
+                        buildingContours.Add(new Cell(contour));
+                    }
+                }
+            }
+            /*
+            graph.ComputeNeighbours();
+            while (unused.Count > 0)
+            {
+                Debug.Log("sorting");
+                List<Graph.Link> contour = new List<Graph.Link>();
+                Graph.Link link = unused[0];
+                
+                unused.RemoveAt(0);
+                if (link == null)
+                {
+                    continue;
+                }
+                contour.Add(link);
+
+                Queue<List<Graph.Node>> q = new Queue<List<Graph.Node>>();
+                HashSet<Graph.Node> used = new HashSet<Graph.Node>();
+                var start = new List<Graph.Node>();
+                start.Add(link.from);
+                q.Enqueue(start);
+
+                int count = 0;
+                List<Graph.Node> solution = null;
+                while (q.Count > 0 && count < 100 && solution==null)
+                {
+                    List<Graph.Node> currentSolution = q.Dequeue();
+                    Graph.Node current = currentSolution[currentSolution.Count - 1];
+
+                    if (current == null || used.Contains(current))
+                        continue;
+                    used.Add(current);
+                    foreach (var next in graph.neighbours[current])
+                    {
+                        if ((next.shell && graph.neighbours[current].Count == 1)
+                            || (!next.shell && graph.neighbours[current].Count > 1))
+                        {
+                            var newSolution = new List<Graph.Node>(currentSolution);
+                            newSolution.Add(link.from);
+                            q.Enqueue(newSolution);
+                        }
+                    }
+                    if (count>2 && current == link.from)
+                    {
+                        Debug.Log("found in " + count + " steps");
+                        solution = currentSolution;
+                    }
+                    ++count;
+                }
+                {
+                    Debug.Log("STATUS:"+ solution + ", in " + count + " steps");
+                }
+            }*/
+            /*
+            Dictionary<Graph.Node, List<Graph.Link>> neighbours = new Dictionary<Graph.Node, List<Graph.Link>>();
+            //compute closed cells inside the graph
+            foreach (Graph.Link link in graph.links)
+            {
+                if (!neighbours.ContainsKey(link.from))
+                    neighbours[link.from] = new List<Graph.Link>();
+                neighbours[link.from].Add(link);
+                if (!neighbours.ContainsKey(link.to))
+                    neighbours[link.to] = new List<Graph.Link>();
+                neighbours[link.to].Add(link);
+            }
+            HashSet<Graph.Link> contourSegments = new HashSet<Graph.Link>();
+            Dictionary<Graph.Link,int> used = new Dictionary<Graph.Link, int>();
+            foreach (var link in graph.segments)
+            {
+                foreach (Graph.Link segment in link)
+                {
+                    contourSegments.Add(segment);
+                    used[segment] = 0;
+                }
+            }
+            foreach (Graph.Link segment in contourSegments)
+            {
+                if (used[segment]==0)
+                {
+                    Graph.Node start = segment.from;
+                    List<Graph.Node> cellContour = new List<Graph.Node>();
+                    ++used[segment];
+                }
+            }
+            */
         }
     }
+    
     private void OnDrawGizmos()
     {
         if (cells == null)
         {
             return;
         }
-        /*int count = 0;
-        foreach (Cell cell in cells)
-        {
-            // Gizmos.DrawWireCube(cell.Bounds.center, cell.Bounds.size);
-            Gizmos.color = Color.white;
-            Vector3 centroid = cell.Center;
-            for (int c = 0; c < cell.Contour.Length; ++c)
-            {
-                Gizmos.DrawSphere(cell.Center, 0.2f);
-                Vector3 p0 = cell.Contour[c];
-                Vector3 p1 = cell.Contour[(c + 1) % cell.Contour.Length];
-                Gizmos.DrawLine(p0, p1);
-            }
-        }*/
 
         foreach (Graph graph in blocks)
         {
+            Gizmos.color = Color.white;
             foreach (var node in graph.nodes)
             {
-                Gizmos.DrawSphere(node.position, 0.25f);
+                Gizmos.color = node.shell ? Color.green : Color.gray;
+                Gizmos.DrawSphere(node.position, 5f);
             }
             foreach (var link in graph.links)
             {
+                Gizmos.color = link.shell ? Color.green : Color.gray;
                 Gizmos.DrawLine(link.from.position, link.to.position);
             }
+            /*Gizmos.color = Color.green;
+            foreach (var link in graph.segments)
+            {
+                foreach (var segment in link)
+                {
+                    Gizmos.DrawLine(segment.from.position, (segment.to.position- segment.from.position)*0.75f+ segment.from.position);
+                }
+            }*/
         }
+        foreach (Cell cell in buildingContours)
+        {
+            // Gizmos.DrawWireCube(cell.Bounds.center, cell.Bounds.size);
+            Gizmos.color = Color.yellow;
+            Vector3 centroid = cell.Center;
+            for (int c = 0; c < cell.Contour.Count; ++c)
+            {
+                Gizmos.DrawSphere(cell.Center, 2f);
+                Vector3 p0 = cell.Contour[c];
+                Vector3 p1 = cell.Contour[(c + 1) % cell.Contour.Count];
+                Gizmos.DrawLine(p0, p1);
+            }
+        }
+
+
         /*
         for (int idx = 0; idx < deflatedCells.Count; ++idx)
         {
@@ -551,47 +728,6 @@ public class DelunayCity : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawLine(pair.Key, pair.Value);
         }*/
-    }
-
-    Vector3 Intersects(Cell cell, Vector3 origin, Vector3 target, out int id)
-    {
-        List<Vector3> list = new List<Vector3>();
-        Vector3 intersection = origin;// origin + Vector3.up ;
-        if (cell.ContainsPoint(target))
-        {
-            intersection = target;
-            id = -1;
-        }
-        else
-        {
-            Vector3 result = target;
-            for (int i = 0; i < cell.Contour.Count; ++i)
-            {
-                Vector3 from = cell.Contour[i];
-                Vector3 to = cell.Contour[(i + 1) % cell.Contour.Count];
-                Vector3 result2;
-                Math3d.LineLineIntersection(out result, origin, target - origin, from, to - from);
-                {
-                    if (cell.Bounds.Contains(result))
-                    {
-                        list.Add(result);
-
-                    }
-                }
-            }
-            id = 0;
-            intersection = list[0];
-            for (int t = 1; t < list.Count; ++t)
-            {
-                if (Vector3.Distance(origin, intersection) > Vector3.Distance(origin, list[t]))
-                {
-                    intersection = list[t];
-                    id = t;
-                }
-            }
-        }
-        return intersection;
-        //return intersection;
     }
 
 
