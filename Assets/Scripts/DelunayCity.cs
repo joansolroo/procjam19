@@ -160,7 +160,7 @@ public class DelunayCity : MonoBehaviour
 
                     area += Vector3.Distance(center, (from + to) / 2) * Vector3.Distance(from,to);
                 }
-                return area;
+                return area/2;
             }
         }
         public Cell(List<Vector3> contour)
@@ -344,7 +344,7 @@ public class DelunayCity : MonoBehaviour
         foreach (Cell cell in cells)
         {
             float area = cell.Area;
-            if (area < 8000  && area > 1000)
+            if (area < 4000  && area >500)
             {
                 ProceduralBuilding building = Instantiate(buildingTemplate);
                 building.transform.parent = this.transform;
