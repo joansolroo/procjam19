@@ -6,7 +6,6 @@ public class ProceduralBuilding : MonoBehaviour
 {
     [SerializeField] bool generate = false;
     [SerializeField] bool flip = false;
-    [SerializeField] Transform[] contour;
     [SerializeField] MeshFilter filter;
     [SerializeField] [Range(1, 10)] int height = 1;
     [SerializeField] Vector2 windowScale = Vector2.one;
@@ -23,32 +22,15 @@ public class ProceduralBuilding : MonoBehaviour
 
     private void OnValidate()
     {
-        if (contourPoints == null || contourPoints.Length != contour.Length)
-        {
-            contourPoints = new Vector3[contour.Length];
-        }
-        if (useControlPoints)
-        {
-            for (int i = 0; i < contour.Length; ++i)
-            {
-                contourPoints[i] = contour[i].localPosition;
-            }
-        }
-        else
-        {
-            for (int i = 0; i < contour.Length; ++i)
-            {
-                contour[i].localPosition = contourPoints[i];
-            }
-        }
         if (generate)
         {
             Generate(contourPoints,height, windowScale);
         }
     }
 
-    public void Generate(Vector3[] points, int height,Vector2 windowScale)
+    public void Generate(Vector3[] points, int height,Vector2 windowScale, float floorHeight = 10)
     {
+        contourPoints = points;
         this.height = height;
         if (filter == null)
         {
@@ -70,7 +52,7 @@ public class ProceduralBuilding : MonoBehaviour
         {
             for (int i = 0; i <= contourCount; ++i)
             {
-                vertices.Add((points[i % contourCount]) + Vector3.up * h);
+                vertices.Add((points[i % contourCount]) + Vector3.up * h* floorHeight);
                 // TODO normalize using distance between vertices
                 if (i % 2 == 0 && h % 2 == 0) uvs.Add(new Vector2(0, 0));
                 else if (i % 2 != 0 && h % 2 == 0) uvs.Add(new Vector2(windowScale.x, 0));
@@ -120,7 +102,7 @@ public class ProceduralBuilding : MonoBehaviour
         Vector3 centroid = Vector3.zero;
         for (int i = 0; i <= contourCount; ++i)
         {
-            Vector3 vertex = (points[i % contourCount]) + Vector3.up * height;
+            Vector3 vertex = (points[i % contourCount]) + Vector3.up * height* floorHeight;
             vertices.Add(vertex);
             uvs.Add(new Vector2(0, 0));
             if (i != 0)
@@ -129,7 +111,7 @@ public class ProceduralBuilding : MonoBehaviour
             }
         }
         centroid /= contourCount;
-        centroid += Vector3.up * Random.Range(0, 2f);
+        centroid += Vector3.up * Random.Range(0, 2f)* floorHeight;
         int centroidIdx = vertices.Count;
         uvs.Add(new Vector2(0, 0));
         vertices.Add(centroid);
@@ -154,10 +136,10 @@ public class ProceduralBuilding : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        for (int i = 0; i < contour.Length; ++i)
+        for (int i = 0; i < contourPoints.Length; ++i)
         {
-            Gizmos.DrawSphere(contour[i].position, 0.25f);
-            Gizmos.DrawLine(contour[i].position, contour[(i + 1) % contour.Length].position);
+            Gizmos.DrawSphere(transform.TransformPoint(contourPoints[i]), 0.25f);
+            Gizmos.DrawLine(transform.TransformPoint(contourPoints[i]), transform.TransformPoint(contourPoints[(i + 1) % contourPoints.Length]));
         }
     }
 }
