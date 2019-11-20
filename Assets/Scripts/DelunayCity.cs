@@ -21,6 +21,8 @@ public class DelunayCity : MonoBehaviour
 
     public ProceduralBuilding buildingTemplate;
 
+    public proceduralRegion regionTemplate;
+
     public class Graph
     {
         public class Node
@@ -163,6 +165,32 @@ public class DelunayCity : MonoBehaviour
                 return area/2;
             }
         }
+
+        //Sum over the edges, (x2 − x1)(y2 + y1). 
+        //If the result is positive the curve is clockwise, if it's negative the curve is counter-clockwise. (The result is twice the enclosed area, with a +/- convention.)
+        public int Handness()
+        {
+            //Sum(x2 − x1)(y2 + y1) < 0?
+            float sum = 0;
+            for (int i = 0; i < contour.Count; ++i)
+            {
+                Vector3 from = contour[i];
+                Vector3 to = contour[(i + 1) % contour.Count];
+
+                sum += (to.x - from.x) * (to.z + from.z);
+            }
+            return sum>0? 1:-1;
+        }
+        public void Flip()
+        {
+            for (int i = 0; i < contour.Count/2; ++i)
+            {
+                Vector3 left = contour[i];
+                Vector3 right = contour[contour.Count-i-1];
+                contour[i] = right;
+                contour[contour.Count - i-1] = left;
+            }
+        }
         public Cell(List<Vector3> contour)
         {
             Contour = contour;
@@ -170,6 +198,10 @@ public class DelunayCity : MonoBehaviour
             if (contour[0] == contour[contour.Count - 1])
             {
                 contour.RemoveAt(contour.Count - 1);
+            }
+            if (Handness() < 0)
+            {
+                Flip();
             }
         }
         public Graph AsGraph()
@@ -327,34 +359,49 @@ public class DelunayCity : MonoBehaviour
         Random.InitState(seed);
         for (int i = 0; i < NumberOfVertices; i++)
         {
-            float x = size * Random.Range(-1.0f, 1.0f);
+            float x = size*Random.Range(-1.0f, 1.0f);
             float y = size * Random.Range(-1.0f, 1.0f);
 
             vertices.Add(new Vertex2(x, y));
         }
-
+        
         voronoi = new VoronoiMesh2();
         voronoi.Generate(vertices);
         TranslateToUnity(voronoi);
         Subdivide();
+        GenerateRegions(cells,1);
+        GenerateRegions(deflatedCells, 2);
         GenerateBuildings(buildingContours);
+    }
+
+    void GenerateRegions(List<Cell> cells, int height)
+    {
+        foreach (Cell cell in cells)
+        {
+            proceduralRegion region = Instantiate(regionTemplate);
+            region.transform.parent = this.transform;
+            region.transform.position = cell.Center;
+            region.Generate(cell,height);
+            region.renderer.material.color = Random.ColorHSV(0, 1, 1, 1, 0.5f, 0.5f);
+        }
     }
     void GenerateBuildings(List<Cell> cells)
     {
         foreach (Cell cell in cells)
         {
             float area = cell.Area;
-            if (area < 4000  && area >500)
+            //if (area < 4000  && area >500)
             {
                 ProceduralBuilding building = Instantiate(buildingTemplate);
                 building.transform.parent = this.transform;
                 building.transform.position = cell.Center;
                 int height =(int)(area/1000*5);
 
-                building.Generate(cell.localContour.ToArray(), height, new Vector2(Random.Range(1, 5), Random.Range(1, 5)));
+                building.Generate(cell.localContour.ToArray(), height, new Vector2(Random.Range(1, 2), Random.Range(1, 2)));
             }
         }
     }
+
     void TranslateToUnity(VoronoiMesh2 voronoi)
     {
         cells = new List<Cell>();
@@ -607,22 +654,26 @@ public class DelunayCity : MonoBehaviour
                 }
                 contour.Add(link);
 
-                Queue<List<Graph.Node>> q = new Queue<List<Graph.Node>>();
-                List<List<Graph.Node>> alternatives = new List<List<Graph.Node>>();
+                Queue<List<Graph.Node>> queueNodes = new Queue<List<Graph.Node>>();
+                Queue<List<Graph.Link>> queueLinks = new Queue<List<Graph.Link>>();
                 HashSet<Graph.Node> used = new HashSet<Graph.Node>();
-                var start = new List<Graph.Node>();
+                var startNodes = new List<Graph.Node>();
                 used.Add(link.from);
-                start.Add(link.from);
-                start.Add(link.to);
-                q.Enqueue(start);
-                alternatives.Add(start);
-
+                startNodes.Add(link.from);
+                startNodes.Add(link.to);
+                queueNodes.Enqueue(startNodes);
+                List<Graph.Link> startLink = new List<Graph.Link>();
+                startLink.Add(link);
+                queueLinks.Enqueue(startLink);
                 int count = 0;
-                List<Graph.Node> solution = null;
+                List<Graph.Node> solutionPath = null;
+                List<Graph.Link> solutionLinks = null;
+               
 
-                while (q.Count > 0 && count < 100 && solution == null)
+                while (queueNodes.Count > 0 && count < 100 && solutionPath == null)
                 {
-                    List<Graph.Node> currentSolution = q.Dequeue();
+                    List<Graph.Node> currentSolution = queueNodes.Dequeue();
+                    List<Graph.Link> currentSolutionLinks = queueLinks.Dequeue();
                     Graph.Node current = currentSolution[currentSolution.Count - 1];
 
                     used.Add(current);
@@ -631,76 +682,58 @@ public class DelunayCity : MonoBehaviour
                         Graph.Node next = current == nextLink.from ? nextLink.to : nextLink.from;
                         if (currentSolution.Count > 2 && next == link.from)
                         {
-                            solution = currentSolution;
+                            solutionPath = currentSolution;
+                            solutionLinks = currentSolutionLinks;
                         }
                         else if (!used.Contains(next))
                         {
                             if (graph.neighbours[current].Count == 1)
                             {
                                 currentSolution.Add(next);
-                                q.Enqueue(currentSolution);
+                                queueNodes.Enqueue(currentSolution);
+
+                                currentSolutionLinks.Add(nextLink);
+                                queueLinks.Enqueue(currentSolutionLinks);
                             }
                             else if (graph.neighbours[current].Count > 1)
                             {
                                 var newSolution = new List<Graph.Node>(currentSolution);
                                 newSolution.Add(next);
-                                q.Enqueue(newSolution);
-                                alternatives.Add(newSolution);
+                                queueNodes.Enqueue(newSolution);
+
+                                var newSolutionLinks = new List<Graph.Link>(currentSolutionLinks);
+                                newSolutionLinks.Add(nextLink);
+                                queueLinks.Enqueue(newSolutionLinks);
+
                             }
                         }
                         ++count;
                     }
-
-                   
                 }
                 {
-                    if (solution != null)
+                    if (solutionPath != null)
                     {
+                        foreach(var usedLink in solutionLinks)
+                        {
+                            if (unused.Contains(usedLink))
+                            {
+                                unused.Remove(usedLink);
+                            }
+                        }
                         List<Vector3> contourCell = new List<Vector3>();
-                        foreach (var entry in solution)
+                        foreach (var entry in solutionPath)
                         {
                             contourCell.Add(entry.position);
                         }
-                        buildingContours.Add(new Cell(contourCell));
+                        Cell building = new Cell(contourCell);
+                        buildingContours.Add(building);
                     }
                     else
                     {
-                        Debug.Log("STATUS:" + (solution != null ? solution.Count.ToString() : "null") + ", in " + count + " steps");
+                        Debug.Log("STATUS:" + (solutionPath != null ? solutionPath.Count.ToString() : "null") + ", in " + count + " steps");
                     }
                 }
             }
-            /*
-            Dictionary<Graph.Node, List<Graph.Link>> neighbours = new Dictionary<Graph.Node, List<Graph.Link>>();
-            //compute closed cells inside the graph
-            foreach (Graph.Link link in graph.links)
-            {
-                if (!neighbours.ContainsKey(link.from))
-                    neighbours[link.from] = new List<Graph.Link>();
-                neighbours[link.from].Add(link);
-                if (!neighbours.ContainsKey(link.to))
-                    neighbours[link.to] = new List<Graph.Link>();
-                neighbours[link.to].Add(link);
-            }
-            HashSet<Graph.Link> contourSegments = new HashSet<Graph.Link>();
-            Dictionary<Graph.Link,int> used = new Dictionary<Graph.Link, int>();
-            foreach (var link in graph.segments)
-            {
-                foreach (Graph.Link segment in link)
-                {
-                    contourSegments.Add(segment);
-                    used[segment] = 0;
-                }
-            }
-            foreach (Graph.Link segment in contourSegments)
-            {
-                if (used[segment]==0)
-                {
-                    Graph.Node start = segment.from;
-                    List<Graph.Node> cellContour = new List<Graph.Node>();
-                    ++used[segment];
-                }
-            }
-            */
         }
         foreach(Cell building in buildingContours)
         {
@@ -728,13 +761,7 @@ public class DelunayCity : MonoBehaviour
                 Gizmos.DrawLine(node.position, labelPosition);
             }
         }
-    }
-    private void OnDrawGizmos()
-    {
-        if (cells == null)
-        {
-            return;
-        }
+       
         foreach (Cell cell in cells)
         {
             // Gizmos.DrawWireCube(cell.Bounds.center, cell.Bounds.size);
