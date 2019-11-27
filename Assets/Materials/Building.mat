@@ -75,10 +75,10 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightPower: 1.21
+    - _LightPower: 1.37
     - _Metallic: 0
     - _Mode: 0
-    - _NoiseThreshold: 0.2
+    - _NoiseThreshold: 0.192
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Power: 0

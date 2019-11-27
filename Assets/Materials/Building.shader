@@ -4,7 +4,7 @@ Shader "Perso/PhongShader" {
 	Properties{
 		_Color("Color", Color) = (1, 1, 1, 1) //The color of our object
 		_Tex("Texture", 2D) = "white" {} //Optional texture
-		_NoiseThreshold("Noise threshold", Float) = 0.5
+		_NoiseThreshold("Noise threshold", Range(0, 1)) = 0.5
 		_Color1("Starting gradient", Color) = (1, 1, 1, 1)
 		_Color2("Ending gradient", Color) = (1, 1, 1, 1)
 		_LightPower("Light power", Float) = 1.1
@@ -96,9 +96,10 @@ Shader "Perso/PhongShader" {
 						float3 color = (ambientLighting + diffuseReflection) * tex.xyz + specularReflection;
 						if (tex.a < 0.01)
 						{
-							if(rand((int)(100 * i.uv.z) + ((int)i.uv.x + 1) + 50*(int)(i.uv.y + 1)) < _NoiseThreshold)
+							int r = ((int)i.uv.x + 1) * (int)(i.uv.y + 1);
+							if(1 - rand((int)(100 * i.uv.z +1) * r) <= _NoiseThreshold)
 							{
-								float t = saturate(1 - rand(((int)i.uv.x + 1) * (int)(i.uv.y + 1)));
+								float t = saturate(1 - rand(r));
 								color = _LightPower * lerp(_Color1, _Color2, t).xyz;
 							}
 						}
