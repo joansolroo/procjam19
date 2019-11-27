@@ -19,7 +19,7 @@
 			_RimThreshold("Rim Threshold", Range(0, 1)) = 0.1
 
 			_OutlineColor("Outline Color", Color) = (0,0,0,1)
-			_Outline("Outline width", Range(.002, 1)) = .005
+			_Outline("Outline width", Range(.002, 10)) = .005
 	}
 		SubShader
 		{
@@ -36,6 +36,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+			// make fog work
+			#pragma multi_compile_fog
 			// Compile multiple versions of this shader depending on lighting settings.
 			#pragma multi_compile_fwdbase
 
@@ -62,6 +64,7 @@
 				// into the TEXCOORD2 semantic with varying precision 
 				// depending on platform target.
 				SHADOW_COORDS(2)
+				UNITY_FOG_COORDS(3)
 			};
 
 			sampler2D _MainTex;
@@ -76,7 +79,8 @@
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				// Defined in Autolight.cginc. Assigns the above shadow coordinate
 				// by transforming the vertex from world space to shadow-map space.
-				TRANSFER_SHADOW(o)
+				UNITY_TRANSFER_FOG(o, o.pos);
+					TRANSFER_SHADOW(o);
 				return o;
 			}
 
@@ -132,8 +136,9 @@
 				float4 rim = rimIntensity * _RimColor;
 
 				float4 sample = tex2D(_MainTex, i.uv);
-
-				return (light + _AmbientColor + specular + rim) * _Color * sample;
+				fixed4 col = (light + _AmbientColor + specular + rim) * _Color * sample;
+				UNITY_APPLY_FOG(i.fogCoord, col);
+				return col;
 			}
 			ENDCG
 		}

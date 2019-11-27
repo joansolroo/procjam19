@@ -18,9 +18,28 @@ public class proceduralRegion : MonoBehaviour
         renderer = GetComponent<MeshRenderer>();
     }
 
-    public void Generate(DelunayCity.Cell cell, float floorHeight = 10)
+    public void Generate(Cell cell, float floorHeight = 10, float margin = 0)
     {
-        Vector3[] points = cell.localContour.ToArray();
+        Vector2 windowScale = Vector2.one*10;
+        var contour = cell.localContour;
+        Vector3[] points;
+        if (margin > 0)
+        {
+            List<Vector3> pointList = new List<Vector3>();
+            for (int i = 0; i < contour.Count; ++i)
+            {
+                Vector3 from = contour[i];
+                Vector3 to = contour[(i + 1) % contour.Count];
+                pointList.Add(Vector3.Lerp(from, to, margin));
+                pointList.Add(Vector3.Lerp(from, to, 1- margin));
+            }
+            points = pointList.ToArray();
+        }
+        else
+        {
+            points = contour.ToArray();
+        }
+
         handedness = cell.Handness();
         if (filter == null)
         {
@@ -34,7 +53,7 @@ public class proceduralRegion : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         List<Vector3> normals = new List<Vector3>();
-        //List<Vector2> uvs = new List<Vector2>();
+        List<Vector2> uvs = new List<Vector2>();
 
         // CONTOUR
         int contourCount = points.Length;
@@ -44,11 +63,11 @@ public class proceduralRegion : MonoBehaviour
             {
                 vertices.Add((points[i % contourCount]) + Vector3.up * h * floorHeight);
                 // TODO normalize using distance between vertices
-               /* if (i % 2 == 0 && h % 2 == 0) uvs.Add(new Vector2(0, 0));
+                if (i % 2 == 0 && h % 2 == 0) uvs.Add(new Vector2(0, 0));
                 else if (i % 2 != 0 && h % 2 == 0) uvs.Add(new Vector2(windowScale.x, 0));
                 else if (i % 2 == 0 && h % 2 != 0) uvs.Add(new Vector2(0, windowScale.y));
                 else if (i % 2 != 0 && h % 2 != 0) uvs.Add(new Vector2(windowScale.x, windowScale.y));
-                */
+                
             }
         }
         int levelCount = contourCount + 1;
@@ -94,7 +113,7 @@ public class proceduralRegion : MonoBehaviour
         {
             Vector3 vertex = (points[i % contourCount]) + Vector3.up * height * floorHeight;
             vertices.Add(vertex);
-            //uvs.Add(new Vector2(0, 0));
+            uvs.Add(new Vector2(0, 0));
             if (i != 0)
             {
                 centroid += vertex;
@@ -102,7 +121,7 @@ public class proceduralRegion : MonoBehaviour
         }
         centroid /= contourCount;
         int centroidIdx = vertices.Count;
-        //uvs.Add(new Vector2(0, 0));
+        uvs.Add(new Vector2(0, 0));
         vertices.Add(centroid);
         for (int i = 0; i < contourCount; ++i)
         {
@@ -114,7 +133,7 @@ public class proceduralRegion : MonoBehaviour
 
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
-        //mesh.uv = uvs.ToArray();
+        mesh.uv = uvs.ToArray();
         mesh.RecalculateNormals();
 
         collider = GetComponent<MeshCollider>();
