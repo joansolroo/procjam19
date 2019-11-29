@@ -40,13 +40,13 @@ public class Skybox : MonoBehaviour
                 }
             }
         }
-        camera = Camera.main;
+       // camera = Camera.main;
     }
     [SerializeField] [Range(0, 1f)] float cloudiness;
     float time = 0;
     [SerializeField] float cloudSpeed = 0.1f;
     public float dayLight = 1;
-    Camera camera;
+    public Camera camera;
     private void Update()
     {
         if (camera.transform.position.y > this.transform.position.y-100)

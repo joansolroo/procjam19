@@ -125,23 +125,24 @@ public class GraphLinked : Graph
 }
 public class Cell
 {
+    private Cell parent;
     private Bounds bounds;
     private Vector3 center;
     private List<Vector3> contour;
-
+    public List<Cell> children = new List<Cell>();
     public float Area
     {
         get
         {
-            float area = 0;
+            float sum = 0;
             for (int i = 0; i < contour.Count; ++i)
             {
                 Vector3 from = contour[i];
                 Vector3 to = contour[(i + 1) % contour.Count];
 
-                area += Vector3.Distance(center, (from + to) / 2) * Vector3.Distance(from, to);
+                sum += (to.x - from.x) * (to.z + from.z);
             }
-            return area / 2;
+            return Mathf.Abs(sum);
         }
     }
 
@@ -213,7 +214,9 @@ public class Cell
             Vector3 p = (Contour[c] - Center) * (1 - margin) + Center;
             deflatedContour.Add(p);
         }
-        return new Cell(deflatedContour);
+        Cell deflated = new Cell(deflatedContour);
+        deflated.Parent = this;
+        return deflated;
     }
     public void Deflate(float margin)
     {
@@ -264,6 +267,24 @@ public class Cell
         }
     }
     public Vector3 Center { get => center; private set => center = value; }
+    public Cell Parent
+    {
+        get => parent;
+        set {
+            if (parent != value)
+            {
+                if (parent != null)
+                {
+                    parent.children.Remove(this);
+                }
+                parent = value;
+                if (parent != null)
+                {
+                    parent.children.Add(this);
+                }
+            }
+        }
+    }
 
     public bool ContainsPoint(Vector3 point)
     {
