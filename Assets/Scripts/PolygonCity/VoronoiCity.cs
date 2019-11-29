@@ -19,6 +19,7 @@ public class VoronoiCity : MonoBehaviour
     private VoronoiMesh2 voronoi;
 
     List<Vector3> points;
+    GraphLinked city;
     public List<Cell> cells;
     public List<Cell> deflatedCells;
     public List<GraphLinked> blocks;
@@ -192,7 +193,7 @@ public class VoronoiCity : MonoBehaviour
     void TranslateToUnity(VoronoiMesh2 voronoi)
     {
         cells = new List<Cell>();
-        deflatedCells = new List<Cell>();
+        //deflatedCells = new List<Cell>();
         frontier = new List<Vector3>();
         foreach (VoronoiRegion<Vertex2> region in voronoi.Regions)
         {
@@ -242,13 +243,14 @@ public class VoronoiCity : MonoBehaviour
             }
             Cell cell = new Cell(contour);
             cells.Add(cell);
-            Cell deflated = cell.Deflated(0.1f);
+            /*Cell deflated = cell.Deflated(0.1f);
             if (deflated.Area > 0)
             {
                 deflated.Parent = cell;
                 deflatedCells.Add(deflated);
-            }
+            }*/
         }
+        deflatedCells = cells;
     }
     void Subdivide(int subdivision = 5)
     {
@@ -540,14 +542,21 @@ public class VoronoiCity : MonoBehaviour
             Gizmos.DrawWireSphere(vertex, 150);
         }
         int c = 0;
+        Gizmos.color = Color.white;
+        foreach (var block in blocks) {
+            foreach (var link in block.links)
+            {
+                Gizmos.DrawLine(link.from.position + Vector3.up * 30, link.to.position + Vector3.up * 30);
+            }
+        }
         foreach (Cell cell in cells)
         {
             Gizmos.color = new Color32((byte)((c*64)%255), (byte)((c/64)%255),255,255);
             GizmosCell(cell, Vector3.zero);
-            foreach (Cell block in cell.children)
+            //foreach (Cell block in cell.children)
             {
-                GizmosCell(block, Vector3.up * 10);
-                foreach (Cell building in block.children)
+                //GizmosCell(block, Vector3.up * 10);
+                foreach (Cell building in cell.children)
                 {
                     for (int h = 1; h <= 2; ++h)
                     {
