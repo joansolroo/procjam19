@@ -46,7 +46,7 @@ public class Skybox : MonoBehaviour
     float time = 0;
     [SerializeField] float cloudSpeed = 0.1f;
     public float dayLight = 1;
-    public Camera camera;
+    new public Camera camera;
     private void Update()
     {
         if (camera.transform.position.y > this.transform.position.y-100)

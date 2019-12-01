@@ -32,7 +32,7 @@ public class DropTrail : MonoBehaviour
         }
     }
 
-	public bool enabled = true;
+	new public bool enabled = true;
     public Material material;
     public float lifeTime = 3f;
 	public AnimationCurve widthCurve;

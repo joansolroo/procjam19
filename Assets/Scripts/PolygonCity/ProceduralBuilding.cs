@@ -13,7 +13,7 @@ public class ProceduralBuilding : MonoBehaviour
     [SerializeField] bool useControlPoints = false;
     [SerializeField] Vector3[] contourPoints;
 
-    [SerializeField] MeshCollider collider;
+    [SerializeField] new  MeshCollider collider;
     // Start is called before the first frame update
     void Start()
     {

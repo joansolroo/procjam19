@@ -17,7 +17,7 @@ namespace UnityEditor.PostProcessing
         internal static PostProcessingProfile CreatePostProcessingProfileAtPath(string path)
         {
             var profile = ScriptableObject.CreateInstance<PostProcessingProfile>();
-            profile.name = Path.GetFileName(path);
+            profile.name = System.IO.Path.GetFileName(path);
             profile.fog.enabled = true;
             AssetDatabase.CreateAsset(profile, path);
             return profile;

@@ -8,7 +8,7 @@ public class ProceduralRegion : MonoBehaviour
     [SerializeField] MeshFilter filter;
     [SerializeField] [Range(1, 10)] int height = 1;
 
-    [SerializeField] MeshCollider collider;
+    [SerializeField] new MeshCollider collider;
     [SerializeField] public new MeshRenderer renderer;
 
     [SerializeField] int handedness;
@@ -18,7 +18,7 @@ public class ProceduralRegion : MonoBehaviour
         renderer = GetComponent<MeshRenderer>();
     }
 
-    public void Generate(Cell cell, float floorHeight = 10, float margin = 0)
+    public void Generate(GraphLinked.Cell cell, float floorHeight = 10, float margin = 0)
     {
         Vector2 windowScale = Vector2.one*10;
         var contour = cell.localContour;

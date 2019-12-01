@@ -111,7 +111,7 @@ public class LightTrail : MonoBehaviour
             mesh.vertices = vertices;
             mesh.triangles = triangles.ToArray();
             mesh.colors = colors;
-        }catch(System.Exception e)
+        }catch(System.Exception)
         {
             Debug.LogWarning(mesh.vertices.Length + ";" + mesh.colors.Length + ";" + mesh.triangles.Length);
         }

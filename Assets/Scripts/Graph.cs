@@ -20,6 +20,12 @@ public class GraphLinked : Graph
         {
             return index;
         }
+
+        public override string ToString()
+        {
+            return "(" + Id + ")" + position;
+        }
+
         public Node(Vector3 position, bool shell = false)
         {
             this.position = position;
@@ -53,15 +59,316 @@ public class GraphLinked : Graph
             this.shell = shell;
         }
     }
-    public Cell Contour;
-    public List<Node> nodes;
-    public List<Link> links;
-    public List<List<Link>> segments;
-    public Dictionary<GraphLinked.Node, List<GraphLinked.Link>> neighbours;
-
-    public void ComputeNeighbours()
+    public class Cell
     {
-        neighbours = new Dictionary<GraphLinked.Node, List<GraphLinked.Link>>();
+        private Cell parent;
+        private Bounds bounds;
+        private Vector3 center;
+        private List<Node> contour;
+        private List<Link> links;
+        public List<Cell> children = new List<Cell>();
+        public float Area
+        {
+            get
+            {
+                float sum = 0;
+                for (int i = 0; i < contour.Count; ++i)
+                {
+                    Vector3 from = contour[i].position;
+                    Vector3 to = contour[(i + 1) % contour.Count].position;
+
+                    sum += (to.x - from.x) * (to.z + from.z);
+                }
+                return Mathf.Abs(sum);
+            }
+        }
+
+        //Sum over the edges, (x2 − x1)(y2 + y1). 
+        //If the result is positive the curve is clockwise, if it's negative the curve is counter-clockwise. (The result is twice the enclosed area, with a +/- convention.)
+        public int Handness()
+        {
+            //Sum(x2 − x1)(y2 + y1) < 0?
+            float sum = 0;
+            for (int i = 0; i < contour.Count; ++i)
+            {
+                Vector3 from = contour[i].position;
+                Vector3 to = contour[(i + 1) % contour.Count].position;
+
+                sum += (to.x - from.x) * (to.z + from.z);
+            }
+            return sum > 0 ? 1 : -1;
+        }
+        public void Flip()
+        {
+            for (int i = 0; i < contour.Count / 2; ++i)
+            {
+                Node left = contour[i];
+                Node right = contour[contour.Count - i - 1];
+                contour[i] = right;
+                contour[contour.Count - i - 1] = left;
+            }
+        }
+        public Cell(List<Node> contour)
+        {
+            Contour = contour;
+            int lastIdx = contour.Count - 1;
+            if (contour[0] == contour[contour.Count - 1])
+            {
+                contour.RemoveAt(contour.Count - 1);
+            }
+            if (Handness() > 0)
+            {
+                Flip();
+            }
+        }
+        public GraphLinked AsGraph()
+        {
+            GraphLinked graph = new GraphLinked();
+            graph.Contour = this;
+            graph.links = new List<GraphLinked.Link>();
+            graph.segments = new List<List<GraphLinked.Link>>();
+            /*for (int i = 0; i < contour.Count; ++i)
+            {
+                  graph.AddNode(contour[i], true);
+            }*/
+
+            for (int i = 0; i < contour.Count; ++i)
+            {
+                GraphLinked.Link link = new GraphLinked.Link(contour[i],contour[(i + 1) % contour.Count], true);
+                graph.links.Add(link);
+                graph.segments.Add(new List<GraphLinked.Link>());
+                graph.segments[i].Add(link);
+            }
+            return graph;
+        }
+        /*public Cell Deflated(float margin)
+        {
+            List<Vector3> deflatedContour = new List<Vector3>();
+            for (int c = 0; c < Contour.Count; ++c)
+            {
+                Vector3 p = (Contour[c].position - Center) * (1 - margin) + Center;
+                deflatedContour.Add(p);
+            }
+            Cell deflated = new Cell(deflatedContour);
+            deflated.Parent = this;
+            return deflated;
+        }*/
+        public void Deflate(float margin)
+        {
+            Vector3 newCenter = Vector3.zero;
+            for (int c = 0; c < Contour.Count; ++c)
+            {
+                Contour[c].position = (Contour[c].position - Center) * (1 - margin) + Center;
+            }
+            RecalculateBounds();
+        }
+        void RecalculateBounds()
+        {
+            Vector3 min = new Vector3(float.MaxValue, 0, float.MaxValue);
+            Vector3 max = new Vector3(float.MinValue, 0, float.MinValue);
+            Vector3 center = Vector3.zero;
+            foreach (Node n in Contour)
+            {
+                Vector3 p = n.position;
+                min.x = Mathf.Min(p.x, min.x);
+                min.z = Mathf.Min(p.z, min.z);
+                max.x = Mathf.Max(p.x, max.x);
+                max.z = Mathf.Max(p.z, max.z);
+                center += p;
+            }
+            Bounds = new Bounds((min + max) / 2, max - min);
+            this.center = center / contour.Count;
+        }
+        public List<Vector3> localContour
+        {
+            get
+            {
+                List<Vector3> result = new List<Vector3>();
+                foreach (Node node in Contour)
+                {
+                    result.Add(node.position - Center);
+                }
+                return result;
+            }
+        }
+
+        public Bounds Bounds { get => bounds; private set => bounds = value; }
+        public List<Node> Contour
+        {
+            get => contour;
+            set
+            {
+                contour = value;
+                RecalculateBounds();
+            }
+        }
+        public Vector3 Center { get => center; private set => center = value; }
+        public Cell Parent
+        {
+            get => parent;
+            set
+            {
+                if (parent != value)
+                {
+                    if (parent != null)
+                    {
+                        parent.children.Remove(this);
+                    }
+                    parent = value;
+                    if (parent != null)
+                    {
+                        parent.children.Add(this);
+                    }
+                }
+            }
+        }
+
+        public bool ContainsPoint(Vector3 point)
+        {
+            return ContainsPoint(Contour, point);
+        }
+        public static bool ContainsPoint(List<Node> polyPoints, Vector3 p)
+        {
+            var j = polyPoints.Count - 1;
+            var inside = false;
+            for (int i = 0; i < polyPoints.Count; j = i++)
+            {
+                var pi = polyPoints[i].position;
+                var pj = polyPoints[j].position;
+                if (((pi.z <= p.z && p.z <= pj.z) || (pj.z <= p.z && p.z <= pi.z)) &&
+                    (p.x <= (pj.x - pi.x) * (p.z - pi.z) / (pj.z - pi.z) + pi.x))
+                    inside = !inside;
+            }
+            return inside;
+        }
+        public Vector3 Intersects(Vector3 origin, Vector3 target, out int id)
+        {
+            Vector3 intersection = origin;// origin + Vector3.up ;
+            if (this.ContainsPoint(target))
+            {
+                intersection = target;
+                id = -1;
+            }
+            else
+            {
+                List<Vector3> list = new List<Vector3>();
+                List<int> listIdx = new List<int>();
+                Vector3 result = target;
+                for (int i = 0; i < this.Contour.Count; ++i)
+                {
+                    Vector3 from = this.Contour[i].position;
+                    Vector3 to = this.Contour[(i + 1) % this.Contour.Count].position;
+                    Math3d.LineLineIntersection(out result, origin, target - origin, from, to - from);
+                    {
+                        if (this.Bounds.Contains(result))
+                        {
+                            list.Add(result);
+                            listIdx.Add(i);
+                        }
+                    }
+                }
+                intersection = list[0];
+                id = listIdx[0];
+                for (int t = 1; t < list.Count; ++t)
+                {
+                    if (Vector3.Distance(origin, intersection) > Vector3.Distance(origin, list[t]))
+                    {
+                        intersection = list[t];
+                        id = listIdx[t];
+                    }
+                }
+            }
+            return intersection;
+            //return intersection;
+        }
+    }
+    public Cell Contour;
+    //public List<Node> nodes;
+    List<Link> links = new List<Link>();
+    public List<List<Link>> segments;
+    private Dictionary<Hash128, GraphLinked.Node> nodes = new Dictionary<Hash128, GraphLinked.Node>();
+
+    public bool NodeExists(Vector3 position)
+    {
+        return nodes.ContainsKey(Hash(position));
+    }
+    public Node GetNode(Vector3 position)
+    {
+        if (NodeExists(position))
+        {
+            return nodes[Hash(position)];
+        }
+        else
+        {
+            return null;
+        }
+    }
+    Hash128 Hash(Vector3 position)
+    {
+        Hash128 h = new Hash128();
+        HashUtilities.QuantisedVectorHash(ref position, ref h);
+        return h;
+    }
+    public Node AddNode(Vector3 position, bool shell = false)
+    {
+        if (NodeExists(position))
+        {
+           
+            return nodes[Hash(position)];
+        }
+        else
+        {
+            return nodes[Hash(position)] = new Node(position, shell);
+        }
+    }
+    public Link AddLink(Vector3 from, Vector3 to)
+    {
+        if (NodeExists(from) && NodeExists(to))
+        {
+            Node fromNode = GetNode(from);
+            Node toNode = GetNode(to);
+            return AddLink(fromNode, toNode);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    public List<Link> GetLinks()
+    {
+        return links;
+    }
+   
+    public Link AddLink(Node fromNode, Node toNode)
+    {
+        if (Vector3.Distance(fromNode.position, toNode.position) > float.Epsilon)
+        {
+            Link link = new Link(fromNode, toNode, fromNode.shell && toNode.shell);
+            links.Add(link);
+            return link;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    /*public Link GetLink(Vector3 from, Vector3 to)
+    {
+
+        if (NodeExists(from) && NodeExists(to))
+        {
+            Node fromNode = GetNode(from);
+            Node toNode = GetNode(to);
+            return AddLink(fromNode, toNode);
+        }
+        else
+        {
+            return null;
+        }
+    }*/
+    public Dictionary<GraphLinked.Node, List<GraphLinked.Link>> ComputeNeighbours()
+    {
+        Dictionary<GraphLinked.Node, List<GraphLinked.Link>> neighbours = new Dictionary<GraphLinked.Node, List<GraphLinked.Link>>();
         //compute closed cells inside the graph
         foreach (GraphLinked.Link link in this.links)
         {
@@ -72,6 +379,7 @@ public class GraphLinked : Graph
                 neighbours[link.to] = new List<GraphLinked.Link>();
             neighbours[link.to].Add(link);
         }
+        return neighbours;
     }
 
     public Link Segment(int linkId, Node node)
@@ -87,11 +395,6 @@ public class GraphLinked : Graph
 
             if (nodePosition < startPosition)
             {
-                /*Link newSegment = new Link(segment.from, node, segment.shell);
-                segment.from = node;
-                segments[linkId].Insert(segIdx, newSegment);
-                links.Add(newSegment);
-                return newSegment;*/
                 break;
             }
             else if (nodePosition < endPosition)
@@ -115,234 +418,10 @@ public class GraphLinked : Graph
         var intersectionNode = from;
         if (Vector3.Distance(intersectionPosition, from.position) > 0.1f)
         {
-            intersectionNode = new GraphLinked.Node(intersectionPosition, true);
-            this.nodes.Add(intersectionNode);
-            GraphLinked.Link link = new GraphLinked.Link(from, intersectionNode);
-            this.links.Add(link);
+            intersectionNode = AddNode(intersectionPosition,true);
+            AddLink(from, intersectionNode);
+            
         }
         GraphLinked.Link shellSegment = this.Segment(segment, intersectionNode);
-    }
-}
-public class Cell
-{
-    private Cell parent;
-    private Bounds bounds;
-    private Vector3 center;
-    private List<Vector3> contour;
-    public List<Cell> children = new List<Cell>();
-    public float Area
-    {
-        get
-        {
-            float sum = 0;
-            for (int i = 0; i < contour.Count; ++i)
-            {
-                Vector3 from = contour[i];
-                Vector3 to = contour[(i + 1) % contour.Count];
-
-                sum += (to.x - from.x) * (to.z + from.z);
-            }
-            return Mathf.Abs(sum);
-        }
-    }
-
-    //Sum over the edges, (x2 − x1)(y2 + y1). 
-    //If the result is positive the curve is clockwise, if it's negative the curve is counter-clockwise. (The result is twice the enclosed area, with a +/- convention.)
-    public int Handness()
-    {
-        //Sum(x2 − x1)(y2 + y1) < 0?
-        float sum = 0;
-        for (int i = 0; i < contour.Count; ++i)
-        {
-            Vector3 from = contour[i];
-            Vector3 to = contour[(i + 1) % contour.Count];
-
-            sum += (to.x - from.x) * (to.z + from.z);
-        }
-        return sum > 0 ? 1 : -1;
-    }
-    public void Flip()
-    {
-        for (int i = 0; i < contour.Count / 2; ++i)
-        {
-            Vector3 left = contour[i];
-            Vector3 right = contour[contour.Count - i - 1];
-            contour[i] = right;
-            contour[contour.Count - i - 1] = left;
-        }
-    }
-    public Cell(List<Vector3> contour)
-    {
-        Contour = contour;
-        int lastIdx = contour.Count - 1;
-        if (contour[0] == contour[contour.Count - 1])
-        {
-            contour.RemoveAt(contour.Count - 1);
-        }
-        if (Handness() > 0)
-        {
-            Flip();
-        }
-    }
-    public GraphLinked AsGraph()
-    {
-        GraphLinked graph = new GraphLinked();
-        graph.Contour = this;
-        graph.nodes = new List<GraphLinked.Node>();
-        graph.links = new List<GraphLinked.Link>();
-        graph.segments = new List<List<GraphLinked.Link>>();
-        for (int i = 0; i < contour.Count; ++i)
-        {
-            GraphLinked.Node node = new GraphLinked.Node(contour[i], true);
-            graph.nodes.Add(node);
-        }
-
-        for (int i = 0; i < contour.Count; ++i)
-        {
-            GraphLinked.Link link = new GraphLinked.Link(graph.nodes[i], graph.nodes[(i + 1) % contour.Count], true);
-            graph.links.Add(link);
-            graph.segments.Add(new List<GraphLinked.Link>());
-            graph.segments[i].Add(link);
-        }
-        return graph;
-    }
-    public Cell Deflated(float margin)
-    {
-        List<Vector3> deflatedContour = new List<Vector3>();
-        for (int c = 0; c < Contour.Count; ++c)
-        {
-            Vector3 p = (Contour[c] - Center) * (1 - margin) + Center;
-            deflatedContour.Add(p);
-        }
-        Cell deflated = new Cell(deflatedContour);
-        deflated.Parent = this;
-        return deflated;
-    }
-    public void Deflate(float margin)
-    {
-        Vector3 newCenter = Vector3.zero;
-        for (int c = 0; c < Contour.Count; ++c)
-        {
-            Contour[c] = (Contour[c] - Center) * (1 - margin) + Center;
-        }
-        RecalculateBounds();
-    }
-    void RecalculateBounds()
-    {
-        Vector3 min = new Vector3(float.MaxValue, 0, float.MaxValue);
-        Vector3 max = new Vector3(float.MinValue, 0, float.MinValue);
-        Vector3 center = Vector3.zero;
-        foreach (Vector3 p in Contour)
-        {
-            min.x = Mathf.Min(p.x, min.x);
-            min.z = Mathf.Min(p.z, min.z);
-            max.x = Mathf.Max(p.x, max.x);
-            max.z = Mathf.Max(p.z, max.z);
-            center += p;
-        }
-        Bounds = new Bounds((min + max) / 2, max - min);
-        this.center = center / contour.Count;
-    }
-    public List<Vector3> localContour
-    {
-        get
-        {
-            List<Vector3> result = new List<Vector3>();
-            foreach (Vector3 point in Contour)
-            {
-                result.Add(point - Center);
-            }
-            return result;
-        }
-    }
-
-    public Bounds Bounds { get => bounds; private set => bounds = value; }
-    public List<Vector3> Contour
-    {
-        get => contour;
-        set
-        {
-            contour = value;
-            RecalculateBounds();
-        }
-    }
-    public Vector3 Center { get => center; private set => center = value; }
-    public Cell Parent
-    {
-        get => parent;
-        set {
-            if (parent != value)
-            {
-                if (parent != null)
-                {
-                    parent.children.Remove(this);
-                }
-                parent = value;
-                if (parent != null)
-                {
-                    parent.children.Add(this);
-                }
-            }
-        }
-    }
-
-    public bool ContainsPoint(Vector3 point)
-    {
-        return ContainsPoint(Contour, point);
-    }
-    public static bool ContainsPoint(List<Vector3> polyPoints, Vector3 p)
-    {
-        var j = polyPoints.Count - 1;
-        var inside = false;
-        for (int i = 0; i < polyPoints.Count; j = i++)
-        {
-            var pi = polyPoints[i];
-            var pj = polyPoints[j];
-            if (((pi.z <= p.z && p.z <= pj.z) || (pj.z <= p.z && p.z <= pi.z)) &&
-                (p.x <= (pj.x - pi.x) * (p.z - pi.z) / (pj.z - pi.z) + pi.x))
-                inside = !inside;
-        }
-        return inside;
-    }
-    public Vector3 Intersects(Vector3 origin, Vector3 target, out int id)
-    {
-        Vector3 intersection = origin;// origin + Vector3.up ;
-        if (this.ContainsPoint(target))
-        {
-            intersection = target;
-            id = -1;
-        }
-        else
-        {
-            List<Vector3> list = new List<Vector3>();
-            List<int> listIdx = new List<int>();
-            Vector3 result = target;
-            for (int i = 0; i < this.Contour.Count; ++i)
-            {
-                Vector3 from = this.Contour[i];
-                Vector3 to = this.Contour[(i + 1) % this.Contour.Count];
-                Vector3 result2;
-                Math3d.LineLineIntersection(out result, origin, target - origin, from, to - from);
-                {
-                    if (this.Bounds.Contains(result))
-                    {
-                        list.Add(result);
-                        listIdx.Add(i);
-                    }
-                }
-            }
-            intersection = list[0];
-            id = listIdx[0];
-            for (int t = 1; t < list.Count; ++t)
-            {
-                if (Vector3.Distance(origin, intersection) > Vector3.Distance(origin, list[t]))
-                {
-                    intersection = list[t];
-                    id = listIdx[t];
-                }
-            }
-        }
-        return intersection;
-        //return intersection;
     }
 }

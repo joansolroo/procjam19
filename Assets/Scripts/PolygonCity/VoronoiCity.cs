@@ -19,11 +19,10 @@ public class VoronoiCity : MonoBehaviour
     private VoronoiMesh2 voronoi;
 
     List<Vector3> points;
-    GraphLinked city;
-    public List<Cell> cells;
-    public List<Cell> deflatedCells;
+    GraphLinked city = new GraphLinked();
+    public List<GraphLinked.Cell> regions;
     public List<GraphLinked> blocks;
-    public List<Cell> buildingContours;
+    public List<GraphLinked.Cell> blockContours;
 
     public List<VoronoiCity> neighbours;
 
@@ -123,7 +122,7 @@ public class VoronoiCity : MonoBehaviour
         int count = edges.Count;
         bool sorted = false;
         int cicles = 0;
-        while (!sorted && cicles < 100)
+        while (!sorted && cicles < 10)
         {
             sorted = true;
             for (int i = 0; i < count - 1; ++i)
@@ -192,7 +191,7 @@ public class VoronoiCity : MonoBehaviour
     }
     void TranslateToUnity(VoronoiMesh2 voronoi)
     {
-        cells = new List<Cell>();
+        regions = new List<GraphLinked.Cell>();
         //deflatedCells = new List<Cell>();
         frontier = new List<Vector3>();
         foreach (VoronoiRegion<Vertex2> region in voronoi.Regions)
@@ -228,8 +227,8 @@ public class VoronoiCity : MonoBehaviour
             {
                 continue;
             }
-            List<Vector3> contour = new List<Vector3>();
-            int c = 0;
+           // List<Vector3> contour = new List<Vector3>();
+            List<GraphLinked.Node> contour = new List<GraphLinked.Node>();
             foreach (VoronoiEdge<Vertex2> e in edges)
             {
                 Vertex2 v0 = e.From.CircumCenter;
@@ -238,39 +237,34 @@ public class VoronoiCity : MonoBehaviour
                 Vector3 p1 = new Vector3(v1.X, 0, v1.Y);
                 centroid += p0;
 
-                contour.Add(p0);
-                ++c;
+                var nodeFrom = city.AddNode(p0, false);
+                var nodeNext = city.AddNode(p1, false);
+                contour.Add(nodeFrom);
+                var link = city.AddLink(nodeFrom,nodeNext);
             }
-            Cell cell = new Cell(contour);
-            cells.Add(cell);
-            /*Cell deflated = cell.Deflated(0.1f);
-            if (deflated.Area > 0)
-            {
-                deflated.Parent = cell;
-                deflatedCells.Add(deflated);
-            }*/
+            GraphLinked.Cell cell = new GraphLinked.Cell(contour);
+            regions.Add(cell);
         }
-        deflatedCells = cells;
     }
     void Subdivide(int subdivision = 5)
     {
-        buildingContours = new List<Cell>();
+        blockContours = new List<GraphLinked.Cell>();
         if (subdivision == 1)
         {
-            foreach (Cell cell in deflatedCells)
+            foreach (GraphLinked.Cell cell in regions)
             {
-                buildingContours.Add(cell);
+                blockContours.Add(cell);
             }
         }
         else
         {
             blocks = new List<GraphLinked>();
-            foreach (Cell cell in deflatedCells)
+            foreach (GraphLinked.Cell region in regions)
             {
 
-                GraphLinked graph = cell.AsGraph();
-                blocks.Add(graph);
-                Bounds bounds = cell.Bounds;
+                GraphLinked regionGraph = region.AsGraph();
+                blocks.Add(regionGraph);
+                Bounds bounds = region.Bounds;
                 Vector3 delta = bounds.size / subdivision;
                 bool[,] valid = new bool[subdivision + 1, subdivision + 1];
                 GraphLinked.Node[,] nodes = new GraphLinked.Node[subdivision + 1, subdivision + 1];
@@ -281,12 +275,11 @@ public class VoronoiCity : MonoBehaviour
                     {
                         float v = z / (float)subdivision * bounds.size.z + bounds.min.z;
                         Vector3 point = new Vector3(u, 0, v);
-                        if (cell.ContainsPoint(point))
+                        if (region.ContainsPoint(point))
                         {
                             valid[x, z] = true;
-                            var node = new GraphLinked.Node(point);
-                            graph.nodes.Add(node);
-                            nodes[x, z] = node;
+                            nodes[x, z] = regionGraph.AddNode(point);
+
                         }
                     }
                 }
@@ -302,55 +295,53 @@ public class VoronoiCity : MonoBehaviour
                         {
                             Vector3 fromPosition = new Vector3(u, 0, v);
                             GraphLinked.Node from = nodes[x, z];
+                            // RIGHT
                             int x2 = x + 1;
-                            if (x2 <= subdivision && !valid[x2, z])
+                            if (x2 > subdivision || !valid[x2, z])
                             {
                                 float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
                                 Vector3 targetPosition = new Vector3(u2, 0, v);
-                                graph.SegmentShell(from, targetPosition);
+                                regionGraph.SegmentShell(from, targetPosition);
+                                
                             }
                             else
                             {
-                                GraphLinked.Link link = new GraphLinked.Link(nodes[x, z], nodes[x2, z]);
-                                graph.links.Add(link);
+                                regionGraph.AddLink(nodes[x, z], nodes[x2, z]);
+                                city.AddLink(city.AddNode(nodes[x, z].position), city.AddNode(nodes[x2, z].position));
                             }
+                            // LEFT
                             x2 = x - 1;
-                            if (x2 >= 0 && !valid[x2, z])
+                            if (x2 < 0 || !valid[x2, z])
                             {
                                 float u2 = x2 / (float)subdivision * bounds.size.x + bounds.min.x;
                                 Vector3 targetPosition = new Vector3(u2, 0, v);
-                                graph.SegmentShell(from, targetPosition);
+                                regionGraph.SegmentShell(from, targetPosition);
                             }
-                            /*else
-                            {
-                                Graph.Link link = new Graph.Link(nodes[x, z], nodes[x2, z]);
-                                graph.links.Add(link);
-                            }*/
+                            // no else: intersections with the edge are done only done right-wards
+
+                            // UP
                             int z2 = z + 1;
-                            if (z2 <= subdivision && !valid[x, z2])
+                            if (z2 > subdivision || !valid[x, z2])
                             {
                                 float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
                                 Vector3 targetPosition = new Vector3(u, 0, v2);
-                                graph.SegmentShell(from, targetPosition);
+                                regionGraph.SegmentShell(from, targetPosition);
                             }
                             else
                             {
-                                GraphLinked.Link link = new GraphLinked.Link(nodes[x, z], nodes[x, z2]);
-                                graph.links.Add(link);
+                                regionGraph.AddLink(nodes[x, z], nodes[x, z2]);
+                                city.AddLink(city.AddNode(nodes[x, z].position), city.AddNode(nodes[x, z2].position));
                             }
 
+                            //DOWN
                             z2 = z - 1;
-                            if (z2 >= 0 && !valid[x, z2])
+                            if (z2 < 0 || !valid[x, z2])
                             {
                                 float v2 = z2 / (float)subdivision * bounds.size.z + bounds.min.z;
                                 Vector3 targetPosition = new Vector3(u, 0, v2);
-                                graph.SegmentShell(from, targetPosition);
+                                regionGraph.SegmentShell(from, targetPosition);
                             }
-                            /*else
-                            {
-                                Graph.Link link = new Graph.Link(nodes[x, z], nodes[x, z2]);
-                                graph.links.Add(link);
-                            }*/
+                            // no else: intersections with the edge are done only done up-wards
                         }
                     }
                 }
@@ -360,25 +351,25 @@ public class VoronoiCity : MonoBehaviour
                     {
                         if (valid[x, z] && valid[x + 1, z] && valid[x, z + 1] && valid[x + 1, z + 1])
                         {
-                            List<Vector3> contour = new List<Vector3>();
-                            contour.Add(nodes[x, z].position);
-                            contour.Add(nodes[x + 1, z].position);
-                            contour.Add(nodes[x + 1, z + 1].position);
-                            contour.Add(nodes[x, z + 1].position);
-                            Cell subcell = new Cell(contour);
-                            subcell.Parent = cell;
-                            buildingContours.Add(subcell);
+                            List<GraphLinked.Node> contour = new List<GraphLinked.Node>();
+                            contour.Add(nodes[x, z]);
+                            contour.Add(nodes[x + 1, z]);
+                            contour.Add(nodes[x + 1, z + 1]);
+                            contour.Add(nodes[x, z + 1]);
+                            GraphLinked.Cell subcell = new GraphLinked.Cell(contour);
+                            subcell.Parent = region;
+                            blockContours.Add(subcell);
                         }
                     }
                 }
 
                 List<GraphLinked.Link> unused = new List<GraphLinked.Link>();
-                foreach (var link in graph.segments)
+                foreach (var link in regionGraph.segments)
                 {
                     unused.AddRange(link);
                 }
                 // get the cells at the edges
-                graph.ComputeNeighbours();
+                regionGraph.ComputeNeighbours();
                 while (unused.Count > 0)
                 {
                     List<GraphLinked.Link> contour = new List<GraphLinked.Link>();
@@ -406,7 +397,7 @@ public class VoronoiCity : MonoBehaviour
                     List<GraphLinked.Node> solutionPath = null;
                     List<GraphLinked.Link> solutionLinks = null;
 
-
+                    var neighbours = regionGraph.ComputeNeighbours();
                     while (queueNodes.Count > 0 && count < 100 && solutionPath == null)
                     {
                         List<GraphLinked.Node> currentSolution = queueNodes.Dequeue();
@@ -414,17 +405,22 @@ public class VoronoiCity : MonoBehaviour
                         GraphLinked.Node current = currentSolution[currentSolution.Count - 1];
 
                         used.Add(current);
-                        foreach (var nextLink in graph.neighbours[current])
+                        foreach (var nextLink in neighbours[current])
                         {
+                            //flips the edge if needed
                             GraphLinked.Node next = current == nextLink.from ? nextLink.to : nextLink.from;
+
+                            // is it a solution?
                             if (currentSolution.Count > 2 && next == link.from)
                             {
                                 solutionPath = currentSolution;
                                 solutionLinks = currentSolutionLinks;
                             }
+                            //no solution, but it can be navigated
                             else if (!used.Contains(next))
                             {
-                                if (graph.neighbours[current].Count == 1)
+                                // single option, no need to create new solution
+                                if (neighbours[current].Count == 1)
                                 {
                                     currentSolution.Add(next);
                                     queueNodes.Enqueue(currentSolution);
@@ -432,7 +428,8 @@ public class VoronoiCity : MonoBehaviour
                                     currentSolutionLinks.Add(nextLink);
                                     queueLinks.Enqueue(currentSolutionLinks);
                                 }
-                                else if (graph.neighbours[current].Count > 1)
+                                // more than one edge, create a new solution for each
+                                else if (neighbours[current].Count > 1)
                                 {
                                     var newSolution = new List<GraphLinked.Node>(currentSolution);
                                     newSolution.Add(next);
@@ -451,17 +448,17 @@ public class VoronoiCity : MonoBehaviour
                         if (solutionPath != null)
                         {
 
-                            List<Vector3> contourCell = new List<Vector3>();
+                            List<GraphLinked.Node> contourCell = new List<GraphLinked.Node>();
                             foreach (var entry in solutionPath)
                             {
-                                if (contourCell.Count == 0 || Vector3.SqrMagnitude(entry.position - contourCell[contourCell.Count - 1]) > float.Epsilon)
+                                if (contourCell.Count == 0 || Vector3.SqrMagnitude(entry.position - contourCell[contourCell.Count - 1].position) > float.Epsilon)
                                 {
-                                    contourCell.Add(entry.position);
+                                    contourCell.Add(entry);
                                 }
                             }
                             if (contourCell.Count > 2)
                             {
-                                Cell building = new Cell(contourCell);
+                                GraphLinked.Cell building = new GraphLinked.Cell(contourCell);
                                 if (building.Area > 0)
                                 {
                                     foreach (var usedLink in solutionLinks)
@@ -471,8 +468,8 @@ public class VoronoiCity : MonoBehaviour
                                             unused.Remove(usedLink);
                                         }
                                     }
-                                    building.Parent = cell;
-                                    buildingContours.Add(building);
+                                    building.Parent = region;
+                                    blockContours.Add(building);
                                 }
                             }
                             else
@@ -500,7 +497,7 @@ public class VoronoiCity : MonoBehaviour
 
     }
 
-    void GizmosCell(Cell cell, Vector3 position, bool center = false)
+    void GizmosCell(GraphLinked.Cell cell, Vector3 position, bool center = false)
     {
         Vector3 centroid = cell.Center + position;
         var contour = cell.localContour;
@@ -532,7 +529,7 @@ public class VoronoiCity : MonoBehaviour
                 Gizmos.DrawSphere(vertex, size / 50);
             }
         }
-        if (cells == null)
+        if (regions == null)
         {
             return;
         }
@@ -541,22 +538,28 @@ public class VoronoiCity : MonoBehaviour
         {
             Gizmos.DrawWireSphere(vertex, 150);
         }
-        int c = 0;
+       
         Gizmos.color = Color.white;
-        foreach (var block in blocks) {
+        foreach (var link in city.GetLinks())
+        {
+            GizmoExtensions.DrawArrow(link.from.position + Vector3.up * 30, link.to.position + Vector3.up * 30);
+        }
+        /*foreach (var block in blocks) {
             foreach (var link in block.links)
             {
                 Gizmos.DrawLine(link.from.position + Vector3.up * 30, link.to.position + Vector3.up * 30);
             }
-        }
-        foreach (Cell cell in cells)
+        }*/
+        /*
+        int c = 0;
+        foreach (GraphLinked.Cell cell in regions)
         {
             Gizmos.color = new Color32((byte)((c*64)%255), (byte)((c/64)%255),255,255);
             GizmosCell(cell, Vector3.zero);
             //foreach (Cell block in cell.children)
             {
                 //GizmosCell(block, Vector3.up * 10);
-                foreach (Cell building in cell.children)
+                foreach (GraphLinked.Cell building in cell.children)
                 {
                     for (int h = 1; h <= 2; ++h)
                     {
@@ -565,7 +568,7 @@ public class VoronoiCity : MonoBehaviour
                 }
             }
             ++c;
-        }
+        }*/
     }
 }
 

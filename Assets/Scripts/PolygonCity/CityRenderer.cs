@@ -14,16 +14,21 @@ public class CityRenderer : MonoBehaviour
     {
         city.Generate();
         float start = Time.realtimeSinceStartup;
-        GenerateRegions(city.cells, 1);
-        GenerateRegions(city.deflatedCells, 2);
-        GenerateRegions(city.buildingContours, 1200, true);
+        GenerateRegions(city.regions, 1);
+        /*List<GraphLinked.Cell> deflatedCells = new List<GraphLinked.Cell>();
+        foreach(var cell in city.regions)
+        {
+            deflatedCells.Add(cell.Deflated(0.1f));
+        }
+        GenerateRegions(deflatedCells, 2);*/
+        GenerateRegions(city.blockContours, 1200, true);
         // GenerateBuildings(buildingContours);
         float end = Time.realtimeSinceStartup;
         Debug.Log("> geometry time:" + (end - start) + "ms");
     }
-    void GenerateRegions(List<Cell> cells, int height, bool perlin = false)
+    void GenerateRegions(List<GraphLinked.Cell> cells, int height, bool perlin = false)
     {
-        foreach (Cell cell in cells)
+        foreach (GraphLinked.Cell cell in cells)
         {
             ProceduralRegion region = Instantiate(regionTemplate);
             float h = height;
@@ -37,9 +42,9 @@ public class CityRenderer : MonoBehaviour
             //region.renderer.material.color = Random.ColorHSV(0, 1, 1, 1, 0.5f, 0.5f);
         }
     }
-    void GenerateBuildings(List<Cell> cells)
+    void GenerateBuildings(List<GraphLinked.Cell> cells)
     {
-        foreach (Cell cell in cells)
+        foreach (GraphLinked.Cell cell in cells)
         {
             float area = cell.Area;
             //if (area < 4000  && area >500)
