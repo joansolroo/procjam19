@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Graph
+public abstract class Graph2
 {
    //// public abstract bool HasNode(int node);
    //// public abstract bool HasLink(int from, int to);
    //// public abstract float GetLink(int from, int to);
 }
 [System.Serializable]
-public class GraphSparse<T> : Graph
+public class GraphSparse<T> : Graph2
 {
     [System.Serializable]
     public class Node
@@ -31,7 +31,7 @@ public class GraphSparse<T> : Graph
 }
 
 [System.Serializable]
-public class GraphDense : Graph
+public class GraphDense : Graph2
 {
     public int entry = 0;
     public int exit = -1;

@@ -79,11 +79,11 @@ public class Markov : MonoBehaviour
         song = new Song();
         int n = clip.Length;
         //song.channels = new SongChannel[n];
-        song.transitions = new Graph(n);
-        song.transitions.origin = new Graph.Links[n];
+        song.transitions = new Graph2(n);
+        song.transitions.origin = new Graph2.Links[n];
         for (int s = 0; s < n; ++s)
         {
-            song.transitions.origin[s] = new Graph.Links();
+            song.transitions.origin[s] = new Graph2.Links();
             song.transitions.origin[s].probabilities = new float[n];
             for (int s2 = 0; s2 < n; ++s2)
             {

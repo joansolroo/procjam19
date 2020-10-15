@@ -7,7 +7,7 @@ using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 // IngredientDrawer
-[CustomPropertyDrawer(typeof(Graph<SongChannel>))]
+[CustomPropertyDrawer(typeof(Graph2<SongChannel>))]
 public class CustomGraphSongChannelDrawer : CustomGraphDrawer { }
 #endif*/
 
@@ -18,7 +18,7 @@ public class SongPart : ScriptableObject
     public int duration = 4;
 
     public UnityEngine.Audio.AudioMixerSnapshot mixerSnapshot;
-    /*public Graph transitions;
+    /*public Graph2 transitions;
 
     void OnValidate()
     {
